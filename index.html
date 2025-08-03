@@ -2,35 +2,58 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Claudio Fernandez</title>
-</head>
-<body>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <nav>
-    <ul>
-      <li><a href="#sobre-mi">Sobre mí</a></li>
-      <li><a href="#contacto">Contacto</a></li>
-      <li><a href="#proyectos">Proyectos</a></li>
-    </ul>
-  </nav>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
 
-  <main>
-    <section id="sobre-mi">
-      <h2>Sobre mí</h2>
-      <p>Aquí va el texto sobre mí.</p>
-    </section>
+    nav {
+      background-color: #004080;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+    }
 
-    <section id="contacto">
-      <h2>Contacto</h2>
-      <p>Aquí va el contacto.</p>
-    </section>
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
 
-    <section id="proyectos">
-      <h2>Proyectos</h2>
-      <p>Aquí va la descripción de proyectos.</p>
-    </section>
-  </main>
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      transition: color 0.3s ease;
+    }
 
-</body>
-</html>
+    nav ul li a:hover {
+      color: #ffcc00;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    section {
+      margin-b
