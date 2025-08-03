@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mi Web</title>
+  <title>Claudio Fernandez</title>
   <style>
     body {
       background-color: #f9f9f9;
@@ -30,3 +30,47 @@
       text-decoration: none;
       font-weight: bold;
       transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ffcc00;
+    }
+
+    @media (max-width: 600px) {
+      nav a {
+        display: block;
+        margin: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Claudio Fernandez</h1>
+    <nav>
+      <a href="#sobre-mi">Sobre mí</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#proyectos">Proyectos</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="sobre-mi">
+      <h2>Sobre mí</h2>
+      <p>Aquí va el texto sobre mí.</p>
+    </section>
+
+    <section id="contacto">
+      <h2>Contacto</h2>
+      <p>Aquí va el contacto.</p>
+    </section>
+
+    <section id="proyectos">
+      <h2>Proyectos</h2>
+      <p>Aquí va la descripción de proyectos.</p>
+    </section>
+  </main>
+
+</body>
+</html>
