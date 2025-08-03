@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Claudio Fernandez</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claudio Fernández</title>
   <style>
     body {
       background-color: #f9f9f9;
@@ -42,15 +42,39 @@
         margin: 10px 0;
       }
     }
+
+    #cotizaciones {
+      margin-top: 40px;
+      font-size: 20px;
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Claudio Fernandez</h1>
+    <h1>Bienvenido a mi sitio</h1>
     <nav>
       <a href="#sobre-mi">Sobre mí</a>
       <a href="#contacto">Contacto</a>
-      <a href="#proyectos">Proyectos</a>
     </nav>
   </header>
+
+  <section id="cotizaciones">
+    <h2>Cotización del Dólar Blue</h2>
+    <p id="dolar-blue">Cargando...</p>
+  </section>
+
+  <script>
+    fetch("https://dolarapi.com/v1/dolares/blue")
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("dolar-blue").innerText =
+          `Compra: $${data.compra} | Venta: $${data.venta}`;
+      })
+      .catch(error => {
+        document.getElementById("dolar-blue").innerText = "Error al cargar datos.";
+      });
+  </script>
+
+</body>
+</html>
