@@ -23,6 +23,14 @@
       margin: 0;
       font-size: 2.5rem;
     }
+    #fecha-hora {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+    }
     nav a {
       color: white;
       margin: 0 15px;
@@ -32,13 +40,6 @@
     }
     nav a:hover {
       text-decoration: underline;
-    }
-    #hora {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 16px;
-      font-weight: bold;
     }
     main {
       max-width: 900px;
@@ -66,7 +67,7 @@
 </head>
 <body>
   <header>
-    <div id="hora"></div>
+    <div id="fecha-hora">Cargando fecha...</div>
     <h1>Cotizaciones - Dólar y Acciones</h1>
     <nav>
       <a href="index.html">Inicio</a>
@@ -135,17 +136,23 @@
         console.error('Error:', error);
       });
 
-    // Mostrar la hora actual en tiempo real
-    function actualizarHora() {
+    // Mostrar fecha y hora actualizada
+    function actualizarFechaHora() {
       const ahora = new Date();
-      const horas = ahora.getHours().toString().padStart(2, '0');
-      const minutos = ahora.getMinutes().toString().padStart(2, '0');
-      const segundos = ahora.getSeconds().toString().padStart(2, '0');
-      document.getElementById('hora').textContent = `${horas}:${minutos}:${segundos}`;
+      const opciones = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      };
+      const formato = ahora.toLocaleDateString('es-AR', opciones);
+      document.getElementById('fecha-hora').textContent = formato;
     }
-    setInterval(actualizarHora, 1000);
-    actualizarHora();
+    setInterval(actualizarFechaHora, 1000);
+    actualizarFechaHora();
   </script>
 </body>
 </html>
-
