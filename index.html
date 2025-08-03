@@ -3,65 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cotizaciones Dólar MEP y Oficial</title>
+  <title>Claudio Fernandez</title>
   <style>
     body {
+      background-color: #f9f9f9;
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f4f4f4;
       text-align: center;
+      padding: 50px;
+      margin: 0;
     }
-    main {
-      max-width: 400px;
-      margin: 30px auto;
-      background: white;
+
+    header {
+      background-color: #005baa;
+      color: white;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
     }
-    h2 {
-      color: #005baa;
-      margin-top: 0;
+
+    nav {
+      margin-top: 10px;
     }
-    .cotizacion {
-      font-size: 18px;
-      margin-bottom: 10px;
+
+    nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ffcc00;
+    }
+
+    @media (max-width: 600px) {
+      nav a {
+        display: block;
+        margin: 10px 0;
+      }
     }
   </style>
 </head>
 <body>
 
-<main>
-  <h1>Cotizaciones Dólar</h1>
-  <h2>Dólar MEP</h2>
-  <p id="dolar-mep" class="cotizacion">Cargando...</p>
+  <header>
+    <h1>Claudio Fernandez</h1>
+    <nav>
+      <a href="#sobre-mi">Sobre mÃ­</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#proyectos">Proyectos</a>
+    </nav>
+  </header>
 
-  <h2>Dólar Oficial</h2>
-  <p id="dolar-oficial" class="cotizacion">Cargando...</p>
-</main>
+  <main>
+    <section id="sobre-mi">
+      <h2>Sobre mÃ­</h2>
+      <p>AquÃ­ va el texto sobre mÃ­.</p>
+    </section>
 
-<script>
-  async function cargarCotizaciones() {
-    try {
-      const response = await fetch('https://api.dolarhoy.com/api/dolar');
-      if (!response.ok) throw new Error('Error en la respuesta');
+    <section id="contacto">
+      <h2>Contacto</h2>
+      <p>AquÃ­ va el contacto.</p>
+    </section>
 
-      const data = await response.json();
-
-      document.getElementById('dolar-mep').textContent = 
-        `Compra: $${data.mep.compra} | Venta: $${data.mep.venta}`;
-
-      document.getElementById('dolar-oficial').textContent =
-        `Compra: $${data.oficial.compra} | Venta: $${data.oficial.venta}`;
-
-    } catch (error) {
-      document.getElementById('dolar-mep').textContent = 'Error al cargar datos.';
-      document.getElementById('dolar-oficial').textContent = 'Error al cargar datos.';
-    }
-  }
-
-  cargarCotizaciones();
-</script>
+    <section id="proyectos">
+      <h2>Proyectos</h2>
+      <p>AquÃ­ va la descripciÃ³n de proyectos.</p>
+    </section>
+  </main>
 
 </body>
 </html>
