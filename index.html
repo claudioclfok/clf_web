@@ -6,15 +6,15 @@
   <title>Claudio Fernandez</title>
   <style>
     body {
-      background-color: #f9f9f9;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
       margin: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #f9f9f9;
     }
 
     header {
       background-color: #005baa;
       color: white;
-      padding: 20px;
+      padding: 20px 15px;
       position: relative;
     }
 
@@ -27,22 +27,40 @@
 
     header h1 {
       text-align: center;
-      margin: 0;
+      margin: 0 0 15px 0;
       font-size: 32px;
     }
 
-    main {
-      padding: 30px;
+    nav {
       text-align: center;
+      margin-top: 10px;
     }
 
-    section {
-      margin-bottom: 30px;
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 40px 20px;
+      text-align: center;
     }
 
     @media (max-width: 600px) {
       header h1 {
         font-size: 24px;
+      }
+
+      nav a {
+        display: block;
+        margin: 10px 0;
       }
 
       #fecha-hora {
@@ -56,38 +74,5 @@
   <header>
     <div id="fecha-hora">Cargando fecha y hora...</div>
     <h1>Claudio Fernandez</h1>
-  </header>
-
-  <main>
-    <section id="sobre-mi">
-      <h2>Sobre mí</h2>
-      <p>Aquí va el texto sobre mí.</p>
-    </section>
-
-    <section id="contacto">
-      <h2>Contacto</h2>
-      <p>Aquí va el contacto.</p>
-    </section>
-
-    <section id="proyectos">
-      <h2>Proyectos</h2>
-      <p>Aquí va la descripción de proyectos.</p>
-    </section>
-  </main>
-
-  <script>
-    function actualizarFechaHora() {
-      const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
-      const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      const ahora = new Date();
-      const fecha = ahora.toLocaleDateString('es-ES', opcionesFecha);
-      const hora = ahora.toLocaleTimeString('es-ES', opcionesHora);
-      document.getElementById('fecha-hora').textContent = `${fecha} - ${hora}`;
-    }
-
-    actualizarFechaHora();
-    setInterval(actualizarFechaHora, 1000);
-  </script>
-
-</body>
-</html>
+    <nav>
+      <a h
