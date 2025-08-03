@@ -3,82 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Noticias Dinámicas</title>
+  <title>Cotizaciones de Dólar</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f9f9f9;
+      margin: 0; padding: 20px;
+      background-color: #f4f4f4;
+      text-align: center;
+    }
+    header {
+      background-color: #005baa;
+      color: white;
+      padding: 20px;
     }
     h1 {
-      text-align: center;
-      color: #005baa;
+      margin: 0;
     }
-    #noticias {
-      max-width: 700px;
-      margin: 20px auto;
+    main {
+      max-width: 400px;
+      margin: 30px auto;
       background: white;
       padding: 20px;
-      border-radius: 6px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-    article {
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-    }
-    article:last-child {
-      border: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     h2 {
       color: #005baa;
-      margin: 0 0 6px;
+      margin-top: 0;
     }
-    p {
-      margin: 0 0 6px;
-    }
-    small {
-      color: #777;
-      font-size: 0.9em;
+    .cotizacion {
+      font-size: 18px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Noticias</h1>
-  <section id="noticias">
-    <p>Cargando noticias...</p>
-  </section>
+<header>
+  <h1>Cotizaciones de Dólar</h1>
+  <p id="fecha"></p>
+</header>
 
-  <script>
-    fetch('noticias.json')
-      .then(response => {
-        if (!response.ok) throw new Error('No se pudo cargar noticias');
-        return response.json();
-      })
-      .then(noticias => {
-        const contenedor = document.getElementById('noticias');
-        if (noticias.length === 0) {
-          contenedor.innerHTML = '<p>No hay noticias para mostrar.</p>';
-          return;
-        }
-        contenedor.innerHTML = '';
-        noticias.forEach(n => {
-          const articulo = document.createElement('article');
-          articulo.innerHTML = `
-            <h2>${n.titulo}</h2>
-            <p>${n.contenido}</p>
-            <small>Fecha: ${new Date(n.fecha).toLocaleDateString('es-ES')}</small>
-          `;
-          contenedor.appendChild(articulo);
-        });
-      })
-      .catch(error => {
-        document.getElementById('noticias').innerHTML = `<p>Error al cargar noticias: ${error.message}</p>`;
-      });
-  </script>
+<main>
+  <h2>Dólar Blue</h2>
+  <p id="dolar-blue" class="cotizacion">Cargando...</p>
+
+  <h2>Dólar MEP</h2>
+  <p id="dolar-mep" class="cotizacion">Cargando...</p>
+
+  <h2>Dólar Oficial</h2>
+  <p id="dolar-oficial" class="cotizacion">Cargando...</p>
+</main>
+
+<script>
+  function mostrarFecha() {
+    const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+    const hoy = new Date();
+    const fechaFormateada = hoy.toLocaleDateString('es-ES', opciones);
+    document.getElementById('fecha').textContent = fechaFormateada;
+  }
+  mostrarFecha();
+
+  async function cargarDolar(url, id) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Error en la respuesta');
+      const data = await response.json();
+
+      // Ajuste según la estructura real de la API
+      // Usamos propiedades distintas según cada endpoint
+      if (id === 'dolar-blue') {
+        document.getElementById(id).textContent = 
+          `Compra: $${data.venta} | Venta: $${data.compra}`;
+      } else if (id === 'dolar-mep') {
+        document.getElementById(id).textContent =
+          `Compra: $${data.venta} | Venta: $${data.compra}`;
+      } else if (id === 'dolar-oficial') {
+        document.getElementById(id).textContent =
+          `Compra: $${data.venta} | Venta: $${data.compra}`;
+      } else {
+        document.getElementById(id).textContent = 'Datos no disponibles';
+      }
+    } catch (error) {
+      document.getElementById(id).textContent = 'Error al cargar datos.';
+    }
+  }
+
+  // URLs para la API con cotizaciones actuales que funcionan (ejemplo)
+  cargarDolar('https://api.bluelytics.com.ar/v2/latest', 'dolar-blue');
+  cargarDolar('https://api-dolar-argentina.herokuapp.com/api/dolarmep', 'dolar-mep');
+  cargarDolar('https://api-dolar-argentina.herokuapp.com/api/dolaroficial', 'dolar-oficial');
+</script>
 
 </body>
 </html>
