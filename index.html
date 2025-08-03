@@ -47,9 +47,25 @@
       margin-top: 40px;
       font-size: 20px;
     }
+
+    #fecha {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #333;
+      background-color: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
+
+  <div id="fecha"></div>
 
   <header>
     <h1>Bienvenido a mi sitio</h1>
@@ -74,6 +90,14 @@
       .catch(error => {
         document.getElementById("dolar-blue").innerText = "Error al cargar datos.";
       });
+
+    function mostrarFecha() {
+      const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+      const hoy = new Date();
+      const fechaFormateada = hoy.toLocaleDateString('es-ES', opciones);
+      document.getElementById('fecha').textContent = fechaFormateada;
+    }
+    mostrarFecha();
   </script>
 
 </body>
