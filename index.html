@@ -136,21 +136,23 @@
         console.error('Error:', error);
       });
 
-    // Mostrar fecha y hora actualizada
+    // Mostrar fecha y hora actualizada en formato 24 hs
     function actualizarFechaHora() {
       const ahora = new Date();
-      const opciones = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      };
-      const formato = ahora.toLocaleDateString('es-AR', opciones);
-      document.getElementById('fecha-hora').textContent = formato;
+      const dia = ahora.getDate();
+      const meses = [
+        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+      ];
+      const mesNombre = meses[ahora.getMonth()];
+      const año = ahora.getFullYear();
+      const horas = ahora.getHours().toString().padStart(2, '0');
+      const minutos = ahora.getMinutes().toString().padStart(2, '0');
+      const segundos = ahora.getSeconds().toString().padStart(2, '0');
+      const fechaHora = `${dia} de ${mesNombre} de ${año} - ${horas}:${minutos}:${segundos}`;
+      document.getElementById('fecha-hora').textContent = fechaHora;
     }
+
     setInterval(actualizarFechaHora, 1000);
     actualizarFechaHora();
   </script>
