@@ -18,6 +18,17 @@
       color: white;
       padding: 20px;
       margin-bottom: 30px;
+      position: relative;
+      text-align: center;
+    }
+
+    #fecha {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      color: #ffcc00;
     }
 
     nav {
@@ -41,33 +52,22 @@
         display: block;
         margin: 10px 0;
       }
+      #fecha {
+        position: static;
+        margin-bottom: 10px;
+      }
     }
 
     #cotizaciones {
       margin-top: 40px;
       font-size: 20px;
     }
-
-    #fecha {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      color: #333;
-      background-color: #f0f0f0;
-      padding: 5px 10px;
-      border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      z-index: 1000;
-    }
   </style>
 </head>
 <body>
 
-  <div id="fecha"></div>
-
   <header>
+    <div id="fecha"></div>
     <h1>Bienvenido a mi sitio</h1>
     <nav>
       <a href="#sobre-mi">Sobre mí</a>
