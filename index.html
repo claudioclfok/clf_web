@@ -38,4 +38,57 @@
       color: #005baa;
     }
     .cotizacion {
-      font-size: 18
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Cotizaciones de Dólar</h1>
+  <p id="fecha"></p>
+</header>
+
+<main>
+  <h2>Dólar Blue</h2>
+  <p id="dolar-blue" class="cotizacion">Cargando...</p>
+
+  <h2>Dólar MEP</h2>
+  <p id="dolar-mep" class="cotizacion">Cargando...</p>
+
+  <h2>Dólar Oficial</h2>
+  <p id="dolar-oficial" class="cotizacion">Cargando...</p>
+</main>
+
+<script>
+  function mostrarFecha() {
+    const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+    const hoy = new Date();
+    const fechaFormateada = hoy.toLocaleDateString('es-ES', opciones);
+    document.getElementById('fecha').textContent = fechaFormateada;
+  }
+  mostrarFecha();
+
+  async function cargarDolar(url, id) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Error en la respuesta');
+      const data = await response.json();
+      if (data.compra && data.venta) {
+        document.getElementById(id).textContent = `Compra: $${data.compra} | Venta: $${data.venta}`;
+      } else {
+        document.getElementById(id).textContent = 'Datos no disponibles';
+      }
+    } catch {
+      document.getElementById(id).textContent = 'Error al cargar datos.';
+    }
+  }
+
+  cargarDolar("https://api-dolar-argentina.herokuapp.com/api/dolarblue", "dolar-blue");
+  cargarDolar("https://api-dolar-argentina.herokuapp.com/api/dolarmep", "dolar-mep");
+  cargarDolar("https://api-dolar-argentina.herokuapp.com/api/dolaroficial", "dolar-oficial");
+</script>
+
+</body>
+</html>
