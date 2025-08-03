@@ -8,8 +8,6 @@
     body {
       background-color: #f9f9f9;
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      text-align: center;
-      padding: 50px;
       margin: 0;
     }
 
@@ -17,34 +15,38 @@
       background-color: #005baa;
       color: white;
       padding: 20px;
-      margin-bottom: 30px;
+      position: relative;
     }
 
     #fecha-hora {
-      margin-top: 10px;
-      font-size: 16px;
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      font-size: 14px;
     }
 
-    nav {
-      margin-top: 10px;
+    header h1 {
+      text-align: center;
+      margin: 0;
+      font-size: 32px;
     }
 
-    nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.3s ease;
+    main {
+      padding: 30px;
+      text-align: center;
     }
 
-    nav a:hover {
-      color: #ffcc00;
+    section {
+      margin-bottom: 30px;
     }
 
     @media (max-width: 600px) {
-      nav a {
-        display: block;
-        margin: 10px 0;
+      header h1 {
+        font-size: 24px;
+      }
+
+      #fecha-hora {
+        font-size: 12px;
       }
     }
   </style>
@@ -52,13 +54,8 @@
 <body>
 
   <header>
-    <h1>Claudio Fernandez</h1>
     <div id="fecha-hora">Cargando fecha y hora...</div>
-    <nav>
-      <a href="#sobre-mi">Sobre mí</a>
-      <a href="#contacto">Contacto</a>
-      <a href="#proyectos">Proyectos</a>
-    </nav>
+    <h1>Claudio Fernandez</h1>
   </header>
 
   <main>
@@ -82,11 +79,9 @@
     function actualizarFechaHora() {
       const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
       const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-
       const ahora = new Date();
       const fecha = ahora.toLocaleDateString('es-ES', opcionesFecha);
       const hora = ahora.toLocaleTimeString('es-ES', opcionesHora);
-
       document.getElementById('fecha-hora').textContent = `${fecha} - ${hora}`;
     }
 
