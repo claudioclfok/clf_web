@@ -3,21 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cotizaciones de Dólar</title>
+  <title>Cotizaciones Dólar MEP y Oficial</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0; padding: 20px;
+      padding: 20px;
       background-color: #f4f4f4;
       text-align: center;
-    }
-    header {
-      background-color: #005baa;
-      color: white;
-      padding: 20px;
-    }
-    h1 {
-      margin: 0;
     }
     main {
       max-width: 400px;
@@ -39,15 +31,8 @@
 </head>
 <body>
 
-<header>
-  <h1>Cotizaciones de Dólar</h1>
-  <p id="fecha"></p>
-</header>
-
 <main>
-  <h2>Dólar Blue</h2>
-  <p id="dolar-blue" class="cotizacion">Cargando...</p>
-
+  <h1>Cotizaciones Dólar</h1>
   <h2>Dólar MEP</h2>
   <p id="dolar-mep" class="cotizacion">Cargando...</p>
 
@@ -56,43 +41,26 @@
 </main>
 
 <script>
-  function mostrarFecha() {
-    const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
-    const hoy = new Date();
-    const fechaFormateada = hoy.toLocaleDateString('es-ES', opciones);
-    document.getElementById('fecha').textContent = fechaFormateada;
-  }
-  mostrarFecha();
-
-  async function cargarDolar(url, id) {
+  async function cargarCotizaciones() {
     try {
-      const response = await fetch(url);
+      const response = await fetch('https://api.dolarhoy.com/api/dolar');
       if (!response.ok) throw new Error('Error en la respuesta');
+
       const data = await response.json();
 
-      // Ajuste según la estructura real de la API
-      // Usamos propiedades distintas según cada endpoint
-      if (id === 'dolar-blue') {
-        document.getElementById(id).textContent = 
-          `Compra: $${data.venta} | Venta: $${data.compra}`;
-      } else if (id === 'dolar-mep') {
-        document.getElementById(id).textContent =
-          `Compra: $${data.venta} | Venta: $${data.compra}`;
-      } else if (id === 'dolar-oficial') {
-        document.getElementById(id).textContent =
-          `Compra: $${data.venta} | Venta: $${data.compra}`;
-      } else {
-        document.getElementById(id).textContent = 'Datos no disponibles';
-      }
+      document.getElementById('dolar-mep').textContent = 
+        `Compra: $${data.mep.compra} | Venta: $${data.mep.venta}`;
+
+      document.getElementById('dolar-oficial').textContent =
+        `Compra: $${data.oficial.compra} | Venta: $${data.oficial.venta}`;
+
     } catch (error) {
-      document.getElementById(id).textContent = 'Error al cargar datos.';
+      document.getElementById('dolar-mep').textContent = 'Error al cargar datos.';
+      document.getElementById('dolar-oficial').textContent = 'Error al cargar datos.';
     }
   }
 
-  // URLs para la API con cotizaciones actuales que funcionan (ejemplo)
-  cargarDolar('https://api.bluelytics.com.ar/v2/latest', 'dolar-blue');
-  cargarDolar('https://api-dolar-argentina.herokuapp.com/api/dolarmep', 'dolar-mep');
-  cargarDolar('https://api-dolar-argentina.herokuapp.com/api/dolaroficial', 'dolar-oficial');
+  cargarCotizaciones();
 </script>
 
 </body>
