@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Claudio Fernandez</title>
+  <title>Claudio Fernández</title>
   <style>
     body {
       background-color: #f9f9f9;
@@ -18,6 +18,17 @@
       color: white;
       padding: 20px;
       margin-bottom: 30px;
+      position: relative;
+    }
+
+    #fecha-hora {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      font-family: Arial, sans-serif;
     }
 
     nav {
@@ -41,15 +52,21 @@
         display: block;
         margin: 10px 0;
       }
+      #fecha-hora {
+        position: static;
+        margin-bottom: 10px;
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Claudio Fernandez</h1>
+    <div id="fecha-hora"></div>
+    <h1>Claudio Fernández</h1>
     <nav>
-      <a href="#sobre-mi">Sobre mÃ­</a>
+      <a href="#sobre-mi">Sobre mí</a>
       <a href="#contacto">Contacto</a>
       <a href="#proyectos">Proyectos</a>
     </nav>
@@ -57,20 +74,32 @@
 
   <main>
     <section id="sobre-mi">
-      <h2>Sobre mÃ­</h2>
-      <p>AquÃ­ va el texto sobre mÃ­.</p>
+      <h2>Sobre mí</h2>
+      <p>Aquí va el texto sobre mí.</p>
     </section>
 
     <section id="contacto">
       <h2>Contacto</h2>
-      <p>AquÃ­ va el contacto.</p>
+      <p>Aquí va el contacto.</p>
     </section>
 
     <section id="proyectos">
       <h2>Proyectos</h2>
-      <p>AquÃ­ va la descripciÃ³n de proyectos.</p>
+      <p>Aquí va la descripción de proyectos.</p>
     </section>
   </main>
+
+  <script>
+    function actualizarFechaHora() {
+      const opciones = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const ahora = new Date();
+      const fechaHora = ahora.toLocaleDateString('es-ES', opciones) + ' ' + ahora.toLocaleTimeString('es-ES');
+      document.getElementById('fecha-hora').textContent = fechaHora;
+    }
+
+    actualizarFechaHora();
+    setInterval(actualizarFechaHora, 1000);
+  </script>
 
 </body>
 </html>
