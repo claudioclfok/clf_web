@@ -8,71 +8,85 @@
     body {
       margin: 0;
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      background-color: #f9f9f9;
+      background-color: #ffffff;
     }
 
     header {
       background-color: #005baa;
       color: white;
-      padding: 20px 15px;
+      padding: 40px 20px 20px 20px;
       position: relative;
+      text-align: center;
     }
 
     #fecha-hora {
       position: absolute;
       top: 10px;
-      left: 15px;
+      left: 20px;
       font-size: 14px;
     }
 
     header h1 {
-      text-align: center;
-      margin: 0 0 15px 0;
-      font-size: 32px;
+      margin: 0;
+      font-size: 36px;
     }
 
-    nav {
-      text-align: center;
-      margin-top: 10px;
+    .botones {
+      margin-top: 30px;
     }
 
-    nav a {
+    .botones a {
       color: white;
       text-decoration: none;
       margin: 0 15px;
-      font-weight: bold;
       font-size: 18px;
+      padding: 8px 16px;
+      border: 2px solid white;
+      border-radius: 10px;
+      transition: background-color 0.3s;
     }
 
-    nav a:hover {
-      text-decoration: underline;
+    .botones a:hover {
+      background-color: white;
+      color: #005baa;
     }
 
     main {
       padding: 40px 20px;
       text-align: center;
     }
-
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 24px;
-      }
-
-      nav a {
-        display: block;
-        margin: 10px 0;
-      }
-
-      #fecha-hora {
-        font-size: 12px;
-      }
-    }
   </style>
 </head>
 <body>
 
   <header>
-    <div id="fecha-hora">Cargando fecha y hora...</div>
+    <div id="fecha-hora">Cargando...</div>
     <h1>Claudio Fernandez</h1>
-    <nav>
-      <a h
+    <div class="botones">
+      <a href="#sobre-mi">Sobre mí</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#proyectos">Proyectos</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Acá podés poner cualquier otra cosa -->
+  </main>
+
+  <script>
+    function actualizarFechaHora() {
+      const ahora = new Date();
+      const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+      const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const fecha = ahora.toLocaleDateString('es-AR', opcionesFecha);
+      const hora = ahora.toLocaleTimeString('es-AR', opcionesHora);
+      document.getElementById('fecha-hora').textContent = `${fecha} - ${hora}`;
+    }
+
+    actualizarFechaHora();
+    setInterval(actualizarFechaHora, 1000);
+  </script>
+
+</body>
+</html>
+
