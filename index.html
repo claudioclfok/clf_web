@@ -8,9 +8,8 @@
     body {
       background-color: #f9f9f9;
       font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
       margin: 0;
+      padding: 20px;
     }
 
     header {
@@ -58,9 +57,37 @@
       }
     }
 
-    #cotizaciones {
-      margin-top: 40px;
-      font-size: 20px;
+    #main-content {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #cotizaciones, #noticias {
+      background: white;
+      padding: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border-radius: 5px;
+      flex: 1 1 400px;
+      max-width: 600px;
+      min-width: 300px;
+    }
+
+    #cotizaciones h2, #noticias h2 {
+      margin-top: 0;
+      text-align: left;
+    }
+
+    #dolar-blue {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    iframe {
+      width: 100%;
+      border: none;
+      height: 500px;
     }
   </style>
 </head>
@@ -75,10 +102,35 @@
     </nav>
   </header>
 
-  <section id="cotizaciones">
-    <h2>Cotización del Dólar Blue</h2>
-    <p id="dolar-blue">Cargando...</p>
-  </section>
+  <div id="main-content">
+    <section id="cotizaciones">
+      <h2>Cotización del Dólar Blue</h2>
+      <p id="dolar-blue">Cargando...</p>
+
+      <div class="tradingview-widget-container" style="margin-top: 20px;">
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        {
+          "symbols": [
+            {"proName": "BCBA:GGAL","title": "GGAL"},
+            {"proName": "BCBA:YPFD","title": "YPFD"},
+            {"proName": "BCBA:PAMP","title": "PAMP"},
+            {"proName": "BCBA:COME","title": "COME"},
+            {"proName": "BCBA:CEPU","title": "CEPU"}
+          ],
+          "colorTheme": "light",
+          "isTransparent": false,
+          "displayMode": "regular",
+          "locale": "es"
+        }
+        </script>
+      </div>
+    </section>
+
+    <section id="noticias">
+      <h2>Noticias</h2>
+      <iframe src="https://surfing-waves.com/widget/?rss=https://www.cronista.com/rss/economia/" ></iframe>
+    </section>
+  </div>
 
   <script>
     fetch("https://dolarapi.com/v1/dolares/blue")
@@ -87,7 +139,7 @@
         document.getElementById("dolar-blue").innerText =
           `Compra: $${data.compra} | Venta: $${data.venta}`;
       })
-      .catch(error => {
+      .catch(() => {
         document.getElementById("dolar-blue").innerText = "Error al cargar datos.";
       });
 
@@ -100,43 +152,5 @@
     mostrarFecha();
   </script>
 
-</body>
-  <div class="tradingview-widget-container">
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-  {
-    "symbols": [
-      {
-        "proName": "BCBA:GGAL",
-        "title": "GGAL"
-      },
-      {
-        "proName": "BCBA:YPFD",
-        "title": "YPFD"
-      },
-      {
-        "proName": "BCBA:PAMP",
-        "title": "PAMP"
-      },
-      {
-        "proName": "BCBA:COME",
-        "title": "COME"
-      },
-      {
-        "proName": "BCBA:CEPU",
-        "title": "CEPU"
-      }
-    ],
-    "colorTheme": "light",
-    "isTransparent": false,
-    "displayMode": "regular",
-    "locale": "es"
- <body><div style="display: flex;">
-    <div style="flex: 1; padding: 10px;">
-      <h2 style="text-align: left;">Noticias</h2>
-      <iframe src="https://surfing-waves.com/widget/?rss=https://www.cronista.com/rss/economia/" 
-              width="100%" height="500" style="border:none;"></iframe>
-    </div>
-    <div style="flex: 1; padding: 10px;"></div>
-  </div>
 </body>
 </html>
