@@ -3,90 +3,106 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Claudio Fernandez</title>
+  <title>CLF Servicios</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: "Comic Sans MS", cursive, sans-serif;
       background-color: #ffffff;
+      color: #333;
     }
 
     header {
       background-color: #005baa;
       color: white;
-      padding: 40px 20px 20px 20px;
+      padding: 20px;
       position: relative;
-      text-align: center;
     }
 
-    #fecha-hora {
+    .fecha-hora {
       position: absolute;
       top: 10px;
-      left: 20px;
+      left: 15px;
       font-size: 14px;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 36px;
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
     }
 
-    .botones {
-      margin-top: 30px;
-    }
-
-    .botones a {
+    nav a {
       color: white;
       text-decoration: none;
-      margin: 0 15px;
-      font-size: 18px;
-      padding: 8px 16px;
-      border: 2px solid white;
-      border-radius: 10px;
-      transition: background-color 0.3s;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background 0.3s;
     }
 
-    .botones a:hover {
-      background-color: white;
-      color: #005baa;
+    nav a:hover {
+      background-color: #003f7d;
     }
 
-    main {
+    section {
       padding: 40px 20px;
       text-align: center;
+    }
+
+    footer {
+      background-color: #eeeeee;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div id="fecha-hora">Cargando...</div>
-    <h1>Claudio Fernandez</h1>
-    <div class="botones">
-      <a href="#sobre-mi">Sobre mí</a>
+    <div class="fecha-hora" id="fechaHora"></div>
+    <h1>CLF Servicios</h1>
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#servicios">Servicios</a>
       <a href="#contacto">Contacto</a>
-      <a href="#proyectos">Proyectos</a>
-    </div>
+    </nav>
   </header>
 
   <main>
-    <!-- Acá podés poner cualquier otra cosa -->
+    <section id="inicio">
+      <h2>Bienvenido</h2>
+      <p>Ofrecemos soluciones profesionales para empresas, comercios y particulares.</p>
+    </section>
+
+    <section id="servicios">
+      <h2>Servicios</h2>
+      <p>Administración, cobranzas, asesoramiento comercial, desarrollo web, y más.</p>
+    </section>
+
+    <section id="contacto">
+      <h2>Contacto</h2>
+      <p>Escribinos a <strong>claudiofernandezclf@gmail.com</strong>.</p>
+    </section>
   </main>
+
+  <footer>
+    © 2025 CLF Servicios | Buenos Aires, Argentina
+  </footer>
 
   <script>
     function actualizarFechaHora() {
       const ahora = new Date();
-      const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
-      const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      const fecha = ahora.toLocaleDateString('es-AR', opcionesFecha);
-      const hora = ahora.toLocaleTimeString('es-AR', opcionesHora);
-      document.getElementById('fecha-hora').textContent = `${fecha} - ${hora}`;
+      const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const fecha = ahora.toLocaleDateString('es-AR', opciones);
+      const hora = ahora.toLocaleTimeString('es-AR');
+      document.getElementById("fechaHora").textContent = `${fecha} - ${hora}`;
     }
-
     actualizarFechaHora();
     setInterval(actualizarFechaHora, 1000);
   </script>
 
 </body>
 </html>
-
