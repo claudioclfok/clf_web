@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Claudio Fernández</title>
+  <title>Claudio Fernandez</title>
   <style>
     body {
       background-color: #f9f9f9;
-      font-family: Arial, sans-serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       text-align: center;
       padding: 50px;
       margin: 0;
@@ -18,17 +18,11 @@
       color: white;
       padding: 20px;
       margin-bottom: 30px;
-      position: relative;
     }
 
     #fecha-hora {
-      position: absolute;
-      top: 20px;
-      left: 20px;
+      margin-top: 10px;
       font-size: 16px;
-      font-weight: bold;
-      color: white;
-      font-family: Arial, sans-serif;
     }
 
     nav {
@@ -52,19 +46,14 @@
         display: block;
         margin: 10px 0;
       }
-      #fecha-hora {
-        position: static;
-        margin-bottom: 10px;
-        text-align: center;
-      }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div id="fecha-hora"></div>
-    <h1>Claudio Fernández</h1>
+    <h1>Claudio Fernandez</h1>
+    <div id="fecha-hora">Cargando fecha y hora...</div>
     <nav>
       <a href="#sobre-mi">Sobre mí</a>
       <a href="#contacto">Contacto</a>
@@ -91,10 +80,14 @@
 
   <script>
     function actualizarFechaHora() {
-      const opciones = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+      const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+
       const ahora = new Date();
-      const fechaHora = ahora.toLocaleDateString('es-ES', opciones) + ' ' + ahora.toLocaleTimeString('es-ES');
-      document.getElementById('fecha-hora').textContent = fechaHora;
+      const fecha = ahora.toLocaleDateString('es-ES', opcionesFecha);
+      const hora = ahora.toLocaleTimeString('es-ES', opcionesHora);
+
+      document.getElementById('fecha-hora').textContent = `${fecha} - ${hora}`;
     }
 
     actualizarFechaHora();
