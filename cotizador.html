@@ -3,26 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simulador de Cambio - Dólar</title>
+  <title>Cotizador Dolar</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      margin: 0;
       background: #f9f9f9;
-      padding: 20px;
+      padding: 40px 20px;
       text-align: center;
     }
-    h1 {
-      color: #005baa;
-      margin-bottom: 20px;
+    header {
+      background-color: #005baa;
+      color: white;
+      padding: 20px;
+      margin-bottom: 40px;
+      position: relative;
     }
-    .simulador {
-      background: white;
-      max-width: 450px;
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 900px;
       margin: 0 auto;
-      padding: 25px;
+      background: white;
+      padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      text-align: left;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      text-align: center;
     }
     label {
       display: block;
@@ -30,118 +48,98 @@
       font-weight: bold;
     }
     input, select {
+      font-size: 1.2rem;
+      padding: 8px;
       width: 100%;
-      padding: 10px;
-      font-size: 1rem;
+      max-width: 300px;
+      box-sizing: border-box;
       border-radius: 5px;
       border: 1px solid #ccc;
     }
     button {
       margin-top: 20px;
-      background: #005baa;
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      background-color: #005baa;
       color: white;
-      padding: 12px;
-      font-size: 1rem;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      width: 100%;
     }
     button:hover {
-      background: #004080;
+      background-color: #004494;
     }
     #resultado {
-      margin-top: 25px;
-      font-size: 1.2rem;
+      margin-top: 30px;
+      font-size: 1.5rem;
       font-weight: bold;
-      color: #333;
-      min-height: 40px;
     }
   </style>
 </head>
 <body>
-  <h1>Simulador de Cambio - Dólar</h1>
-  <div class="simulador">
-    <label for="monto">Monto</label>
-    <input type="number" id="monto" placeholder="Ingrese monto" min="0" />
+  <header>
+    <h1>Cotizador Dolar</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="Cotizador.html">Cotizador Dolar</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
 
-    <label for="tipo-cambio">Tipo de cambio</label>
-    <select id="tipo-cambio">
+  <main>
+    <label for="tipoCambio">Tipo de cambio</label>
+    <select id="tipoCambio">
       <option value="oficial">Dólar Oficial</option>
       <option value="blue">Dólar Blue</option>
       <option value="mep">Dólar MEP</option>
     </select>
 
-    <label for="direccion">Convertir</label>
-    <select id="direccion">
-      <option value="ars-to-usd">Pesos a Dólar</option>
-      <option value="usd-to-ars">Dólar a Pesos</option>
-    </select>
+    <label for="monto">Monto</label>
+    <input type="number" id="monto" placeholder="Ingrese monto" />
 
-    <button id="calcular">Calcular</button>
+    <button onclick="convertir()">Convertir</button>
 
     <div id="resultado"></div>
-  </div>
+  </main>
 
   <script>
     let cotizaciones = {
-      oficial: null,
-      blue: null,
-      mep: null,
+      oficial: 0,
+      blue: 0,
+      mep: 0
     };
 
-    async function obtenerCotizaciones() {
+    async function cargarCotizaciones() {
       try {
-        const response = await fetch('https://api.estadisticasbcra.com/usd_oficial');
-        const oficialData = await response.json();
+        const res = await fetch('https://api.bluelytics.com.ar/v2/latest');
+        const data = await res.json();
+        const resMEP = await fetch('https://dolarapi.com/v1/dolares/bolsa');
+        const mepData = await resMEP.json();
 
-        const responseBlue = await fetch('https://api.estadisticasbcra.com/usd_blue');
-        const blueData = await responseBlue.json();
+        cotizaciones.oficial = data.oficial.value_sell;
+        cotizaciones.blue = data.blue.value_sell;
+        cotizaciones.mep = mepData.venta;
 
-        const responseMep = await fetch('https://api.estadisticasbcra.com/usd_mep');
-        const mepData = await responseMep.json();
-
-        // Último valor de cada cotización
-        cotizaciones.oficial = oficialData[oficialData.length - 1]?.v || null;
-        cotizaciones.blue = blueData[blueData.length - 1]?.v || null;
-        cotizaciones.mep = mepData[mepData.length - 1]?.v || null;
-
-      } catch (error) {
-        document.getElementById('resultado').textContent = 'Error al obtener cotizaciones.';
+      } catch {
+        alert('Error al cargar cotizaciones');
       }
     }
 
-    function formatearNumero(num) {
-      return num.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    document.getElementById('calcular').addEventListener('click', () => {
+    function convertir() {
+      const tipo = document.getElementById('tipoCambio').value;
       const monto = parseFloat(document.getElementById('monto').value);
-      const tipo = document.getElementById('tipo-cambio').value;
-      const direccion = document.getElementById('direccion').value;
-
       if (isNaN(monto) || monto <= 0) {
-        document.getElementById('resultado').textContent = 'Ingrese un monto válido.';
+        alert('Ingrese un monto válido');
         return;
       }
-      const valor = cotizaciones[tipo];
-      if (!valor) {
-        document.getElementById('resultado').textContent = 'Cotización no disponible.';
-        return;
-      }
-
       let resultado;
-      if (direccion === 'ars-to-usd') {
-        resultado = monto / valor;
-        document.getElementById('resultado').textContent = `${formatearNumero(monto)} ARS = ${formatearNumero(resultado)} USD (${tipo})`;
-      } else {
-        resultado = monto * valor;
-        document.getElementById('resultado').textContent = `${formatearNumero(monto)} USD = ${formatearNumero(resultado)} ARS (${tipo})`;
+      if(tipo === 'oficial' || tipo === 'blue' || tipo === 'mep') {
+        resultado = monto * cotizaciones[tipo];
+        document.getElementById('resultado').textContent = `ARS $${resultado.toFixed(2)}`;
       }
-    });
+    }
 
-    obtenerCotizaciones();
+    cargarCotizaciones();
   </script>
 </body>
 </html>
-
