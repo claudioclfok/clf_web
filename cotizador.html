@@ -1,1 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulador de Cambio - Dólar y Pesos</title>
+  <style>
+    body {
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    header {
+      background-color: #005baa;
+      color: white;
+      padding: 20px;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    #fecha-hora {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #005baa;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #004080;
+    }
+    #resultado {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #005baa;
+    }
+    @media (max-width: 600px) {
+      main {
+        padding: 20px;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div id="fecha-hora"></div>
+    <h1>Simulador de Cambio</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="cotizador.html">Cotizador Dólar</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <main>
+    <label for="tipo-cambio">Tipo de cambio:</label>
+    <select id="tipo-cambio">
+      <option value="oficial">Dólar Oficial</option>
+      <option value="blue">Dólar Blue</option>
+      <option value="mep">Dólar MEP</option>
+    </select>
+
+    <label for="direccion">Convertir:</label>
+    <select id="direccion">
+      <option value="ars_to_usd">Pesos a Dólar</option>
+      <option value="usd_to_ars">Dólar a Pesos</option>
+    </select>
+
+    <label for="monto">Monto:</label>
+    <input type="number" id="monto" placeholder="Ingrese el monto" />
+
+    <button id="calcular">Calcular</button>
+
+    <div id="resultado"></div>
+  </main>
+
+  <script>
+    const fechaHoraElem = document.getElementById('fecha-hora');
+    const tipoCambioSelect = document.getElementById('tipo-cambio');
+    const direccionSelect = document.getElementById('direccion');
+    const montoInput = document.getElementById('monto');
+    const calcularBtn = document.getElementById('calcular');
+    const resultadoDiv = document.getElementById('resultado');
+
+    let cotizaciones = {
+      oficial: 0,
+      blue: 0,
+      mep: 0
+    };
+
+    function actualizarFechaHora() {
+      const ahora = new Date();
+      const dia = ahora.getDate();
+      const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+      const mesNombre = meses[ahora.getMonth()];
+      const año = ahora.getFullYear();
+      const horas = ahora.getHours().toString().padStart(2, '0');
+      const minutos = ahora.getMinutes().toString().padStart(2, '0');
+      const segundos = ahora.getSeconds().toString().padStart(2, '0');
+      fechaHoraElem.textContent = `${dia} de ${mesNombre} de ${año} - ${horas}:${minutos}:${segundos}`;
+    }
+    setInterval(actualizarFechaHora, 1000);
+    actualizarFechaHora();
+
+    function obtenerCotizaciones() {
+      fetch('https://api-dolar-argentina.herokuapp.com/api/dolaroficial')
+        .then(res => res.json())
+        .then(data => {
+          cotizaciones.oficial = parseFloat(data.compra);
+        });
+
+      fetch('https://api-dolar-argentina.herokuapp.com/api/blue')
+        .then(res => res.json())
+        .then(data => {
+          cotizaciones.blue = parseFloat(data.compra);
+        });
+
+      fetch('https://api-dolar-argentina.herokuapp.com/api/mep')
+        .then(res => res.json())
+        .then(data => {
+          cotizaciones.mep = parseFloat(data.compra);
+        });
+    }
+
+    obtenerCotizaciones();
+
+    calcularBtn.addEventListener('click', () => {
+      const tipoCambio = tipoCambioSelect.value;
+      const direccion = direccionSelect.value;
+      const monto = parseFloat(montoInput.value);
+
+      if (isNaN(monto) || monto <= 0) {
+        resultadoDiv.textContent = 'Ingrese un monto válido';
+        return;
+      }
+
+      const cambio = cotizaciones[tipoCambio];
+
+      if (cambio === 0) {
+        resultadoDiv.textContent = 'Cotización no disponible para esa moneda.';
+        return;
+      }
+
+      let resultado = 0;
+      if (direccion === 'ars_to_usd') {
+        resultado = monto / cambio;
+        resultadoDiv.textContent = `$${monto.toFixed(2)} ARS = U$D ${resultado.toFixed(2)}`;
+      } else {
+        resultado = monto * cambio;
+        resultadoDiv.textContent = `U$D ${monto.toFixed(2)} = $${resultado.toFixed(2)} ARS`;
+      }
+    });
+  </script>
+</body>
+</html>
 
