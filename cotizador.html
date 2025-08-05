@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>cotizador Dolar</title>
+  <title>Cotizador Dolar</title>
   <style>
     body {
       font-family: "Comic Sans MS", cursive, sans-serif;
@@ -17,7 +17,6 @@
       color: white;
       padding: 20px;
       margin-bottom: 40px;
-      position: relative;
     }
     header h1 {
       margin: 0;
@@ -40,7 +39,6 @@
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      text-align: center;
     }
     label {
       display: block;
@@ -78,7 +76,7 @@
 </head>
 <body>
   <header>
-    <h1>cotizador Dolar</h1>
+    <h1>Cotizador Dolar</h1>
     <nav>
       <a href="index.html">Inicio</a>
       <a href="cotizador.html">Cotizador Dolar</a>
@@ -119,7 +117,6 @@
         cotizaciones.oficial = data.oficial.value_sell;
         cotizaciones.blue = data.blue.value_sell;
         cotizaciones.mep = mepData.venta;
-
       } catch {
         alert('Error al cargar cotizaciones');
       }
@@ -132,11 +129,8 @@
         alert('Ingrese un monto válido');
         return;
       }
-      let resultado;
-      if(tipo === 'oficial' || tipo === 'blue' || tipo === 'mep') {
-        resultado = monto * cotizaciones[tipo];
-        document.getElementById('resultado').textContent = `ARS $${resultado.toFixed(2)}`;
-      }
+      let resultado = monto * cotizaciones[tipo];
+      document.getElementById('resultado').textContent = `ARS $${resultado.toFixed(2)}`;
     }
 
     cargarCotizaciones();
