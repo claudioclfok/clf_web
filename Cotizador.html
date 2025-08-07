@@ -95,11 +95,11 @@
       <div class="fila">
         <div class="campo">
           <label>Pesos → Dólares</label>
-          <input type="number" oninput="convertir(this, 'oficial', 'ars', 'usd')" placeholder="ARS" />
+          <input type="text" oninput="convertir(this, 'oficial', 'ars', 'usd')" placeholder="ARS" />
         </div>
         <div class="campo">
           <label>Dólares → Pesos</label>
-          <input type="number" oninput="convertir(this, 'oficial', 'usd', 'ars')" placeholder="USD" />
+          <input type="text" oninput="convertir(this, 'oficial', 'usd', 'ars')" placeholder="USD" />
         </div>
       </div>
       <div class="cotizacion-valor" id="cot-oficial">Cargando cotización...</div>
@@ -110,11 +110,11 @@
       <div class="fila">
         <div class="campo">
           <label>Pesos → Dólares</label>
-          <input type="number" oninput="convertir(this, 'blue', 'ars', 'usd')" placeholder="ARS" />
+          <input type="text" oninput="convertir(this, 'blue', 'ars', 'usd')" placeholder="ARS" />
         </div>
         <div class="campo">
           <label>Dólares → Pesos</label>
-          <input type="number" oninput="convertir(this, 'blue', 'usd', 'ars')" placeholder="USD" />
+          <input type="text" oninput="convertir(this, 'blue', 'usd', 'ars')" placeholder="USD" />
         </div>
       </div>
       <div class="cotizacion-valor" id="cot-blue">Cargando cotización...</div>
@@ -125,11 +125,11 @@
       <div class="fila">
         <div class="campo">
           <label>Pesos → Dólares</label>
-          <input type="number" oninput="convertir(this, 'mep', 'ars', 'usd')" placeholder="ARS" />
+          <input type="text" oninput="convertir(this, 'mep', 'ars', 'usd')" placeholder="ARS" />
         </div>
         <div class="campo">
           <label>Dólares → Pesos</label>
-          <input type="number" oninput="convertir(this, 'mep', 'usd', 'ars')" placeholder="USD" />
+          <input type="text" oninput="convertir(this, 'mep', 'usd', 'ars')" placeholder="USD" />
         </div>
       </div>
       <div class="cotizacion-valor" id="cot-mep">Cargando cotización...</div>
@@ -170,11 +170,21 @@
       }
     }
 
+    function parsearNumero(str) {
+      return parseFloat(str.replace(/\./g, '').replace(',', '.'));
+    }
+
     function convertir(input, tipo, origen, destino) {
       const contenedor = input.closest(".fila");
       const inputs = contenedor.querySelectorAll("input");
-      const valor = parseFloat(input.value);
-      if (isNaN(valor) || valor <= 0 || !cotizaciones[tipo]) return;
+      const valor = parsearNumero(input.value);
+
+      if (isNaN(valor) || valor <= 0 || !cotizaciones[tipo]) {
+        inputs.forEach(i => {
+          if (i !== input) i.value = "";
+        });
+        return;
+      }
 
       let resultado;
       if (origen === "ars" && destino === "usd") {
@@ -184,9 +194,7 @@
       }
 
       inputs.forEach(i => {
-        if (i !== input) {
-          i.value = formato(resultado);
-        }
+        if (i !== input) i.value = formato(resultado);
       });
     }
 
