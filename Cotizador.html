@@ -18,11 +18,31 @@
       color: white;
       padding: 30px 20px;
       text-align: center;
+      position: relative;
     }
 
     header h1 {
       margin: 0;
       font-size: 2.2rem;
+    }
+
+    #btn-volver-inicio {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: white;
+      color: #005baa;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #btn-volver-inicio:hover {
+      background-color: #e6e6e6;
     }
 
     main {
@@ -82,11 +102,26 @@
       color: #888;
       margin: 40px 0 20px;
     }
+
+    @media screen and (max-width: 600px) {
+      header h1 {
+        font-size: 1.6rem;
+      }
+
+      #btn-volver-inicio {
+        position: static;
+        display: block;
+        margin: 15px auto 0;
+        width: 90%;
+        font-size: 16px;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Cotización: Pesos a Dólar - Dólar a Pesos</h1>
+    <button id="btn-volver-inicio">Volver al inicio</button>
   </header>
 
   <main>
@@ -199,6 +234,11 @@
     }
 
     cargarCotizaciones();
+
+    document.getElementById('btn-volver-inicio').addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
   </script>
 </body>
 </html>
+
