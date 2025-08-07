@@ -77,6 +77,10 @@
   </header>
 
   <main>
+    <marquee behavior="scroll" direction="left" scrollamount="5" style="font-size: 18px; color: #005baa; font-weight: bold; margin-bottom: 20px;">
+      Dólar Blue, Oficial y MEP actualizados en tiempo real — Cotizaciones del mercado argentino — Datos provistos por Bluelytics y DólarAPI
+    </marquee>
+
     <section id="cotizaciones-dolar">
       <h3>Cotizaciones del Dólar</h3>
       <div id="dolar-cotizaciones"></div>
@@ -116,9 +120,11 @@
       const anio = ahora.getFullYear();
       const horas = ahora.getHours().toString().padStart(2,'0');
       const minutos = ahora.getMinutes().toString().padStart(2,'0');
-      document.getElementById('fecha-hora').textContent = `${dia} de ${mes} de ${anio} - ${horas}:${minutos}`;
+      const segundos = ahora.getSeconds().toString().padStart(2,'0');
+      document.getElementById('fecha-hora').textContent = `${dia} de ${mes} de ${anio} - ${horas}:${minutos}:${segundos}`;
     }
-    setInterval(actualizarFechaHora,60000);
+
+    setInterval(actualizarFechaHora, 1000);
     actualizarFechaHora();
 
     async function cargarCotizaciones() {
@@ -149,3 +155,4 @@
   </script>
 </body>
 </html>
+
