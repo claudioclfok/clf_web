@@ -121,7 +121,7 @@
 
   <main>
     <marquee behavior="scroll" direction="left" scrollamount="5" style="font-size: 18px; color: #005baa; font-weight: bold; margin-bottom: 20px;">
-      Dólar Blue, Oficial y MEP actualizados en tiempo real — Cotizaciones del mercado argentino — Datos provistos por Bluelytics y DólarAPI
+      Dólar Blue, Oficial y MEP actualizados en tiempo real — Cotizaciones del mercado argentino — Datos provistos por DolarAPI
     </marquee>
 
     <section id="cotizaciones-dolar">
@@ -171,31 +171,47 @@
     actualizarFechaHora();
 
     async function cargarCotizaciones() {
+      const target = document.getElementById('dolar-cotizaciones');
       try {
-        const res = await fetch('https://api.bluelytics.com.ar/v2/latest');
-        const data = await res.json();
-        const resMEP = await fetch('https://dolarapi.com/v1/dolares/bolsa');
-        const mep = await resMEP.json();
+        // Endpoints correctos (DolarAPI): /v1/dolares/blue, /v1/dolares/oficial, /v1/dolares/bolsa
+        // (documentación: https://dolarapi.com)
+        const urls = {
+          blue:  'https://dolarapi.com/v1/dolares/blue',
+          oficial: 'https://dolarapi.com/v1/dolares/oficial',
+          mep:   'https://dolarapi.com/v1/dolares/bolsa'
+        };
 
-        const blue = data.blue;
-        const oficial = data.oficial;
+        // Pedimos en paralelo
+        const fetches = await Promise.all(Object.values(urls).map(u => fetch(u)));
+        // Validamos cada response antes de parsear
+        const parsed = await Promise.all(fetches.map(async (r) => {
+          if (!r.ok) {
+            // levanta error con status para debugeo
+            throw new Error(`Error HTTP ${r.status} en ${r.url}`);
+          }
+          return r.json();
+        }));
+
+        const [blue, oficial, mep] = parsed;
 
         let html = `
-          <p><strong>Dólar Blue:</strong> Compra $${blue.value_buy.toFixed(2)} - Venta $${blue.value_sell.toFixed(2)}</p>
-          <p><strong>Dólar Oficial:</strong> Compra $${oficial.value_buy.toFixed(2)} - Venta $${oficial.value_sell.toFixed(2)}</p>
+          <p><strong>Dólar Blue:</strong> Compra $${Number(blue.compra).toFixed(2)} - Venta $${Number(blue.venta).toFixed(2)}</p>
+          <p><strong>Dólar Oficial:</strong> Compra $${Number(oficial.compra).toFixed(2)} - Venta $${Number(oficial.venta).toFixed(2)}</p>
+          <p><strong>Dólar MEP:</strong> Compra $${Number(mep.compra).toFixed(2)} - Venta $${Number(mep.venta).toFixed(2)}</p>
+          <p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString()}</p>
         `;
-        if (mep.compra && mep.venta) {
-          html += `<p><strong>Dólar MEP:</strong> Compra $${mep.compra.toFixed(2)} - Venta $${mep.venta.toFixed(2)}</p>`;
-        }
 
-        document.getElementById('dolar-cotizaciones').innerHTML = html;
-      } catch(e) {
-        document.getElementById('dolar-cotizaciones').textContent = 'Error al cargar cotizaciones.';
+        target.innerHTML = html;
+      } catch (err) {
+        console.error('Error cargando cotizaciones:', err);
+        // Mensaje visible para el usuario con detalle breve
+        target.innerHTML = `<p style="color:crimson;">Error al cargar cotizaciones: ${err.message}. Revisá la consola (F12) para más detalles.</p>`;
       }
     }
 
+    // Carga inmediata y luego cada 60s
     cargarCotizaciones();
+    setInterval(cargarCotizaciones, 60000);
   </script>
 </body>
 </html>
-
