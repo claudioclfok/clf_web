@@ -17,7 +17,7 @@
       background-color: #005baa;
       color: white;
       padding: 20px;
-      margin-bottom: 40px;
+      margin-bottom: 20px; /* Reducido para dejar espacio para la barra de acciones */
       position: relative;
     }
 
@@ -47,6 +47,29 @@
       text-decoration: underline;
     }
 
+    /* Estilos para la barra de acciones FUERA del main */
+    #acciones-barra-superior {
+      max-width: 900px;
+      margin: 0 auto 30px auto; /* Centrado y con margen inferior */
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      padding: 15px 0; /* Padding vertical para el contenido */
+    }
+
+    #acciones-barra-superior h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #005baa;
+    }
+
+    .tradingview-widget-container {
+      margin: 0 auto; /* Centrar el widget dentro de su contenedor */
+      max-width: 880px; /* Asegurar que no sea demasiado ancho */
+    }
+    /* --- Fin estilos barra de acciones superior --- */
+
+
     main {
       max-width: 900px;
       margin: 0 auto;
@@ -59,21 +82,14 @@
 
     #cotizaciones-dolar {
       font-size: 20px;
-      margin-bottom: 30px;
+      margin-bottom: 30px; /* Margen para separar de lo que venga después, si hay algo */
     }
 
     #cotizaciones-dolar p {
       margin: 6px 0;
     }
-
-    #cotizaciones-acciones {
-      margin-top: 30px;
-    }
-
-    .tradingview-widget-container {
-      margin-top: 20px;
-    }
-
+    
+    /* Media queries para responsividad */
     @media screen and (max-width: 600px) {
       body {
         padding: 20px 10px;
@@ -105,6 +121,11 @@
       main {
         padding: 20px 10px;
       }
+      
+      #acciones-barra-superior {
+        padding: 10px 0;
+        margin-bottom: 20px;
+      }
     }
   </style>
 </head>
@@ -119,6 +140,29 @@
     </nav>
   </header>
 
+  <section id="acciones-barra-superior">
+    <h3>Cotizaciones de Acciones</h3>
+    <div class="tradingview-widget-container">
+      <div id="tradingview-ticker"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+        "symbols": [
+          {"proName": "BCBA:GGAL","title":"GGAL"},
+          {"proName": "BCBA:YPFD","title":"YPFD"},
+          {"proName": "BCBA:PAMP","title":"PAMP"},
+          {"proName": "BCBA:COME","title":"COME"},
+          {"proName": "BCBA:CEPU","title":"CEPU"},
+          {"proName": "BCBA:BMA","title":"BMA"},
+          {"proName": "BCBA:TECO2","title":"TECO2"}
+        ],
+        "colorTheme":"light",
+        "isTransparent":false,
+        "displayMode":"adaptive",
+        "locale":"es"
+      }
+      </script>
+    </div>
+  </section>
   <main>
     <marquee behavior="scroll" direction="left" scrollamount="5" style="font-size: 18px; color: #005baa; font-weight: bold; margin-bottom: 20px;">
     </marquee>
@@ -127,33 +171,10 @@
       <h3>Cotizaciones del Dólar</h3>
       <div id="dolar-cotizaciones"></div>
     </section>
-
-    <section id="cotizaciones-acciones">
-      <h3>Cotizaciones de Acciones</h3>
-      <div class="tradingview-widget-container">
-        <div id="tradingview-ticker"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-        {
-          "symbols": [
-            {"proName": "BCBA:GGAL","title":"GGAL"},
-            {"proName": "BCBA:YPFD","title":"YPFD"},
-            {"proName": "BCBA:PAMP","title":"PAMP"},
-            {"proName": "BCBA:COME","title":"COME"},
-            {"proName": "BCBA:CEPU","title":"CEPU"},
-            {"proName": "BCBA:BMA","title":"BMA"},
-            {"proName": "BCBA:TECO2","title":"TECO2"}
-          ],
-          "colorTheme":"light",
-          "isTransparent":false,
-          "displayMode":"adaptive",
-          "locale":"es"
-        }
-        </script>
-      </div>
-    </section>
-  </main>
+    </main>
 
   <script>
+    // Función para actualizar la fecha y hora en el encabezado
     function actualizarFechaHora() {
       const ahora = new Date();
       const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -166,26 +187,27 @@
       document.getElementById('fecha-hora').textContent = `${dia} de ${mes} de ${anio} - ${horas}:${minutos}:${segundos}`;
     }
 
+    // Actualiza la fecha y hora cada segundo
     setInterval(actualizarFechaHora, 1000);
-    actualizarFechaHora();
+    actualizarFechaHora(); // Llama una vez al cargar la página
 
+    // Función asíncrona para cargar las cotizaciones del dólar
     async function cargarCotizaciones() {
       const target = document.getElementById('dolar-cotizaciones');
       try {
-        // Endpoints correctos (DolarAPI): /v1/dolares/blue, /v1/dolares/oficial, /v1/dolares/bolsa
-        // (documentación: https://dolarapi.com)
+        // Endpoints de DolarAPI para Blue, Oficial y MEP
         const urls = {
-          blue:  'https://dolarapi.com/v1/dolares/blue',
+          blue:    'https://dolarapi.com/v1/dolares/blue',
           oficial: 'https://dolarapi.com/v1/dolares/oficial',
-          mep:   'https://dolarapi.com/v1/dolares/bolsa'
+          mep:     'https://dolarapi.com/v1/dolares/bolsa'
         };
 
-        // Pedimos en paralelo
+        // Realiza todas las peticiones en paralelo
         const fetches = await Promise.all(Object.values(urls).map(u => fetch(u)));
-        // Validamos cada response antes de parsear
+        
+        // Procesa las respuestas, verificando si son OK antes de parsear JSON
         const parsed = await Promise.all(fetches.map(async (r) => {
           if (!r.ok) {
-            // levanta error con status para debugeo
             throw new Error(`Error HTTP ${r.status} en ${r.url}`);
           }
           return r.json();
@@ -193,24 +215,29 @@
 
         const [blue, oficial, mep] = parsed;
 
+        // Construye el HTML con las cotizaciones
         let html = `
           <p><strong>Dólar Blue:</strong> Compra $${Number(blue.compra).toFixed(2)} - Venta $${Number(blue.venta).toFixed(2)}</p>
           <p><strong>Dólar Oficial:</strong> Compra $${Number(oficial.compra).toFixed(2)} - Venta $${Number(oficial.venta).toFixed(2)}</p>
           <p><strong>Dólar MEP:</strong> Compra $${Number(mep.compra).toFixed(2)} - Venta $${Number(mep.venta).toFixed(2)}</p>
-          <p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString()}</p>
+          <p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>
         `;
 
         target.innerHTML = html;
       } catch (err) {
         console.error('Error cargando cotizaciones:', err);
-        // Mensaje visible para el usuario con detalle breve
+        // Muestra un mensaje de error claro al usuario
         target.innerHTML = `<p style="color:crimson;">Error al cargar cotizaciones: ${err.message}. Revisá la consola (F12) para más detalles.</p>`;
       }
     }
 
-    // Carga inmediata y luego cada 60s
+    // La función cargarNoticias y su setInterval han sido eliminados de aquí
+
+    // Carga inicial de cotizaciones al cargar la página
     cargarCotizaciones();
-    setInterval(cargarCotizaciones, 60000);
+
+    // Actualiza las cotizaciones cada 60 segundos (1 minuto)
+    setInterval(cargarCotizaciones, 60000); 
   </script>
 </body>
 </html>
