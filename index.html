@@ -11,13 +11,14 @@
       background: #f9f9f9;
       padding: 40px 20px;
       text-align: center;
+      color: #2c3e50;
     }
 
     header {
       background-color: #005baa;
       color: white;
       padding: 20px;
-      margin-bottom: 20px; /* Reducido para dejar espacio para la barra de acciones */
+      margin-bottom: 20px;
       position: relative;
     }
 
@@ -47,14 +48,13 @@
       text-decoration: underline;
     }
 
-    /* Estilos para la barra de acciones FUERA del main */
     #acciones-barra-superior {
       max-width: 900px;
-      margin: 0 auto 30px auto; /* Centrado y con margen inferior */
+      margin: 0 auto 30px auto;
       background: white;
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      padding: 15px 0; /* Padding vertical para el contenido */
+      padding: 15px 0;
     }
 
     #acciones-barra-superior h3 {
@@ -64,11 +64,9 @@
     }
 
     .tradingview-widget-container {
-      margin: 0 auto; /* Centrar el widget dentro de su contenedor */
-      max-width: 880px; /* Asegurar que no sea demasiado ancho */
+      margin: 0 auto;
+      max-width: 880px;
     }
-    /* --- Fin estilos barra de acciones superior --- */
-
 
     main {
       max-width: 900px;
@@ -82,28 +80,83 @@
 
     #cotizaciones-dolar {
       font-size: 20px;
-      margin-bottom: 30px; /* Margen para separar de lo que venga después, si hay algo */
+      margin-bottom: 30px;
     }
 
     #cotizaciones-dolar p {
       margin: 6px 0;
     }
-    
-    /* Media queries para responsividad */
-    @media screen and (max-width: 600px) {
+
+    /* Estilos noticias */
+    #noticias {
+      text-align: left;
+      margin-top: 40px;
+    }
+
+    #noticias h2 {
+      color: #005baa;
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    #noticias-lista {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #noticias-lista li {
+      background: #fefefe;
+      border-radius: 12px;
+      padding: 18px 22px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    #noticias-lista li:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+    }
+
+    #noticias-lista li a {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: #004a9f;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    #noticias-lista li a:hover {
+      text-decoration: underline;
+    }
+
+    #noticias-lista li p {
+      flex-grow: 1;
+      font-size: 0.95rem;
+      color: #444f5a;
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    #noticias-lista li time {
+      font-size: 0.82rem;
+      color: #8899aa;
+      opacity: 0.85;
+      align-self: flex-end;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
       body {
-        padding: 20px 10px;
-      }
-
-      header h1 {
-        font-size: 1.6rem;
-        text-align: center;
-      }
-
-      #fecha-hora {
-        font-size: 12px;
-        top: 10px;
-        left: 10px;
+        padding: 20px 12px;
       }
 
       nav {
@@ -119,12 +172,7 @@
       }
 
       main {
-        padding: 20px 10px;
-      }
-      
-      #acciones-barra-superior {
-        padding: 10px 0;
-        margin-bottom: 20px;
+        padding: 20px 15px;
       }
     }
   </style>
@@ -164,6 +212,7 @@
       </script>
     </div>
   </section>
+
   <main>
     <marquee behavior="scroll" direction="left" scrollamount="5" style="font-size: 18px; color: #005baa; font-weight: bold; margin-bottom: 20px;">
     </marquee>
@@ -172,10 +221,16 @@
       <h3>Cotizaciones del Dólar</h3>
       <div id="dolar-cotizaciones"></div>
     </section>
-    </main>
+
+    <section id="noticias">
+      <h2>Noticias Económicas - Ámbito Financiero</h2>
+      <ul id="noticias-lista">
+        <li>Cargando noticias...</li>
+      </ul>
+    </section>
+  </main>
 
   <script>
-    // Función para actualizar la fecha y hora en el encabezado
     function actualizarFechaHora() {
       const ahora = new Date();
       const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -187,58 +242,79 @@
       const segundos = ahora.getSeconds().toString().padStart(2,'0');
       document.getElementById('fecha-hora').textContent = `${dia} de ${mes} de ${anio} - ${horas}:${minutos}:${segundos}`;
     }
-
-    // Actualiza la fecha y hora cada segundo
     setInterval(actualizarFechaHora, 1000);
-    actualizarFechaHora(); // Llama una vez al cargar la página
+    actualizarFechaHora();
 
-    // Función asíncrona para cargar las cotizaciones del dólar
     async function cargarCotizaciones() {
       const target = document.getElementById('dolar-cotizaciones');
       try {
-        // Endpoints de DolarAPI para Blue, Oficial y MEP
         const urls = {
           blue:    'https://dolarapi.com/v1/dolares/blue',
           oficial: 'https://dolarapi.com/v1/dolares/oficial',
           mep:     'https://dolarapi.com/v1/dolares/bolsa'
         };
-
-        // Realiza todas las peticiones en paralelo
         const fetches = await Promise.all(Object.values(urls).map(u => fetch(u)));
-        
-        // Procesa las respuestas, verificando si son OK antes de parsear JSON
         const parsed = await Promise.all(fetches.map(async (r) => {
           if (!r.ok) {
             throw new Error(`Error HTTP ${r.status} en ${r.url}`);
           }
           return r.json();
         }));
-
         const [blue, oficial, mep] = parsed;
-
-        // Construye el HTML con las cotizaciones
         let html = `
           <p><strong>Dólar Blue:</strong> Compra $${Number(blue.compra).toFixed(2)} - Venta $${Number(blue.venta).toFixed(2)}</p>
           <p><strong>Dólar Oficial:</strong> Compra $${Number(oficial.compra).toFixed(2)} - Venta $${Number(oficial.venta).toFixed(2)}</p>
           <p><strong>Dólar MEP:</strong> Compra $${Number(mep.compra).toFixed(2)} - Venta $${Number(mep.venta).toFixed(2)}</p>
           <p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>
         `;
-
         target.innerHTML = html;
       } catch (err) {
         console.error('Error cargando cotizaciones:', err);
-        // Muestra un mensaje de error claro al usuario
         target.innerHTML = `<p style="color:crimson;">Error al cargar cotizaciones: ${err.message}. Revisá la consola (F12) para más detalles.</p>`;
       }
     }
-
-    // La función cargarNoticias y su setInterval han sido eliminados de aquí
-
-    // Carga inicial de cotizaciones al cargar la página
     cargarCotizaciones();
+    setInterval(cargarCotizaciones, 60000);
 
-    // Actualiza las cotizaciones cada 60 segundos (1 minuto)
-    setInterval(cargarCotizaciones, 60000); 
+    async function cargarNoticias() {
+      const proxy = 'https://api.allorigins.win/get?url=';
+      const urlRSS = encodeURIComponent('https://www.ambito.com/rss/economia.xml');
+      try {
+        const resp = await fetch(proxy + urlRSS);
+        const data = await resp.json();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data.contents, "text/xml");
+        const items = xml.querySelectorAll('item');
+        let html = '';
+        items.forEach((item, i) => {
+          if (i >= 10) return;
+          const title = item.querySelector('title')?.textContent || '';
+          const link = item.querySelector('link')?.textContent || '#';
+          const pubDate = item.querySelector('pubDate')?.textContent || '';
+          const description = item.querySelector('description')?.textContent || '';
+          let imgSrc = '';
+          const imgMatch = description.match(/<img[^>]+src="([^">]+)"/i);
+          if(imgMatch) imgSrc = imgMatch[1];
+          const div = document.createElement('div');
+          div.innerHTML = description;
+          const texto = div.textContent || div.innerText || '';
+          const fecha = pubDate ? new Date(pubDate).toLocaleDateString('es-AR', {year:'numeric', month:'short', day:'numeric'}) : '';
+          html += `<li>
+            ${imgSrc ? `<img src="${imgSrc}" alt="Imagen noticia" style="border-radius:8px; margin-bottom:12px; max-height:150px; object-fit:cover; width:100%;">` : ''}
+            <a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a>
+            <p>${texto.substring(0,140)}${texto.length>140?'...':''}</p>
+            <time>${fecha}</time>
+          </li>`;
+        });
+        document.getElementById('noticias-lista').innerHTML = html;
+      } catch(e) {
+        document.getElementById('noticias-lista').textContent = 'Error cargando noticias';
+        console.error(e);
+      }
+    }
+    cargarNoticias();
+    setInterval(cargarNoticias, 5 * 60 * 1000);
   </script>
 </body>
 </html>
+
