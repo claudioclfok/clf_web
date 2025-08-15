@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CUIT / CUIL</title>
+    <title>CUIT/CUIL</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
         }
         header {
             background-color: #005baa;
             color: white;
-            padding: 10px 0;
+            padding: 20px;
             text-align: center;
-        }
-        nav {
-            background-color: #005baa;
-            text-align: center;
-            padding-bottom: 10px;
         }
         nav a {
             color: white;
-            text-decoration: none;
             margin: 0 15px;
+            text-decoration: none;
             font-weight: bold;
         }
         nav a:hover {
@@ -32,10 +28,10 @@
         }
         main {
             background-color: #005baa;
-            padding: 30px;
+            padding: 40px 20px;
             color: white;
-            min-height: calc(100vh - 100px);
             text-align: center;
+            min-height: calc(100vh - 100px);
         }
         input, select, button {
             padding: 10px;
@@ -49,75 +45,67 @@
             font-weight: bold;
         }
         #resultadoCUIT {
-            margin-top: 15px;
+            margin-top: 20px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>CUIT/CUIL</h1>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="cuit-cuil.html">CUIT/CUIL</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Ingrese su DNI y seleccione su sexo</h2>
+        <input type="number" id="dniInput" placeholder="Ingrese DNI">
+        <select id="sexoInput">
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+        </select>
+        <button onclick="calcularCUIT()">Calcular</button>
+        <div id="resultadoCUIT"></div>
+    </main>
+    <script>
+        function calcularCUIT() {
+            let dni = document.getElementById("dniInput").value.trim();
+            let sexo = document.getElementById("sexoInput").value;
+            
+            if (dni === "" || dni.length < 7 || dni.length > 8) {
+                document.getElementById("resultadoCUIT").innerText = "Ingrese un DNI válido";
+                return;
+            }
 
-<header>
-    <h1>CUIT / CUIL</h1>
-</header>
+            let prefijo = (sexo === "M") ? 20 : 27;
+            let base = prefijo.toString() + dni;
+            let multip = [5,4,3,2,7,6,5,4,3,2];
+            let suma = 0;
 
-<nav>
-    <a href="#">Inicio</a>
-    <a href="#">Cuit - Cuil</a>
-</nav>
+            for (let i = 0; i < multip.length; i++) {
+                suma += parseInt(base[i]) * multip[i];
+            }
 
-<main>
-    <h2>Calculadora CUIT / CUIL</h2>
-    <p>Ingrese su DNI y seleccione su sexo para calcular.</p>
-    
-    <input type="number" id="dniInput" placeholder="Ingrese DNI">
-    <select id="sexoInput">
-        <option value="M">Masculino</option>
-        <option value="F">Femenino</option>
-    </select>
-    <button onclick="calcularCUIT()">Calcular</button>
+            let resto = suma % 11;
+            let digito = 11 - resto;
 
-    <div id="resultadoCUIT"></div>
-</main>
+            if (digito === 11) digito = 0;
+            else if (digito === 10) {
+                prefijo = 23;
+                base = prefijo.toString() + dni;
+                suma = 0;
+                for (let i = 0; i < multip.length; i++) {
+                    suma += parseInt(base[i]) * multip[i];
+                }
+                resto = suma % 11;
+                digito = 11 - resto;
+            }
 
-<script>
-function calcularCUIT() {
-    let dni = document.getElementById("dniInput").value.trim();
-    let sexo = document.getElementById("sexoInput").value;
-    
-    if (dni === "" || dni.length < 7 || dni.length > 8) {
-        document.getElementById("resultadoCUIT").innerText = "Ingrese un DNI válido";
-        return;
-    }
-
-    let prefijo = (sexo === "M") ? 20 : 27;
-    let base = prefijo.toString() + dni;
-    let multip = [5,4,3,2,7,6,5,4,3,2];
-    let suma = 0;
-
-    for (let i = 0; i < multip.length; i++) {
-        suma += parseInt(base[i]) * multip[i];
-    }
-
-    let resto = suma % 11;
-    let digito = 11 - resto;
-
-    if (digito === 11) digito = 0;
-    else if (digito === 10) {
-        prefijo = 23;
-        base = prefijo.toString() + dni;
-        suma = 0;
-        for (let i = 0; i < multip.length; i++) {
-            suma += parseInt(base[i]) * multip[i];
+            let cuit = prefijo + "-" + dni + "-" + digito;
+            document.getElementById("resultadoCUIT").innerText = "CUIT/CUIL: " + cuit;
         }
-        resto = suma % 11;
-        digito = 11 - resto;
-    }
-
-    let cuit = prefijo + "-" + dni + "-" + digito;
-    document.getElementById("resultadoCUIT").innerText = "CUIT/CUIL: " + cuit;
-}
-</script>
-
+    </script>
 </body>
 </html>
