@@ -58,14 +58,12 @@
 <body>
 
 <header>
-    <h1>Cotizaciones - Dólar y Acciones</h1>
+    <h1>CUIT / CUIL</h1>
 </header>
 
 <nav>
-    <a href="index.html">Inicio</a>
-    <a href="cotizador.html">Cotizador Dólar</a>
-    <a href="cuit-cuil.html">Cuit - Cuil</a>
-    <a href="contacto.html">Contacto</a>
+    <a href="#">Inicio</a>
+    <a href="#">Cuit - Cuil</a>
 </nav>
 
 <main>
@@ -116,5 +114,10 @@ function calcularCUIT() {
         digito = 11 - resto;
     }
 
-    let cuit = pref
+    let cuit = prefijo + "-" + dni + "-" + digito;
+    document.getElementById("resultadoCUIT").innerText = "CUIT/CUIL: " + cuit;
+}
+</script>
 
+</body>
+</html>
