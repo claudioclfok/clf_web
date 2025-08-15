@@ -87,7 +87,33 @@
       margin: 6px 0;
     }
 
-    /* Estilos noticias */
+    #cuit-cuil {
+      background-color: #005baa;
+      color: white;
+      padding: 30px;
+      margin-top: 30px;
+      border-radius: 10px;
+    }
+
+    #cuit-cuil input, #cuit-cuil select, #cuit-cuil button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+    }
+
+    #cuit-cuil button {
+      cursor: pointer;
+      background-color: #ffc107;
+      border: none;
+      font-weight: bold;
+    }
+
+    #resultadoCUIT {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
     #noticias {
       text-align: left;
       margin-top: 40px;
@@ -153,7 +179,6 @@
       align-self: flex-end;
     }
 
-    /* Responsive */
     @media (max-width: 600px) {
       body {
         padding: 20px 12px;
@@ -174,6 +199,10 @@
       main {
         padding: 20px 15px;
       }
+
+      #cuit-cuil {
+        padding: 20px;
+      }
     }
   </style>
 </head>
@@ -183,8 +212,8 @@
     <h1>Cotizaciones - Dólar y Acciones</h1>
     <nav>
       <a href="index.html">Inicio</a>
-      <a href="Cotizador.html">Cotizador Dolar</a>
-      <a href="cartera.html">Cuit - Cuil</a>
+      <a href="Cotizador.html">Cotizador Dólar</a>
+      <a href="#">CUIT/CUIL</a>
       <a href="contacto.html">Contacto</a>
     </nav>
   </header>
@@ -222,6 +251,18 @@
       <div id="dolar-cotizaciones"></div>
     </section>
 
+    <section id="cuit-cuil">
+      <h2>CUIT/CUIL</h2>
+      <p>Ingrese su DNI y seleccione su sexo para calcular.</p>
+      <input type="number" id="dniInput" placeholder="Ingrese DNI">
+      <select id="sexoInput">
+        <option value="M">Masculino</option>
+        <option value="F">Femenino</option>
+      </select>
+      <button onclick="calcularCUIT()">Calcular</button>
+      <div id="resultadoCUIT"></div>
+    </section>
+
     <section id="noticias">
       <h2>Noticias Económicas - Ámbito Financiero</h2>
       <ul id="noticias-lista">
@@ -255,22 +296,19 @@
         };
         const fetches = await Promise.all(Object.values(urls).map(u => fetch(u)));
         const parsed = await Promise.all(fetches.map(async (r) => {
-          if (!r.ok) {
-            throw new Error(`Error HTTP ${r.status} en ${r.url}`);
-          }
+          if (!r.ok) throw new Error(`Error HTTP ${r.status}`);
           return r.json();
         }));
         const [blue, oficial, mep] = parsed;
-        let html = `
+        target.innerHTML = `
           <p><strong>Dólar Blue:</strong> Compra $${Number(blue.compra).toFixed(2)} - Venta $${Number(blue.venta).toFixed(2)}</p>
           <p><strong>Dólar Oficial:</strong> Compra $${Number(oficial.compra).toFixed(2)} - Venta $${Number(oficial.venta).toFixed(2)}</p>
           <p><strong>Dólar MEP:</strong> Compra $${Number(mep.compra).toFixed(2)} - Venta $${Number(mep.venta).toFixed(2)}</p>
           <p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>
         `;
-        target.innerHTML = html;
       } catch (err) {
-        console.error('Error cargando cotizaciones:', err);
-        target.innerHTML = `<p style="color:crimson;">Error al cargar cotizaciones: ${err.message}. Revisá la consola (F12) para más detalles.</p>`;
+        console.error('Error cotizaciones:', err);
+        target.innerHTML = `<p style="color:crimson;">Error al cargar cotizaciones</p>`;
       }
     }
     cargarCotizaciones();
@@ -314,6 +352,43 @@
     }
     cargarNoticias();
     setInterval(cargarNoticias, 5 * 60 * 1000);
+
+    function calcularCUIT() {
+      let dni = document.getElementById("dniInput").value.trim();
+      let sexo = document.getElementById("sexoInput").value;
+      
+      if (dni === "" || dni.length < 7 || dni.length > 8) {
+        document.getElementById("resultadoCUIT").innerText = "Ingrese un DNI válido";
+        return;
+      }
+
+      let prefijo = (sexo === "M") ? 20 : 27;
+      let base = prefijo.toString() + dni;
+      let multip = [5,4,3,2,7,6,5,4,3,2];
+      let suma = 0;
+
+      for (let i = 0; i < multip.length; i++) {
+        suma += parseInt(base[i]) * multip[i];
+      }
+
+      let resto = suma % 11;
+      let digito = 11 - resto;
+
+      if (digito === 11) digito = 0;
+      else if (digito === 10) {
+        prefijo = 23;
+        base = prefijo.toString() + dni;
+        suma = 0;
+        for (let i = 0; i < multip.length; i++) {
+          suma += parseInt(base[i]) * multip[i];
+        }
+        resto = suma % 11;
+        digito = 11 - resto;
+      }
+
+      let cuit = prefijo + "-" + dni + "-" + digito;
+      document.getElementById("resultadoCUIT").innerText = "CUIT/CUIL: " + cuit;
+    }
   </script>
 </body>
 </html>
