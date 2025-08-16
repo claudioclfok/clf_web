@@ -1,314 +1,407 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cotizaciones - Dólar y Acciones</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f9f9f9;
-      padding: 40px 20px;
-      text-align: center;
-      color: #2c3e50;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cotizaciones - Dólar y Acciones</title>
+    <style>
+        :root {
+            --color-primary: #005baa;
+            --color-text-dark: #2c3e50;
+            --color-text-light: #444f5a;
+            --color-background-light: #f9f9f9;
+            --color-card-background: #fefefe;
+            --shadow-base: 0 0 15px rgba(0,0,0,0.1);
+            --shadow-hover: 0 12px 32px rgba(0,0,0,0.15);
+        }
 
-    header {
-      background-color: #005baa;
-      color: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      position: relative;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: var(--color-background-light);
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--color-text-dark);
+        }
 
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-    }
+        header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
 
-    #fecha-hora {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 16px;
-      font-weight: bold;
-      color: white;
-    }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
 
-    nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 18px;
-    }
+        #fecha-hora {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
 
-    nav a:hover {
-      text-decoration: underline;
-    }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: text-decoration 0.2s ease; /* Transición suave */
+        }
 
-    #acciones-barra-superior {
-      max-width: 900px;
-      margin: 0 auto 30px auto;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      padding: 15px 0;
-    }
+        nav a:hover {
+            text-decoration: underline;
+        }
 
-    #acciones-barra-superior h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      color: #005baa;
-    }
+        #acciones-barra-superior {
+            max-width: 900px;
+            margin: 0 auto 30px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow-base);
+            padding: 15px 0;
+        }
 
-    .tradingview-widget-container {
-      margin: 0 auto;
-      max-width: 880px;
-    }
+        #acciones-barra-superior h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
 
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      text-align: center;
-    }
+        .tradingview-widget-container {
+            margin: 0 auto;
+            max-width: 880px;
+        }
 
-    #cotizaciones-dolar {
-      font-size: 20px;
-      margin-bottom: 30px;
-    }
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-base);
+            text-align: center;
+        }
 
-    #cotizaciones-dolar p {
-      margin: 6px 0;
-    }
+        #cotizaciones-dolar {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
 
-    #noticias {
-      text-align: left;
-      margin-top: 40px;
-    }
+        #cotizaciones-dolar p {
+            margin: 6px 0;
+        }
 
-    #noticias h2 {
-      color: #005baa;
-      font-size: 1.8rem;
-      margin-bottom: 25px;
-      text-align: center;
-    }
+        #noticias {
+            text-align: left;
+            margin-top: 40px;
+        }
 
-    #noticias-lista {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 28px;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+        #noticias h2 {
+            color: var(--color-primary);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
 
-    #noticias-lista li {
-      background: #fefefe;
-      border-radius: 12px;
-      padding: 18px 22px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.07);
-      display: flex;
-      flex-direction: column;
-      min-height: 200px;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
+        #noticias-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-    #noticias-lista li:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
-    }
+        #noticias-lista li {
+            background: var(--color-card-background);
+            border-radius: 12px;
+            padding: 18px 22px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+            display: flex;
+            flex-direction: column;
+            min-height: 200px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
 
-    #noticias-lista li a {
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-      color: #004a9f;
-      text-decoration: none;
-      flex-shrink: 0;
-    }
+        #noticias-lista li:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
 
-    #noticias-lista li a:hover {
-      text-decoration: underline;
-    }
+        #noticias-lista li a {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #004a9f;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
 
-    #noticias-lista li p {
-      flex-grow: 1;
-      font-size: 0.95rem;
-      color: #444f5a;
-      margin-bottom: 14px;
-      line-height: 1.3;
-    }
+        #noticias-lista li a:hover {
+            text-decoration: underline;
+        }
 
-    #noticias-lista li time {
-      font-size: 0.82rem;
-      color: #8899aa;
-      opacity: 0.85;
-      align-self: flex-end;
-    }
+        #noticias-lista li p {
+            flex-grow: 1;
+            font-size: 0.95rem;
+            color: var(--color-text-light);
+            margin-bottom: 14px;
+            line-height: 1.3;
+        }
 
-    @media (max-width: 600px) {
-      body {
-        padding: 20px 12px;
-      }
+        #noticias-lista li time {
+            font-size: 0.82rem;
+            color: #8899aa;
+            opacity: 0.85;
+            align-self: flex-end;
+        }
 
-      nav {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 10px;
-      }
+        #noticias-lista li img { /* Estilo para las imágenes de noticias */
+            border-radius: 8px;
+            margin-bottom: 12px;
+            max-height: 150px;
+            object-fit: cover;
+            width: 100%;
+        }
 
-      nav a {
-        font-size: 16px;
-        margin: 5px 0;
-      }
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 12px;
+            }
 
-      main {
-        padding: 20px 15px;
-      }
-    }
-  </style>
+            nav {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            nav a {
+                font-size: 16px;
+                margin: 5px 0;
+            }
+
+            main {
+                padding: 20px 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div id="fecha-hora"></div>
-    <h1>Cotizaciones - Dólar y Acciones</h1>
-    <nav>
-      <a href="index.html">Inicio</a>
-      <a href="Cotizador.html">Cotizador Dólar</a>
-      <a href="cuit-cuil.html">CUIT/CUIL</a>
-      <a href="contacto.html">Contacto</a>
-    </nav>
-  </header>
+    <header>
+        <div id="fecha-hora"></div>
+        <h1>Cotizaciones - Dólar y Acciones</h1>
+        <nav aria-label="Navegación principal">
+            <a href="index.html">Inicio</a>
+            <a href="Cotizador.html">Cotizador Dólar</a>
+            <a href="cuit-cuil.html">CUIT/CUIL</a>
+            <a href="contacto.html">Contacto</a>
+        </nav>
+    </header>
 
-  <section id="acciones-barra-superior">
-    <h3>Cotizaciones de Acciones</h3>
-    <div class="tradingview-widget-container">
-      <div id="tradingview-ticker"></div>
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-      {
-        "symbols": [
-          {"proName": "BCBA:GGAL","title":"GGAL"},
-          {"proName": "BCBA:YPFD","title":"YPFD"},
-          {"proName": "BCBA:PAMP","title":"PAMP"},
-          {"proName": "BCBA:COME","title":"COME"},
-          {"proName": "BCBA:CEPU","title":"CEPU"},
-          {"proName": "BCBA:BMA","title":"BMA"},
-          {"proName": "BCBA:TECO2","title":"TECO2"}
-        ],
-        "colorTheme":"light",
-        "isTransparent":false,
-        "displayMode":"adaptive",
-        "locale":"es"
-      }
-      </script>
-    </div>
-  </section>
-
-  <main>
-    <marquee behavior="scroll" direction="left" scrollamount="5" style="font-size: 18px; color: #005baa; font-weight: bold; margin-bottom: 20px;">
-    </marquee>
-
-    <section id="cotizaciones-dolar">
-      <h3>Cotizaciones del Dólar</h3>
-      <div id="dolar-cotizaciones"></div>
+    <section id="acciones-barra-superior">
+        <h3>Cotizaciones de Acciones</h3>
+        <div class="tradingview-widget-container">
+            <div id="tradingview-ticker"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+            {
+                "symbols": [
+                    {"proName": "BCBA:GGAL","title":"GGAL"},
+                    {"proName": "BCBA:YPFD","title":"YPFD"},
+                    {"proName": "BCBA:PAMP","title":"PAMP"},
+                    {"proName": "BCBA:COME","title":"COME"},
+                    {"proName": "BCBA:CEPU","title":"CEPU"},
+                    {"proName": "BCBA:BMA","title":"BMA"},
+                    {"proName": "BCBA:TECO2","title":"TECO2"}
+                ],
+                "colorTheme":"light",
+                "isTransparent":false,
+                "displayMode":"adaptive",
+                "locale":"es"
+            }
+            </script>
+        </div>
     </section>
 
-    <section id="noticias">
-      <h2>Noticias Económicas - Ámbito Financiero</h2>
-      <ul id="noticias-lista">
-        <li>Cargando noticias...</li>
-      </ul>
-    </section>
-  </main>
+    <main>
+        <section id="cotizaciones-dolar">
+            <h3>Cotizaciones del Dólar</h3>
+            <div id="dolar-cotizaciones">
+                <p>Cargando cotizaciones...</p>
+            </div>
+        </section>
 
-  <script>
-    function actualizarFechaHora() {
-      const ahora = new Date();
-      const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-      const dia = ahora.getDate();
-      const mes = meses[ahora.getMonth()];
-      const anio = ahora.getFullYear();
-      const horas = ahora.getHours().toString().padStart(2,'0');
-      const minutos = ahora.getMinutes().toString().padStart(2,'0');
-      const segundos = ahora.getSeconds().toString().padStart(2,'0');
-      document.getElementById('fecha-hora').textContent = `${dia} de ${mes} de ${anio} - ${horas}:${minutos}:${segundos}`;
-    }
-    setInterval(actualizarFechaHora, 1000);
-    actualizarFechaHora();
+        <section id="noticias">
+            <h2>Noticias Económicas - Varias Fuentes</h2>
+            <ul id="noticias-lista">
+                <li>Cargando noticias de varias fuentes...</li>
+            </ul>
+        </section>
+    </main>
 
-    async function cargarCotizaciones() {
-      const target = document.getElementById('dolar-cotizaciones');
-      try {
-        const urls = {
-          blue:    'https://dolarapi.com/v1/dolares/blue',
-          oficial: 'https://dolarapi.com/v1/dolares/oficial',
-          mep:     'https://dolarapi.com/v1/dolares/bolsa'
-        };
-        const fetches = await Promise.all(Object.values(urls).map(u => fetch(u)));
-        const parsed = await Promise.all(fetches.map(async (r) => {
-          if (!r.ok) throw new Error(`Error HTTP ${r.status}`);
-          return r.json();
-        }));
-        const [blue, oficial, mep] = parsed;
-        target.innerHTML = `
-          <p><strong>Dólar Blue:</strong> Compra $${Number(blue.compra).toFixed(2)} - Venta $${Number(blue.venta).toFixed(2)}</p>
-          <p><strong>Dólar Oficial:</strong> Compra $${Number(oficial.compra).toFixed(2)} - Venta $${Number(oficial.venta).toFixed(2)}</p>
-          <p><strong>Dólar MEP:</strong> Compra $${Number(mep.compra).toFixed(2)} - Venta $${Number(mep.venta).toFixed(2)}</p>
-          <p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>
-        `;
-      } catch (err) {
-        console.error('Error cotizaciones:', err);
-        target.innerHTML = `<p style="color:crimson;">Error al cargar cotizaciones</p>`;
-      }
-    }
-    cargarCotizaciones();
-    setInterval(cargarCotizaciones, 60000);
+    <script>
+        function actualizarFechaHora() {
+            const ahora = new Date();
+            const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+            const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const fechaFormateada = ahora.toLocaleDateString('es-AR', opcionesFecha);
+            const horaFormateada = ahora.toLocaleTimeString('es-AR', opcionesHora);
+            document.getElementById('fecha-hora').textContent = `${fechaFormateada} - ${horaFormateada}`;
+        }
+        setInterval(actualizarFechaHora, 1000);
+        actualizarFechaHora();
 
-    async function cargarNoticias() {
-      const proxy = 'https://api.allorigins.win/get?url=';
-      const urlRSS = encodeURIComponent('https://www.ambito.com/rss/economia.xml');
-      try {
-        const resp = await fetch(proxy + urlRSS);
-        const data = await resp.json();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(data.contents, "text/xml");
-        const items = xml.querySelectorAll('item');
-        let html = '';
-        items.forEach((item, i) => {
-          if (i >= 10) return;
-          const title = item.querySelector('title')?.textContent || '';
-          const link = item.querySelector('link')?.textContent || '#';
-          const pubDate = item.querySelector('pubDate')?.textContent || '';
-          const description = item.querySelector('description')?.textContent || '';
-          let imgSrc = '';
-          const imgMatch = description.match(/<img[^>]+src="([^">]+)"/i);
-          if(imgMatch) imgSrc = imgMatch[1];
-          const div = document.createElement('div');
-          div.innerHTML = description;
-          const texto = div.textContent || div.innerText || '';
-          const fecha = pubDate ? new Date(pubDate).toLocaleDateString('es-AR', {year:'numeric', month:'short', day:'numeric'}) : '';
-          html += `<li>
-            ${imgSrc ? `<img src="${imgSrc}" alt="Imagen noticia" style="border-radius:8px; margin-bottom:12px; max-height:150px; object-fit:cover; width:100%;">` : ''}
-            <a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a>
-            <p>${texto.substring(0,140)}${texto.length>140?'...':''}</p>
-            <time>${fecha}</time>
-          </li>`;
-        });
-        document.getElementById('noticias-lista').innerHTML = html;
-      } catch(e) {
-        document.getElementById('noticias-lista').textContent = 'Error cargando noticias';
-        console.error(e);
-      }
-    }
-    cargarNoticias();
-    setInterval(cargarNoticias, 5 * 60 * 1000);
-  </script>
+        async function cargarCotizaciones() {
+            const target = document.getElementById('dolar-cotizaciones');
+            const urls = {
+                blue:    'https://dolarapi.com/v1/dolares/blue',
+                oficial: 'https://dolarapi.com/v1/dolares/oficial',
+                mep:     'https://dolarapi.com/v1/dolares/bolsa'
+            };
+
+            try {
+                const responses = await Promise.allSettled(Object.values(urls).map(url => fetch(url)));
+                let html = '';
+                const labels = { blue: 'Blue', oficial: 'Oficial', mep: 'MEP' };
+
+                for (const [index, result] of responses.entries()) {
+                    const type = Object.keys(urls)[index];
+                    const label = labels[type];
+
+                    if (result.status === 'fulfilled' && result.value.ok) {
+                        const data = await result.value.json();
+                        if (typeof data.compra === 'number' && typeof data.venta === 'number') {
+                            html += `<p><strong>Dólar ${label}:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
+                        } else {
+                            html += `<p style="color:crimson;">Error: Datos inválidos para Dólar ${label}</p>`;
+                            console.warn(`Datos inválidos recibidos para Dólar ${label}:`, data);
+                        }
+                    } else {
+                        html += `<p style="color:crimson;">Error al cargar Dólar ${label}</p>`;
+                        console.error(`Error en la petición para Dólar ${label}:`, result.reason || 'Fallo de red o servidor');
+                    }
+                }
+                html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
+                target.innerHTML = html;
+
+            } catch (err) {
+                console.error('Error general al cargar cotizaciones:', err);
+                target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`;
+            }
+        }
+        cargarCotizaciones();
+        setInterval(cargarCotizaciones, 60000); // Actualiza cada minuto
+
+        async function cargarNoticias() {
+            const noticiasLista = document.getElementById('noticias-lista');
+            noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>'; // Restablece el mensaje de carga
+
+            const proxy = 'https://api.allorigins.win/get?url=';
+            // Define las URLs de los feeds RSS
+            const rssFeeds = [
+                { name: 'Ámbito Financiero', url: 'https://www.ambito.com/rss/economia.xml', limit: 5 }, // Limita a 5 de Ámbito
+                { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 3 }, // Limita a 3 de La Nación
+                { name: 'Clarín (Economía)', url: 'https://www.clarin.com/rss/economia/', limit: 2 } // Limita a 2 de Clarín
+            ];
+
+            let allNewsItems = []; // Array para almacenar todas las noticias
+
+            try {
+                // Usa Promise.allSettled para que si una fuente falla, las otras sigan cargando
+                const results = await Promise.allSettled(
+                    rssFeeds.map(feed =>
+                        fetch(proxy + encodeURIComponent(feed.url))
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Error HTTP ${response.status} para ${feed.name}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                const parser = new DOMParser();
+                                const xml = parser.parseFromString(data.contents, "text/xml");
+                                const items = xml.querySelectorAll('item');
+                                const newsFromFeed = [];
+                                items.forEach((item, i) => {
+                                    if (i >= feed.limit) return; // Aplicar límite por fuente
+
+                                    const title = item.querySelector('title')?.textContent || 'Sin título';
+                                    const link = item.querySelector('link')?.textContent || '#';
+                                    const pubDate = item.querySelector('pubDate')?.textContent || '';
+                                    const descriptionHtml = item.querySelector('description')?.textContent || '';
+
+                                    let imgSrc = '';
+                                    let cleanDescriptionText = '';
+                                    const tempDiv = document.createElement('div');
+                                    tempDiv.innerHTML = descriptionHtml;
+
+                                    const imgElement = tempDiv.querySelector('img');
+                                    if (imgElement) {
+                                        imgSrc = imgElement.src;
+                                        imgElement.remove();
+                                    }
+                                    cleanDescriptionText = tempDiv.textContent || '';
+                                    const shortText = cleanDescriptionText.substring(0, 140) + (cleanDescriptionText.length > 140 ? '...' : '');
+
+                                    const fecha = pubDate ? new Date(pubDate).toLocaleDateString('es-AR', {year:'numeric', month:'short', day:'numeric'}) : 'Fecha desconocida';
+
+                                    newsFromFeed.push({
+                                        title,
+                                        link,
+                                        shortText,
+                                        fecha,
+                                        imgSrc,
+                                        source: feed.name // Agrega la fuente de la noticia
+                                    });
+                                });
+                                return newsFromFeed;
+                            })
+                    )
+                );
+
+                // Procesar los resultados de Promise.allSettled
+                results.forEach(result => {
+                    if (result.status === 'fulfilled') {
+                        allNewsItems = allNewsItems.concat(result.value);
+                    } else {
+                        console.error(`Error al cargar noticias de una fuente:`, result.reason);
+                        // Aquí podrías agregar un mensaje al usuario sobre la fuente fallida si lo deseas
+                    }
+                });
+
+                // Opcional: Ordenar las noticias por fecha (las más recientes primero)
+                // Esto es más robusto si las fechas de publicación son consistentes.
+                allNewsItems.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+                let html = '';
+                if (allNewsItems.length === 0) {
+                    html = '<li>No se pudieron cargar noticias de ninguna fuente.</li>';
+                } else {
+                    allNewsItems.forEach(news => {
+                        html += `<li>
+                            ${news.imgSrc ? `<img src="${news.imgSrc}" alt="${news.title}">` : ''}
+                            <a href="${news.link}" target="_blank" rel="noopener noreferrer">${news.title}</a>
+                            <p>${news.shortText}</p>
+                            <time>${news.fecha} - <span style="font-weight: bold;">${news.source}</span></time>
+                        </li>`;
+                    });
+                }
+                noticiasLista.innerHTML = html;
+
+            } catch(e) {
+                console.error('Error general al cargar noticias:', e);
+                noticiasLista.innerHTML = '<li style="color:crimson;">Error general al cargar las noticias. Por favor, inténtelo de nuevo más tarde.</li>';
+            }
+        }
+        cargarNoticias();
+        setInterval(cargarNoticias, 5 * 60 * 1000); // Actualiza cada 5 minutos
+    </script>
 </body>
 </html>
