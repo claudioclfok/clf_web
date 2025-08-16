@@ -1,44 +1,127 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contacto - Contacto</title>
-  <style>
-    body {
-      font-family: "Comic Sans MS", cursive, sans-serif;
-      margin: 0;
-      background: #f9f9f9;
-      text-align: center;
-      padding: 50px;
-    }
-    header {
-      background-color: #005baa;
-      color: white;
-      padding: 20px;
-    }
-    nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto</title>
+    <style>
+        /* Reutiliza los estilos generales del header, nav, main, footer y responsividad */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f9f9f9;
+            padding: 40px 20px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        header {
+            background-color: #005baa;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: text-decoration 0.2s ease;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .section-title {
+            color: #005baa;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+
+        .contact-info p strong {
+            color: #005baa;
+        }
+
+        .contact-info a {
+            color: #005baa;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 12px;
+            }
+            nav {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 10px;
+            }
+            nav a {
+                font-size: 16px;
+                margin: 5px 0;
+            }
+            main {
+                padding: 20px 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Contacto</h1>
-    <nav>
-      <a href="index.html">Inicio</a>
-    </nav>
-  </header>
+    <header>
+        <h1>Contacto</h1>
+        <nav aria-label="Navegación principal">
+            <a href="index.html">Inicio</a>
+            <a href="Cotizador.html">Cotizador Dólar</a>
+            <a href="cuit-cuil.html">CUIT/CUIL</a>
+            <a href="contacto.html">Contacto</a>
+        </nav>
+    </header>
 
-  <main>
-    <p>Escribinos a <strong>claudiofernandezclf@gmail.com</strong> o llamanos al (011) 1234-5678.</p>
-  </main>
+    <main>
+        <h2 class="section-title">¡Contáctanos!</h2>
+        <p>Si tienes alguna pregunta, sugerencia o necesitas ayuda, no dudes en contactarnos.</p>
+        
+        <div class="contact-info">
+            <p><strong>Correo Electrónico:</strong> <a href="mailto:tuemail@example.com">tuemail@example.com</a></p>
+            <p><strong>Teléfono:</strong> <a href="tel:+5491112345678">+54 9 11 1234-5678</a></p>
+            <p><strong>Dirección:</strong> Tu Calle 123, Tu Ciudad, Buenos Aires, Argentina</p>
+            <p>Puedes seguirnos en nuestras redes sociales (¡próximamente!).</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Herramientas Financieras. Todos los derechos reservados.</p>
+    </footer>
 </body>
 </html>
