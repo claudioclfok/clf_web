@@ -52,7 +52,7 @@
             text-decoration: none;
             font-weight: bold;
             font-size: 18px;
-            transition: text-decoration 0.2s ease; /* Transición suave */
+            transition: text-decoration 0.2s ease;
         }
 
         nav a:hover {
@@ -163,7 +163,7 @@
             align-self: flex-end;
         }
 
-        #noticias-lista li img { /* Estilo para las imágenes de noticias */
+        #noticias-lista li img {
             border-radius: 8px;
             margin-bottom: 12px;
             max-height: 150px;
@@ -202,7 +202,7 @@
             <a href="index.html">Inicio</a>
             <a href="Cotizador.html">Cotizador Dólar</a>
             <a href="cuit-cuil.html">CUIT/CUIL</a>
-            <a href="cuit-cuil.html">Cental de Deudores</a>
+            <a href="central-deudores.html">Central de Deudores</a>
             <a href="contacto.html">Contacto</a>
         </nav>
     </header>
@@ -298,24 +298,22 @@
             }
         }
         cargarCotizaciones();
-        setInterval(cargarCotizaciones, 60000); // Actualiza cada minuto
+        setInterval(cargarCotizaciones, 60000);
 
         async function cargarNoticias() {
             const noticiasLista = document.getElementById('noticias-lista');
-            noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>'; // Restablece el mensaje de carga
+            noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>';
 
             const proxy = 'https://api.allorigins.win/get?url=';
-            // Define las URLs de los feeds RSS
             const rssFeeds = [
-                { name: 'Ámbito Financiero', url: 'https://www.ambito.com/rss/economia.xml', limit: 5 }, // Limita a 5 de Ámbito
-                { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 3 }, // Limita a 3 de La Nación
-                { name: 'Clarín (Economía)', url: 'https://www.clarin.com/rss/economia/', limit: 2 } // Limita a 2 de Clarín
+                { name: 'Ámbito Financiero', url: 'https://www.ambito.com/rss/economia.xml', limit: 5 },
+                { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 3 },
+                { name: 'Clarín (Economía)', url: 'https://www.clarin.com/rss/economia/', limit: 2 }
             ];
 
-            let allNewsItems = []; // Array para almacenar todas las noticias
+            let allNewsItems = [];
 
             try {
-                // Usa Promise.allSettled para que si una fuente falla, las otras sigan cargando
                 const results = await Promise.allSettled(
                     rssFeeds.map(feed =>
                         fetch(proxy + encodeURIComponent(feed.url))
@@ -331,7 +329,7 @@
                                 const items = xml.querySelectorAll('item');
                                 const newsFromFeed = [];
                                 items.forEach((item, i) => {
-                                    if (i >= feed.limit) return; // Aplicar límite por fuente
+                                    if (i >= feed.limit) return;
 
                                     const title = item.querySelector('title')?.textContent || 'Sin título';
                                     const link = item.querySelector('link')?.textContent || '#';
@@ -359,7 +357,7 @@
                                         shortText,
                                         fecha,
                                         imgSrc,
-                                        source: feed.name // Agrega la fuente de la noticia
+                                        source: feed.name
                                     });
                                 });
                                 return newsFromFeed;
@@ -367,18 +365,14 @@
                     )
                 );
 
-                // Procesar los resultados de Promise.allSettled
                 results.forEach(result => {
                     if (result.status === 'fulfilled') {
                         allNewsItems = allNewsItems.concat(result.value);
                     } else {
                         console.error(`Error al cargar noticias de una fuente:`, result.reason);
-                        // Aquí podrías agregar un mensaje al usuario sobre la fuente fallida si lo deseas
                     }
                 });
 
-                // Opcional: Ordenar las noticias por fecha (las más recientes primero)
-                // Esto es más robusto si las fechas de publicación son consistentes.
                 allNewsItems.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
                 let html = '';
@@ -402,7 +396,7 @@
             }
         }
         cargarNoticias();
-        setInterval(cargarNoticias, 5 * 60 * 1000); // Actualiza cada 5 minutos
+        setInterval(cargarNoticias, 5 * 60 * 1000);
     </script>
 </body>
 </html>
