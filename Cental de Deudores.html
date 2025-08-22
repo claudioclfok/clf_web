@@ -1,1 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central de Deudores</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f4f8;
+        margin: 0;
+        padding: 20px;
+        color: #2c3e50;
+        text-align: center;
+    }
+    main {
+        max-width: 600px;
+        margin: 40px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+        margin-bottom: 10px;
+        color: #005baa;
+    }
+    input[type=text] {
+        width: 80%;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+    button {
+        padding: 12px 25px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        background-color: #005baa;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    button:hover {
+        background-color: #004a9f;
+    }
+    #resultado {
+        margin-top: 25px;
+        font-size: 1rem;
+        text-align: left;
+    }
+    #resultado span {
+        font-weight: bold;
+    }
+    .deudor {
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+    .deudor.encontrado {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .deudor.no-encontrado {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+    @media(max-width: 480px){
+        input[type=text] {
+            width: 100%;
+        }
+        button {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+
+<main>
+    <h1>Central de Deudores</h1>
+    <p>Ingrese un CUIT/CUIL para verificar si está en la lista de deudores.</p>
+    <input type="text" id="cuitInput" placeholder="Ej: 20-12345678-9">
+    <br>
+    <button onclick="buscarDeudor()">Buscar</button>
+    <div id="resultado"></div>
+</main>
+
+<script>
+async function cargarDeudores() {
+    try {
+        const response = await fetch('deudores.json');
+        return await response.json();
+    } catch (err) {
+        console.error('Error cargando deudores:', err);
+        return [];
+    }
+}
+
+function validarCUIT(cuit) {
+    // Valida formato XX-XXXXXXXX-X
+    return /^\d{2}-\d{8}-\d$/.test(cuit);
+}
+
+async function buscarDeudor() {
+    const input = document.getElementById('cuitInput').value.trim();
+    const resultado = document.getElementById('resultado');
+    resultado.innerHTML = '';
+
+    if (!input) {
+        resultado.innerHTML = '<span style="color:crimson;">Por favor ingrese un CUIT/CUIL.</span>';
+        return;
+    }
+    if (!validarCUIT(input)) {
+        resultado.innerHTML = '<span style="color:crimson;">Formato de CUIT/CUIL inválido. Use XX-XXXXXXXX-X.</span>';
+        return;
+    }
+
+    const deudores = await cargarDeudores();
+    const deudor = deudores.find(d => d.cuit === input);
+
+    if (deudor) {
+        const div = document.createElement('div');
+        div.className = 'deudor encontrado';
+        div.innerHTML = `<span>¡Atención!</span> ${deudor.nombre} aparece en la lista de deudores con una deuda de $${deudor.deuda.toLocaleString()}.`;
+        resultado.appendChild(div);
+    } else {
+        const div = document.createElement('div');
+        div.className = 'deudor no-encontrado';
+        div.innerHTML = `<span>Sin registro:</span> El CUIT/CUIL ingresado no se encuentra en la lista de deudores.`;
+        resultado.appendChild(div);
+    }
+}
+</script>
+
+</body>
+</html>
 
