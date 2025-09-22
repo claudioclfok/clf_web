@@ -46,9 +46,16 @@
             color: white;
         }
 
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
         nav a {
             color: white;
-            margin: 0 15px;
+            margin: 5px 10px;
             text-decoration: none;
             font-weight: bold;
             font-size: 18px;
@@ -172,25 +179,10 @@
         }
 
         @media (max-width: 600px) {
-            body {
-                padding: 20px 12px;
-            }
-
-            nav {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                margin-top: 10px;
-            }
-
-            nav a {
-                font-size: 16px;
-                margin: 5px 0;
-            }
-
-            main {
-                padding: 20px 15px;
-            }
+            body { padding: 20px 12px; }
+            nav { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+            nav a { font-size: 16px; margin: 5px 0; }
+            main { padding: 20px 15px; }
         }
     </style>
 </head>
@@ -202,7 +194,8 @@
             <a href="index.html">Inicio</a>
             <a href="Cotizador.html">Cotizador Dólar</a>
             <a href="cuit-cuil.html">CUIT/CUIL</a>
-            <a href="validador.html">Validador CBU/CVU</a>
+            <a href="cbu-cvu.html">Validador CBU/CVU</a>
+            <a href="datos-personales.html">Datos Personales</a>
             <a href="contacto.html">Contacto</a>
         </nav>
     </header>
@@ -258,6 +251,30 @@
         }
         setInterval(actualizarFechaHora, 1000);
         actualizarFechaHora();
-    </script>
-</body>
-</html>
+
+        async function cargarCotizaciones() {
+            const target = document.getElementById('dolar-cotizaciones');
+            const urls = { blue:'https://dolarapi.com/v1/dolares/blue', oficial:'https://dolarapi.com/v1/dolares/oficial', mep:'https://dolarapi.com/v1/dolares/bolsa' };
+            try {
+                const responses = await Promise.allSettled(Object.values(urls).map(url => fetch(url)));
+                let html = '';
+                const labels = { blue: 'Blue', oficial: 'Oficial', mep: 'MEP' };
+                for (const [index, result] of responses.entries()) {
+                    const type = Object.keys(urls)[index];
+                    const label = labels[type];
+                    if (result.status === 'fulfilled' && result.value.ok) {
+                        const data = await result.value.json();
+                        if (typeof data.compra === 'number' && typeof data.venta === 'number') {
+                            html += `<p><strong>Dólar ${label}:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
+                        } else {
+                            html += `<p style="color:crimson;">Error: Datos inválidos para Dólar ${label}</p>`;
+                        }
+                    } else {
+                        html += `<p style="color:crimson;">Error al cargar Dólar ${label}</p>`;
+                    }
+                }
+                html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
+                target.innerHTML = html;
+            } catch { target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`; }
+        }
+        cargarCotizaciones
