@@ -3,59 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Datos Personales</title>
+  <title>Datos Personales - Simulación</title>
   <style>
-    :root {
-      --color-primary: #005baa;
-      --color-text-dark: #2c3e50;
-      --color-background-light: #f9f9f9;
-      --color-card-background: #fff;
-      --shadow-base: 0 0 15px rgba(0,0,0,0.1);
-      --shadow-hover: 0 12px 32px rgba(0,0,0,0.15);
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 30px;
+      text-align: center;
+      color: #2c3e50;
     }
-    body { font-family: Arial, sans-serif; margin: 0; background: var(--color-background-light); color: var(--color-text-dark); }
-    header { background: var(--color-primary); color: white; padding: 20px; text-align: center; }
-    header h1 { margin: 0; font-size: 1.8rem; }
-    nav { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
-    nav a { color: white; margin: 5px 10px; text-decoration: none; font-weight: bold; }
-    nav a:hover { text-decoration: underline; }
-    main { max-width: 600px; margin: 20px auto; background: var(--color-card-background); padding: 20px; border-radius: 10px; box-shadow: var(--shadow-base); }
-    label { display: block; margin-bottom: 8px; font-weight: bold; }
-    input, button { width: 100%; padding: 10px; margin-bottom: 15px; font-size: 1rem; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
-    button { background: var(--color-primary); color: white; border: none; cursor: pointer; transition: 0.2s; }
+    header {
+      background: #005baa;
+      color: white;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    header h1 { margin: 0; }
+    main {
+      background: white;
+      max-width: 500px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    label { display: block; margin-bottom: 10px; font-weight: bold; }
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background: #005baa;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 6px;
+    }
     button:hover { background: #004080; }
-    pre { background: #f1f1f1; padding: 10px; border-radius: 6px; overflow-x: auto; }
-    @media (max-width: 480px) {
-      header h1 { font-size: 1.4rem; }
-      nav a { margin: 5px 6px; font-size: 0.9rem; }
+    #resultado {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      text-align: left;
     }
+    #resultado p { margin: 5px 0; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Datos Personales</h1>
-    <nav aria-label="Navegación principal">
-      <a href="index.html">Inicio</a>
-      <a href="Cotizador.html">Cotizador Dólar</a>
-      <a href="cuit-cuil.html">CUIT/CUIL</a>
-      <a href="cbu-cvu.html">Validador CBU/CVU</a>
-      <a href="datos-personales.html">Datos Personales</a>
-      <a href="contacto.html">Contacto</a>
-    </nav>
+    <h1>Datos Personales - Simulación</h1>
   </header>
   <main>
-    <label for="dni">DNI:</label>
-    <input type="text" id="dni" placeholder="Ingrese el DNI">
-    <button onclick="consultarDatos()">Consultar</button>
-
-    <h2>Datos Personales</h2>
-    <pre id="datosPersonales"></pre>
-
-    <h2>Datos Fiscales</h2>
-    <pre id="datosFiscales"></pre>
+    <form id="formDNI">
+      <label for="dni">Ingrese DNI:</label>
+      <input type="text" id="dni" maxlength="8" placeholder="Ejemplo: 12345678" required>
+      <button type="submit">Consultar</button>
+    </form>
+    <div id="resultado"></div>
   </main>
 
-  <script src="datos-personales.js"></script>
+  <script>
+    // Datos simulados para prueba
+    const datosSimulados = {
+      "12345678": { nombre: "Juan Pérez", nacimiento: "01/01/1990", genero: "Masculino", cuil: "20-12345678-3", localidad: "Buenos Aires", entidad: "Empresa ABC" },
+      "87654321": { nombre: "María Gómez", nacimiento: "15/05/1985", genero: "Femenino", cuil: "27-87654321-1", localidad: "Córdoba", entidad: "Banco XYZ" },
+      "11223344": { nombre: "Carlos López", nacimiento: "20/12/1975", genero: "Masculino", cuil: "20-11223344-5", localidad: "Rosario", entidad: "Municipalidad" }
+    };
+
+    document.getElementById("formDNI").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const dni = document.getElementById("dni").value.trim();
+      const resultado = document.getElementById("resultado");
+
+      if (datosSimulados[dni]) {
+        const persona = datosSimulados[dni];
+        resultado.innerHTML = `
+          <p><strong>Nombre:</strong> ${persona.nombre}</p>
+          <p><strong>Fecha de Nacimiento:</strong> ${persona.nacimiento}</p>
+          <p><strong>Género:</strong> ${persona.genero}</p>
+          <p><strong>CUIL:</strong> ${persona.cuil}</p>
+          <p><strong>Localidad:</strong> ${persona.localidad}</p>
+          <p><strong>Entidad:</strong> ${persona.entidad}</p>
+        `;
+      } else {
+        resultado.innerHTML = `<p style="color:red;">No se encontraron datos para el DNI ingresado.</p>`;
+      }
+    });
+  </script>
 </body>
 </html>
-
