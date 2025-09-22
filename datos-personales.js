@@ -5,15 +5,19 @@ async function consultarDatos() {
   const dni = document.getElementById('dni').value;
   if (!dni) { alert('Por favor, ingrese un DNI.'); return; }
 
-  const datosPersonales = await obtenerDatosPersonales(dni);
-  document.getElementById('datosPersonales').textContent = JSON.stringify(datosPersonales, null, 2);
+  try {
+    const datosPersonales = await obtenerDatosPersonales(dni);
+    document.getElementById('datosPersonales').textContent = JSON.stringify(datosPersonales, null, 2);
 
-  const cuit = datosPersonales.cuit;
-  if (cuit) {
-    const datosFiscales = await obtenerDatosFiscales(cuit);
-    document.getElementById('datosFiscales').textContent = JSON.stringify(datosFiscales, null, 2);
-  } else {
-    alert('No se pudo obtener el CUIT asociado al DNI.');
+    const cuit = datosPersonales.cuit;
+    if (cuit) {
+      const datosFiscales = await obtenerDatosFiscales(cuit);
+      document.getElementById('datosFiscales').textContent = JSON.stringify(datosFiscales, null, 2);
+    } else {
+      document.getElementById('datosFiscales').textContent = 'No se pudo obtener el CUIT asociado al DNI.';
+    }
+  } catch (error) {
+    alert('Error al consultar los datos: ' + error.message);
   }
 }
 
@@ -30,3 +34,4 @@ async function obtenerDatosFiscales(cuit) {
   if (!response.ok) throw new Error('Error al consultar los datos fiscales.');
   return await response.json();
 }
+
