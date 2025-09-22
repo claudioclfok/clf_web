@@ -19,7 +19,7 @@ header {
 }
 main {
   background: white;
-  max-width: 600px;
+  max-width: 650px;
   margin: 20px auto;
   padding: 20px;
   border-radius: 10px;
@@ -47,7 +47,7 @@ button {
 button:hover {
   background: #004080;
 }
-#resultado {
+#resultado, #codigo-banco {
   font-weight: bold;
   margin-top: 10px;
 }
@@ -64,17 +64,16 @@ button:hover {
   <button type="submit">Validar</button>
 </form>
 
-<label for="lista-bancos">Listado de Bancos</label>
+<label for="lista-bancos">Listado de Bancos y Billeteras Virtuales</label>
 <select id="lista-bancos">
-  <option value="">Seleccione un banco</option>
+  <option value="">Seleccione una entidad</option>
 </select>
 <div id="codigo-banco"></div>
-
 <div id="resultado"></div>
 </main>
 
 <script>
-const bancos = {
+const entidades = {
   "011": "Banco de la Nación Argentina",
   "014": "Banco de la Provincia de Buenos Aires",
   "017": "Banco de la Provincia de Córdoba",
@@ -99,14 +98,21 @@ const bancos = {
   "224": "Banco de Corrientes S.A.",
   "259": "Banco Itaú Argentina S.A.",
   "285": "Banco de la Nación Argentina",
-  "292": "Banco Credicoop Cooperativo Ltdo."
+  "292": "Banco Credicoop Cooperativo Ltdo.",
+  // Billeteras Virtuales
+  "MP": "Mercado Pago",
+  "UALA": "Ualá",
+  "NX": "Naranja X",
+  "BNA+": "BNA+",
+  "BNP": "Billetera Provincia",
+  "BN": "Billetera Nación"
 };
 
-function obtenerBanco(cbu) {
+function obtenerEntidad(cbu) {
   const codigoBanco = cbu.slice(0, 3);
   const codigoSucursal = cbu.slice(3, 7);
-  const nombreBanco = bancos[codigoBanco] || "Banco desconocido";
-  return `Banco: ${nombreBanco}, Sucursal: ${codigoSucursal}`;
+  const nombre = entidades[codigoBanco] || "Banco desconocido";
+  return `Banco: ${nombre}, Sucursal: ${codigoSucursal}`;
 }
 
 function validarCBU(cbu) {
@@ -134,7 +140,7 @@ document.getElementById("formValidador").addEventListener("submit", function(e){
   const resultado = document.getElementById("resultado");
   if(validarCBU(codigo)){
     resultado.style.color = "green";
-    resultado.textContent = "✅ CBU/CVU válido - " + obtenerBanco(codigo);
+    resultado.textContent = "✅ CBU/CVU válido - " + obtenerEntidad(codigo);
   } else {
     resultado.style.color = "red";
     resultado.textContent = "❌ CBU/CVU no válido";
@@ -142,16 +148,16 @@ document.getElementById("formValidador").addEventListener("submit", function(e){
 });
 
 const lista = document.getElementById("lista-bancos");
-for(const codigo in bancos){
+for(const codigo in entidades){
   const option = document.createElement("option");
   option.value = codigo;
-  option.textContent = bancos[codigo];
+  option.textContent = entidades[codigo];
   lista.appendChild(option);
 }
 
 lista.addEventListener("change", function(){
   const codigo = this.value;
-  const nombre = bancos[codigo];
+  const nombre = entidades[codigo];
   const div = document.getElementById("codigo-banco");
   if(codigo){
     div.textContent = `Código: ${codigo} - ${nombre}`;
