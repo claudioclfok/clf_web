@@ -1,40 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Validador CBU / CVU</title>
+  <title>Validador CBU/CVU</title>
   <style>
+    :root {
+      --color-primary: #005baa;
+      --color-text-dark: #2c3e50;
+      --color-text-light: #444f5a;
+      --color-background-light: #f9f9f9;
+      --color-card-background: #fefefe;
+      --shadow-base: 0 0 15px rgba(0,0,0,0.1);
+      --shadow-hover: 0 12px 32px rgba(0,0,0,0.15);
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: #f9f9f9;
       margin: 0;
-      padding: 30px;
+      background: var(--color-background-light);
+      padding: 40px 20px;
       text-align: center;
-      color: #2c3e50;
+      color: var(--color-text-dark);
     }
+
     header {
-      background: #005baa;
+      background: var(--color-primary);
       color: white;
       padding: 20px;
       margin-bottom: 30px;
     }
+
     header h1 {
       margin: 0;
     }
+
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
     main {
       background: white;
       max-width: 500px;
       margin: auto;
       padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow-base);
     }
+
     label {
       display: block;
       margin-bottom: 10px;
       font-weight: bold;
     }
+
     input {
       width: 100%;
       padding: 10px;
@@ -43,8 +70,9 @@
       border: 1px solid #ccc;
       border-radius: 6px;
     }
+
     button {
-      background: #005baa;
+      background: var(--color-primary);
       color: white;
       border: none;
       padding: 12px 20px;
@@ -52,30 +80,55 @@
       cursor: pointer;
       border-radius: 6px;
     }
+
     button:hover {
       background: #004080;
     }
+
     #resultado {
       margin-top: 20px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Validador de CBU / CVU</h1>
+    <h1>Validador CBU/CVU</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="Cotizador.html">Cotizador Dólar</a>
+      <a href="cuit-cuil.html">CUIT/CUIL</a>
+      <a href="validador.html">Validador CBU/CVU</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
   </header>
+
   <main>
     <form id="formValidador">
       <label for="codigo">Ingrese su CBU o CVU (22 dígitos):</label>
-      <input type="text" id="codigo" maxlength="22" placeholder="Ejemplo: 2850590940090418135201" required>
+      <input type="text" id="codigo" maxlength="22" placeholder="Ej: 2850590940090418135201" required>
       <button type="submit">Validar</button>
     </form>
     <div id="resultado"></div>
   </main>
 
   <script>
+    // Lista de códigos de bancos principales (Argentina) según CBU
+    const bancos = {
+      "011": "Banco de la Nación Argentina",
+      "014": "Banco de la Ciudad de Buenos Aires",
+      "017": "BBVA Argentina",
+      "029": "Banco Hipotecario",
+      "027": "Banco Galicia",
+      "072": "Banco Santander Río",
+      "065": "Banco Provincia de Buenos Aires",
+      "011": "Banco Nación",
+      "024": "Banco ICBC",
+      "044": "Banco Patagonia"
+      // Podés ampliar la lista según la tabla oficial del BCRA
+    };
+
     function validarCodigoCBU(codigo) {
       if (!/^[0-9]{22}$/.test(codigo)) return false;
 
@@ -95,6 +148,13 @@
              validarBloque(bloque2, [3, 9, 7, 1, 3, 9, 7, 1, 3, 9, 7, 1, 3]);
     }
 
+    function obtenerBanco(cbu) {
+      const codigoBanco = cbu.slice(0, 3);
+      const codigoSucursal = cbu.slice(3, 7);
+      const nombreBanco = bancos[codigoBanco] || "Banco desconocido";
+      return `Banco: ${nombreBanco}, Sucursal: ${codigoSucursal}`;
+    }
+
     document.getElementById("formValidador").addEventListener("submit", function(e) {
       e.preventDefault();
       const codigo = document.getElementById("codigo").value.trim();
@@ -102,10 +162,10 @@
 
       if (validarCodigoCBU(codigo)) {
         resultado.style.color = "green";
-        resultado.textContent = "✅ El CBU/CVU es válido";
+        resultado.innerHTML = `✅ CBU/CVU válido<br>${obtenerBanco(codigo)}`;
       } else {
         resultado.style.color = "red";
-        resultado.textContent = "❌ El CBU/CVU no es válido";
+        resultado.textContent = "❌ CBU/CVU no válido";
       }
     });
   </script>
