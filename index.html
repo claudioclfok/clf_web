@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cotizaciones - Noticias</title>
 <style>
 :root {
@@ -18,28 +18,19 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: var(--color-background-light);
-    padding: 40px 20px;
-    text-align: center;
     color: var(--color-text-dark);
+    padding: 40px 20px;
 }
 header {
     background-color: var(--color-primary);
     color: white;
     padding: 20px;
-    margin-bottom: 20px;
     position: relative;
+    text-align: center;
 }
 header h1 {
     margin: 0;
     font-size: 2.5rem;
-}
-#fecha-hora {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
 }
 nav a {
     color: white;
@@ -63,7 +54,10 @@ nav a:hover { text-decoration: underline; }
     margin-bottom: 10px;
     color: var(--color-primary);
 }
-.tradingview-widget-container { margin: 0 auto; max-width: 880px; }
+.tradingview-widget-container {
+    margin: 0 auto;
+    max-width: 880px;
+}
 main {
     max-width: 900px;
     margin: 0 auto;
@@ -73,9 +67,15 @@ main {
     box-shadow: var(--shadow-base);
     text-align: center;
 }
-#cotizaciones-dolar { font-size: 20px; margin-bottom: 30px; }
+#cotizaciones-dolar {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
 #cotizaciones-dolar p { margin: 6px 0; }
-#noticias { text-align: left; margin-top: 40px; }
+#noticias {
+    text-align: left;
+    margin-top: 40px;
+}
 #noticias h2 {
     color: var(--color-primary);
     font-size: 1.8rem;
@@ -142,149 +142,112 @@ main {
 </style>
 </head>
 <body>
+
 <header>
-<div id="fecha-hora"></div>
-<h1>Validador CBU/CVU</h1>
-<nav aria-label="Navegación principal">
-    <a href="index.html">Inicio</a>
-    <a href="Cotizador.html">Cotizador Dólar</a>
-    <a href="cuit-cuil.html">CUIT/CUIL</a>
-    <a href="validador.html">Validador CBU/CVU</a>
-    <a href="contacto.html">Contacto</a>
-</nav>
+    <h1>Cotizaciones - Noticias</h1>
+    <nav aria-label="Navegación principal">
+        <a href="index.html">Inicio</a>
+        <a href="Cotizador.html">Cotizador Dólar</a>
+        <a href="cuit-cuil.html">CUIT/CUIL</a>
+        <a href="cbu-cvu.html">CBU/CVU</a>
+        <a href="contacto.html">Contacto</a>
+    </nav>
 </header>
+
 <section id="acciones-barra-superior">
-<h3>Cotizaciones de Acciones</h3>
-<div class="tradingview-widget-container">
-<div id="tradingview-ticker"></div>
-<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-{
-"symbols":[
-{"proName":"BCBA:GGAL","title":"GGAL"},
-{"proName":"BCBA:YPFD","title":"YPFD"},
-{"proName":"BCBA:PAMP","title":"PAMP"},
-{"proName":"BCBA:COME","title":"COME"},
-{"proName":"BCBA:CEPU","title":"CEPU"},
-{"proName":"BCBA:BMA","title":"BMA"},
-{"proName":"BCBA:TECO2","title":"TECO2"}
-],
-"colorTheme":"light",
-"isTransparent":false,
-"displayMode":"adaptive",
-"locale":"es"
-}
-</script>
-</div>
+    <h3>Cotizaciones de Acciones</h3>
+    <div class="tradingview-widget-container">
+        <div id="tradingview-ticker"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        {
+            "symbols": [
+                {"proName": "BCBA:GGAL","title":"GGAL"},
+                {"proName": "BCBA:YPFD","title":"YPFD"},
+                {"proName": "BCBA:PAMP","title":"PAMP"},
+                {"proName": "BCBA:COME","title":"COME"},
+                {"proName": "BCBA:CEPU","title":"CEPU"},
+                {"proName": "BCBA:BMA","title":"BMA"},
+                {"proName": "BCBA:TECO2","title":"TECO2"}
+            ],
+            "colorTheme":"light",
+            "isTransparent":false,
+            "displayMode":"adaptive",
+            "locale":"es"
+        }
+        </script>
+    </div>
 </section>
+
 <main>
-<section id="cotizaciones-dolar">
-<h3>Cotizaciones del Dólar</h3>
-<div id="dolar-cotizaciones">
-<p>Cargando cotizaciones...</p>
-</div>
-</section>
-<section id="noticias">
-<h2>Noticias Económicas - Varias Fuentes</h2>
-<ul id="noticias-lista">
-<li>Cargando noticias de varias fuentes...</li>
-</ul>
-</section>
+    <section id="cotizaciones-dolar">
+        <h3>Cotizaciones del Dólar</h3>
+        <div id="dolar-cotizaciones">
+            <p>Cargando cotizaciones...</p>
+        </div>
+    </section>
+
+    <section id="noticias">
+        <h2>Noticias Económicas - Varias Fuentes</h2>
+        <ul id="noticias-lista">
+            <li>Cargando noticias de varias fuentes...</li>
+        </ul>
+    </section>
 </main>
+
 <script>
 function actualizarFechaHora() {
     const ahora = new Date();
-    const opcionesFecha = { year:'numeric', month:'long', day:'numeric' };
-    const opcionesHora = { hour:'2-digit', minute:'2-digit', second:'2-digit' };
+    const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+    const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
     const fechaFormateada = ahora.toLocaleDateString('es-AR', opcionesFecha);
     const horaFormateada = ahora.toLocaleTimeString('es-AR', opcionesHora);
-    document.getElementById('fecha-hora').textContent = `${fechaFormateada} - ${horaFormateada}`;
+    document.getElementById('fecha-hora')?.textContent = `${fechaFormateada} - ${horaFormateada}`;
 }
-setInterval(actualizarFechaHora,1000);
+setInterval(actualizarFechaHora, 1000);
 actualizarFechaHora();
 
 async function cargarCotizaciones() {
     const target = document.getElementById('dolar-cotizaciones');
-    const urls = { blue:'https://dolarapi.com/v1/dolares/blue', oficial:'https://dolarapi.com/v1/dolares/oficial', mep:'https://dolarapi.com/v1/dolares/bolsa' };
+    const urls = {
+        blue: 'https://dolarapi.com/v1/dolares/blue',
+        oficial: 'https://dolarapi.com/v1/dolares/oficial',
+        mep: 'https://dolarapi.com/v1/dolares/bolsa'
+    };
     try {
         const responses = await Promise.allSettled(Object.values(urls).map(url => fetch(url)));
-        let html='';
-        const labels = { blue:'Blue', oficial:'Oficial', mep:'MEP' };
-        for (const [index,result] of responses.entries()) {
+        let html = '';
+        const labels = { blue: 'Blue', oficial: 'Oficial', mep: 'MEP' };
+        for (const [index, result] of responses.entries()) {
             const type = Object.keys(urls)[index];
             const label = labels[type];
-            if(result.status==='fulfilled' && result.value.ok){
+            if (result.status === 'fulfilled' && result.value.ok) {
                 const data = await result.value.json();
-                if(typeof data.compra==='number' && typeof data.venta==='number'){
+                if (typeof data.compra === 'number' && typeof data.venta === 'number') {
                     html += `<p><strong>Dólar ${label}:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
-                }else{
+                } else {
                     html += `<p style="color:crimson;">Error: Datos inválidos para Dólar ${label}</p>`;
+                    console.warn(`Datos inválidos recibidos para Dólar ${label}:`, data);
                 }
-            }else{
+            } else {
                 html += `<p style="color:crimson;">Error al cargar Dólar ${label}</p>`;
+                console.error(`Error en la petición para Dólar ${label}:`, result.reason || 'Fallo de red o servidor');
             }
         }
         html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
         target.innerHTML = html;
-    } catch(err) {
+    } catch (err) {
+        console.error('Error general al cargar cotizaciones:', err);
         target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`;
     }
 }
 cargarCotizaciones();
-setInterval(cargarCotizaciones,60000);
+setInterval(cargarCotizaciones, 60000);
 
 async function cargarNoticias() {
     const noticiasLista = document.getElementById('noticias-lista');
     noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>';
+    const proxy = 'https://api.allorigins.win/get?url=';
     const rssFeeds = [
         { name: 'Ámbito Financiero', url: 'https://www.ambito.com/rss/economia.xml', limit: 5 },
         { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 3 },
-        { name: 'Clarín (Economía)', url: 'https://www.clarin.com/rss/economia/', limit: 2 }
-    ];
-    const proxy = 'https://api.allorigins.win/get?url=';
-    try {
-        let allNewsItems = [];
-        for(const feed of rssFeeds){
-            const response = await fetch(proxy + encodeURIComponent(feed.url));
-            if(!response.ok) throw new Error(`Error HTTP ${response.status} para ${feed.name}`);
-            const data = await response.json();
-            const parser = new DOMParser();
-            const xml = parser.parseFromString(data.contents,"text/xml");
-            const items = xml.querySelectorAll('item');
-            const feedNews=[];
-            items.forEach((item,i)=>{
-                if(i>=feed.limit) return;
-                const title = item.querySelector('title')?.textContent || 'Sin título';
-                const link = item.querySelector('link')?.textContent || '#';
-                const pubDate = item.querySelector('pubDate')?.textContent || '';
-                const descriptionHtml = item.querySelector('description')?.textContent || '';
-                const tempDiv=document.createElement('div');
-                tempDiv.innerHTML=descriptionHtml;
-                const imgElement=tempDiv.querySelector('img');
-                const imgSrc = imgElement ? imgElement.src : '';
-                if(imgElement) imgElement.remove();
-                const cleanDescription = tempDiv.textContent || '';
-                const shortText = cleanDescription.substring(0,140)+(cleanDescription.length>140?'...':'');
-                const fecha = pubDate?new Date(pubDate).toLocaleDateString('es-AR',{year:'numeric',month:'short',day:'numeric'}):'Fecha desconocida';
-                feedNews.push({ title, link, shortText, fecha, imgSrc, source: feed.name });
-            });
-            allNewsItems = allNewsItems.concat(feedNews);
-        }
-        allNewsItems.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
-        if(allNewsItems.length===0){
-            noticiasLista.innerHTML='<li>No se pudieron cargar noticias de ninguna fuente.</li>';
-        }else{
-            let html='';
-            allNewsItems.forEach(news=>{
-                html+=`<li>${news.imgSrc?`<img src="${news.imgSrc}" alt="${news.title}">`:''}<a href="${news.link}" target="_blank" rel="noopener noreferrer">${news.title}</a><p>${news.shortText}</p><time>${news.fecha} - <span style="font-weight:bold;">${news.source}</span></time></li>`;
-            });
-            noticiasLista.innerHTML=html;
-        }
-    } catch(e){
-        noticiasLista.innerHTML='<li style="color:crimson;">Error al cargar las noticias. Intente nuevamente más tarde.</li>';
-    }
-}
-cargarNoticias();
-setInterval(cargarNoticias,5*60*1000);
-</script>
-</body>
-</html>
+        { name: 'Clarín (Economía)', url: 'https://www.clarin.com/rss/economia/', limit
