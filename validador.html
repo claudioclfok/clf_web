@@ -39,7 +39,9 @@ header h1 {
 }
 header button {
     position: absolute;
-    right: 20px;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
     background-color: white;
     color: var(--color-primary);
     border: none;
@@ -50,6 +52,7 @@ header button {
     transition: background 0.3s ease;
 }
 header button:hover { background-color: #e0e0e0; }
+
 .container {
     max-width: 500px;
     margin: 30px auto;
@@ -104,8 +107,8 @@ button#validarBtn:hover { background-color: var(--btn-hover-bg); }
 <body>
 
 <header>
-    <h1>Validador CBU/CVU</h1>
     <button onclick="window.location.href='index.html'">Inicio</button>
+    <h1>Validador CBU/CVU</h1>
 </header>
 
 <div class="container">
