@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Validador CBU / CVU</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    h2 { color: #333; }
+    input {
+      padding: 10px;
+      width: 300px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #007BFF;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #resultado {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Validador de CBU / CVU</h2>
+  <input type="text" id="clave" placeholder="Ingrese CBU o CVU (22 dígitos)">
+  <button onclick="validar()">Validar</button>
+  <div id="resultado"></div>
+
+  <script>
+    function calcularDV(bloque, pesos) {
+      let suma = 0;
+      for (let i = 0; i < bloque.length; i++) {
+        suma += parseInt(bloque[i]) * pesos[i];
+      }
+      let resto = suma % 10;
+      return (10 - resto) % 10;
+    }
+
+    function validarCBU(cbu) {
+      if (!/^\d{22}$/.test(cbu)) return false;
+
+      // Primer bloque: banco(3) + sucursal(4) + dv(1)
+      let bancoSucursal = cbu.substring(0, 7);
+      let dv1 = parseInt(cbu[7]);
+      let pesos1 = [7, 1, 3, 9, 7, 1, 3];
+      if (calcularDV(bancoSucursal, pesos1) !== dv1) return false;
+
+      // Segundo bloque: cuenta(13) + dv(1)
+      let cuenta = cbu.substring(8, 21);
+      let dv2 = parseInt(cbu[21]);
+      let pesos2 = [3, 9, 7, 1, 3, 9, 7, 1, 3, 9, 7, 1, 3];
+      if (calcularDV(cuenta, pesos2) !== dv2) return false;
+
+      return true;
+    }
+
+    function validar() {
+      const clave = document.getElementById("clave").value.trim();
+      const salida = document.getElementById("resultado");
+
+      if (clave.length !== 22) {
+        salida.textContent = "La clave debe tener 22 dígitos.";
+        salida.style.color = "red";
+        return;
+      }
+
+      if (validarCBU(clave)) {
+        salida.textContent = "✅ Clave válida (CBU o CVU).";
+        salida.style.color = "green";
+      } else {
+        salida.textContent = "❌ Clave inválida.";
+        salida.style.color = "red";
+      }
+    }
+  </script>
+</body>
+</html>
