@@ -50,11 +50,11 @@
 
   <script src="validador.js"></script>
   <script>
-    // Mostrar listado de bancos
+    // Mostrar listado de bancos como "Banco - Código"
     const bancosUl = document.getElementById('bancos-ul');
     for (const [codigo, nombre] of Object.entries(bancos)) {
       const li = document.createElement('li');
-      li.textContent = `Código: ${codigo} - ${nombre}`;
+      li.textContent = `${nombre} - Código: ${codigo}`;
       bancosUl.appendChild(li);
     }
 
