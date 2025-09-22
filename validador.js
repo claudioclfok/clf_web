@@ -50,3 +50,69 @@ const bancos = {
  "BN": "Billetera Nación",
  "PO": "Billetera Personal Pay"
 };
+
+function obtenerEntidad(codigo) {
+    if (codigo.length === 22) {
+        const codigoBanco = codigo.slice(0, 5);
+        return bancos[codigoBanco.padStart(5, '0')] || "Banco desconocido";
+    }
+    return bancos[codigo] || "Entidad no reconocida";
+}
+
+function validarCBU(cbu) {
+    if (!/^[0-9]{22}$/.test(cbu)) return false;
+
+    function validarBloque(bloque, pesos) {
+        let suma = 0;
+        for (let i = 0; i < pesos.length; i++) {
+            suma += parseInt(bloque[i], 10) * pesos[i];
+        }
+        const verificador = (10 - (suma % 10)) % 10;
+        return verificador === parseInt(bloque[bloque.length - 1], 10);
+    }
+
+    const bloque1 = cbu.slice(0, 8);
+    const bloque2 = cbu.slice(8, 22);
+
+    return validarBloque(bloque1, [7, 1, 3, 9, 7, 1, 3]) &&
+           validarBloque(bloque2, [3, 9, 7, 1, 3, 9, 7, 1, 3, 9, 7, 1, 3]);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const formValidador = document.getElementById("formValidador");
+    const inputCodigo = document.getElementById("codigo");
+    const resultadoDiv = document.getElementById("resultado");
+    const listaBancos = document.getElementById("lista-bancos");
+    const codigoBancoDiv = document.getElementById("codigo-banco");
+
+    for (const codigo in bancos) {
+        const option = document.createElement("option");
+        option.value = codigo;
+        option.textContent = bancos[codigo];
+        listaBancos.appendChild(option);
+    }
+
+    formValidador.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const codigo = inputCodigo.value.trim();
+        const entidad = obtenerEntidad(codigo);
+        
+        if (validarCBU(codigo)) {
+            resultadoDiv.style.color = "green";
+            resultadoDiv.textContent = `✅ CBU válido - Entidad: ${entidad}`;
+        } else {
+            resultadoDiv.style.color = "red";
+            resultadoDiv.textContent = `❌ CBU/CVU no válido`;
+        }
+    });
+
+    listaBancos.addEventListener("change", () => {
+        const codigoSeleccionado = listaBancos.value;
+        const nombreEntidad = bancos[codigoSeleccionado];
+        if (codigoSeleccionado) {
+            codigoBancoDiv.textContent = `Código: ${codigoSeleccionado} - ${nombreEntidad}`;
+        } else {
+            codigoBancoDiv.textContent = "";
+        }
+    });
+});
