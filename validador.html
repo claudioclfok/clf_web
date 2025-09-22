@@ -6,50 +6,50 @@
 <title>Validador CBU / CVU</title>
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: #f9f9f9;
-  padding: 20px;
-  color: #2c3e50;
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    padding: 20px;
+    color: #2c3e50;
 }
 header {
-  background: #005baa;
-  color: white;
-  padding: 15px;
-  text-align: center;
+    background: #005baa;
+    color: white;
+    padding: 15px;
+    text-align: center;
 }
 main {
-  background: white;
-  max-width: 650px;
-  margin: 20px auto;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    background: white;
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 label, select, input, button {
-  display: block;
-  width: 100%;
-  margin-bottom: 15px;
-  font-size: 1rem;
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    font-size: 1rem;
 }
 select, input {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 button {
-  background: #005baa;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 6px;
-  cursor: pointer;
+    background: #005baa;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 button:hover {
-  background: #004080;
+    background: #004080;
 }
 #resultado, #codigo-banco {
-  font-weight: bold;
-  margin-top: 10px;
+    font-weight: bold;
+    margin-top: 10px;
 }
 </style>
 </head>
@@ -59,112 +59,19 @@ button:hover {
 </header>
 <main>
 <form id="formValidador">
-  <label for="codigo">Ingrese su CBU o CVU (22 dígitos):</label>
-  <input type="text" id="codigo" maxlength="22" placeholder="Ejemplo: 2850590940090418135201" required>
-  <button type="submit">Validar</button>
+    <label for="codigo">Ingrese su CBU o CVU (22 dígitos):</label>
+    <input type="text" id="codigo" maxlength="22" placeholder="Ejemplo: 2850590940090418135201" required>
+    <button type="submit">Validar</button>
 </form>
 
 <label for="lista-bancos">Listado de Bancos y Billeteras Virtuales</label>
 <select id="lista-bancos">
-  <option value="">Seleccione una entidad</option>
+    <option value="">Seleccione una entidad</option>
 </select>
 <div id="codigo-banco"></div>
 <div id="resultado"></div>
 </main>
 
-<script>
-const entidades = {
-  "011": "Banco de la Nación Argentina",
-  "014": "Banco de la Provincia de Buenos Aires",
-  "017": "Banco de la Provincia de Córdoba",
-  "019": "Banco de la Provincia de Santa Fe",
-  "027": "Banco Supervielle S.A.",
-  "029": "Banco de la Ciudad de Buenos Aires",
-  "034": "Banco Patagonia S.A.",
-  "044": "Banco Hipotecario S.A.",
-  "047": "Banco de Galicia y Buenos Aires S.A.",
-  "072": "Banco Santander Río S.A.",
-  "081": "Banco de la Provincia de Tierra del Fuego",
-  "100": "Banco Macro S.A.",
-  "102": "Banco de la Provincia de Tucumán",
-  "143": "Banco del Chubut S.A.",
-  "147": "Banco B.I. Creditanstalt S.A.",
-  "150": "HSBC Bank Argentina S.A.",
-  "178": "Banco de la Provincia de Mendoza",
-  "191": "Banco de la Provincia de Jujuy",
-  "206": "Banco Comafi S.A.",
-  "208": "Banco de Servicios y Transacciones S.A.",
-  "220": "Banco Nación Argentina (Sucursal específica)",
-  "224": "Banco de Corrientes S.A.",
-  "259": "Banco Itaú Argentina S.A.",
-  "285": "Banco de la Nación Argentina",
-  "292": "Banco Credicoop Cooperativo Ltdo.",
-  // Billeteras Virtuales
-  "MP": "Mercado Pago",
-  "UALA": "Ualá",
-  "NX": "Naranja X",
-  "BNA+": "BNA+",
-  "BNP": "Billetera Provincia",
-  "BN": "Billetera Nación"
-};
-
-function obtenerEntidad(cbu) {
-  const codigoBanco = cbu.slice(0, 3);
-  const codigoSucursal = cbu.slice(3, 7);
-  const nombre = entidades[codigoBanco] || "Banco desconocido";
-  return `Banco: ${nombre}, Sucursal: ${codigoSucursal}`;
-}
-
-function validarCBU(cbu) {
-  if (!/^[0-9]{22}$/.test(cbu)) return false;
-
-  function validarBloque(bloque, pesos) {
-    let suma = 0;
-    for (let i = 0; i < pesos.length; i++) {
-      suma += parseInt(bloque[i], 10) * pesos[i];
-    }
-    const verificador = (10 - (suma % 10)) % 10;
-    return verificador === parseInt(bloque[bloque.length - 1], 10);
-  }
-
-  const bloque1 = cbu.slice(0, 8);
-  const bloque2 = cbu.slice(8, 22);
-
-  return validarBloque(bloque1, [7,1,3,9,7,1,3]) &&
-         validarBloque(bloque2, [3,9,7,1,3,9,7,1,3,9,7,1,3]);
-}
-
-document.getElementById("formValidador").addEventListener("submit", function(e){
-  e.preventDefault();
-  const codigo = document.getElementById("codigo").value.trim();
-  const resultado = document.getElementById("resultado");
-  if(validarCBU(codigo)){
-    resultado.style.color = "green";
-    resultado.textContent = "✅ CBU/CVU válido - " + obtenerEntidad(codigo);
-  } else {
-    resultado.style.color = "red";
-    resultado.textContent = "❌ CBU/CVU no válido";
-  }
-});
-
-const lista = document.getElementById("lista-bancos");
-for(const codigo in entidades){
-  const option = document.createElement("option");
-  option.value = codigo;
-  option.textContent = entidades[codigo];
-  lista.appendChild(option);
-}
-
-lista.addEventListener("change", function(){
-  const codigo = this.value;
-  const nombre = entidades[codigo];
-  const div = document.getElementById("codigo-banco");
-  if(codigo){
-    div.textContent = `Código: ${codigo} - ${nombre}`;
-  } else {
-    div.textContent = "";
-  }
-});
-</script>
+<script src="validador.js"></script>
 </body>
 </html>
