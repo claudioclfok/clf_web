@@ -39,9 +39,7 @@ header h1 {
 }
 header button {
     position: absolute;
-    top: 50%;
     left: 20px;
-    transform: translateY(-50%);
     background-color: white;
     color: var(--color-primary);
     border: none;
@@ -52,7 +50,6 @@ header button {
     transition: background 0.3s ease;
 }
 header button:hover { background-color: #e0e0e0; }
-
 .container {
     max-width: 500px;
     margin: 30px auto;
@@ -191,12 +188,12 @@ listaBancos.addEventListener("change", () => {
     document.getElementById('codigo-banco').textContent = codigo ? `Código: ${codigo} - ${bancos[codigo]}` : '';
 });
 
-function obtenerEntidad(codigo) {
-    if (codigo.length === 22) {
-        const codigoBanco = codigo.slice(0, 5);
+function obtenerEntidad(cbu) {
+    if(cbu.length === 22 || cbu.length === 24){
+        const codigoBanco = cbu.slice(0,5);
         return bancos[codigoBanco.padStart(5,'0')] || "Banco desconocido";
     }
-    return bancos[codigo] || "Entidad no reconocida";
+    return "Entidad no reconocida";
 }
 
 function validarCBU() {
@@ -216,4 +213,5 @@ document.getElementById('validarBtn').addEventListener('click', validarCBU);
 </script>
 </body>
 </html>
+
 
