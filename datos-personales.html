@@ -1,1 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datos Personales</title>
+  <style>
+    :root {
+      --color-primary: #005baa;
+      --color-text-dark: #2c3e50;
+      --color-background-light: #f9f9f9;
+      --color-card-background: #fff;
+      --shadow-base: 0 0 15px rgba(0,0,0,0.1);
+      --shadow-hover: 0 12px 32px rgba(0,0,0,0.15);
+    }
+    body { font-family: Arial, sans-serif; margin: 0; background: var(--color-background-light); color: var(--color-text-dark); }
+    header { background: var(--color-primary); color: white; padding: 20px; text-align: center; }
+    header h1 { margin: 0; font-size: 1.8rem; }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+    nav a { color: white; margin: 5px 10px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: 600px; margin: 20px auto; background: var(--color-card-background); padding: 20px; border-radius: 10px; box-shadow: var(--shadow-base); }
+    label { display: block; margin-bottom: 8px; font-weight: bold; }
+    input, button { width: 100%; padding: 10px; margin-bottom: 15px; font-size: 1rem; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+    button { background: var(--color-primary); color: white; border: none; cursor: pointer; transition: 0.2s; }
+    button:hover { background: #004080; }
+    pre { background: #f1f1f1; padding: 10px; border-radius: 6px; overflow-x: auto; }
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.4rem; }
+      nav a { margin: 5px 6px; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Datos Personales</h1>
+    <nav aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      <a href="Cotizador.html">Cotizador Dólar</a>
+      <a href="cuit-cuil.html">CUIT/CUIL</a>
+      <a href="cbu-cvu.html">Validador CBU/CVU</a>
+      <a href="datos-personales.html">Datos Personales</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+  <main>
+    <label for="dni">DNI:</label>
+    <input type="text" id="dni" placeholder="Ingrese el DNI">
+    <button onclick="consultarDatos()">Consultar</button>
+
+    <h2>Datos Personales</h2>
+    <pre id="datosPersonales"></pre>
+
+    <h2>Datos Fiscales</h2>
+    <pre id="datosFiscales"></pre>
+  </main>
+
+  <script src="datos-personales.js"></script>
+</body>
+</html>
 
