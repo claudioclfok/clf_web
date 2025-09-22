@@ -1,77 +1,169 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validador CBU / CVU</title>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f9f9f9;
-    padding: 20px;
-    color: #2c3e50;
-}
-header {
-    background: #005baa;
-    color: white;
-    padding: 15px;
-    text-align: center;
-}
-main {
-    background: white;
-    max-width: 650px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-label, select, input, button {
-    display: block;
-    width: 100%;
-    margin-bottom: 15px;
-    font-size: 1rem;
-}
-select, input {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-button {
-    background: #005baa;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-button:hover {
-    background: #004080;
-}
-#resultado, #codigo-banco {
-    font-weight: bold;
-    margin-top: 10px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validador CBU / CVU</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 30px;
+      text-align: center;
+      color: #2c3e50;
+    }
+    header {
+      background: #005baa;
+      color: white;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    header h1 { margin: 0; }
+    main {
+      background: white;
+      max-width: 500px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    label { display: block; margin-bottom: 10px; font-weight: bold; }
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background: #005baa;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    button:hover { background: #004080; }
+    #resultado {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    #bancos-container {
+      margin-top: 40px;
+      text-align: left;
+    }
+    #bancos-container h2 { margin-bottom: 10px; }
+    #bancos-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 6px;
+      background: #fff;
+    }
+    #bancos-list p { margin: 6px 0; }
+  </style>
 </head>
 <body>
-<header>
-<h1>Validador de CBU / CVU</h1>
-</header>
-<main>
-<form id="formValidador">
-    <label for="codigo">Ingrese su CBU o CVU (22 dígitos):</label>
-    <input type="text" id="codigo" maxlength="22" placeholder="Ejemplo: 2850590940090418135201" required>
-    <button type="submit">Validar</button>
-</form>
+  <header>
+    <h1>Validador de CBU / CVU</h1>
+  </header>
+  <main>
+    <form id="formValidador">
+      <label for="codigo">Ingrese su CBU o CVU (22 dígitos):</label>
+      <input type="text" id="codigo" maxlength="22" placeholder="Ejemplo: 2850590940090418135201" required>
+      <button type="submit">Validar</button>
+    </form>
+    <div id="resultado"></div>
 
-<label for="lista-bancos">Listado de Bancos y Billeteras Virtuales</label>
-<select id="lista-bancos">
-    <option value="">Seleccione una entidad</option>
-</select>
-<div id="codigo-banco"></div>
-<div id="resultado"></div>
-</main>
+    <div id="bancos-container">
+      <h2>Listado de Bancos y Billeteras Virtuales</h2>
+      <div id="bancos-list"></div>
+    </div>
+  </main>
 
-<script src="validador.js"></script>
+  <script>
+    const bancos = {
+      "011": "Banco de la Nación Argentina",
+      "014": "Banco de la Provincia de Buenos Aires",
+      "017": "Banco de la Provincia de Córdoba",
+      "019": "Banco de la Provincia de Santa Fe",
+      "027": "Banco Supervielle S.A.",
+      "029": "Banco de la Ciudad de Buenos Aires",
+      "034": "Banco Patagonia S.A.",
+      "044": "Banco Hipotecario S.A.",
+      "047": "Banco de Galicia y Buenos Aires S.A.",
+      "072": "Banco Santander Río S.A.",
+      "081": "Banco de la Provincia de Tierra del Fuego",
+      "100": "Banco Macro S.A.",
+      "102": "Banco de la Provincia de Tucumán",
+      "143": "Banco del Chubut S.A.",
+      "147": "Banco B.I. Creditanstalt S.A.",
+      "150": "HSBC Bank Argentina S.A.",
+      "178": "Banco de la Provincia de Mendoza",
+      "191": "Banco de la Provincia de Jujuy",
+      "206": "Banco Comafi S.A.",
+      "208": "Banco de Servicios y Transacciones S.A.",
+      "220": "Banco Nación Argentina (Sucursal específica)",
+      "224": "Banco de Corrientes S.A.",
+      "259": "Banco Itaú Argentina S.A.",
+      "285": "Banco de la Nación Argentina",
+      "292": "Banco Credicoop Cooperativo Ltdo.",
+      "300": "Mercado Pago",
+      "301": "Ualá",
+      "302": "Brubank",
+      "303": "Naranja X",
+      "304": "Reba",
+      "305": "Lemon Cash"
+    };
+
+    function obtenerBanco(cbu) {
+      const codigoBanco = cbu.slice(0, 3);
+      const codigoSucursal = cbu.slice(3, 7);
+      const nombreBanco = bancos[codigoBanco] || "Banco desconocido";
+      return `Banco: ${nombreBanco}, Código: ${codigoBanco}, Sucursal: ${codigoSucursal}`;
+    }
+
+    function validarCBU(cbu) {
+      if (!/^[0-9]{22}$/.test(cbu)) return false;
+      function validarBloque(bloque, pesos) {
+        let suma = 0;
+        for (let i = 0; i < pesos.length; i++) {
+          suma += parseInt(bloque[i], 10) * pesos[i];
+        }
+        const verificador = (10 - (suma % 10)) % 10;
+        return verificador === parseInt(bloque[bloque.length - 1], 10);
+      }
+      const bloque1 = cbu.slice(0, 8);
+      const bloque2 = cbu.slice(8, 22);
+      return validarBloque(bloque1, [7,1,3,9,7,1,3]) &&
+             validarBloque(bloque2, [3,9,7,1,3,9,7,1,3,9,7,1,3]);
+    }
+
+    document.getElementById("formValidador").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const codigo = document.getElementById("codigo").value.trim();
+      const resultado = document.getElementById("resultado");
+      if (validarCBU(codigo)) {
+        resultado.style.color = "green";
+        resultado.textContent = `✅ CBU válido - ${obtenerBanco(codigo)}`;
+      } else {
+        resultado.style.color = "red";
+        resultado.textContent = `❌ CBU no válido`;
+      }
+    });
+
+    // Mostrar listado completo de bancos y billeteras
+    const bancosListContainer = document.getElementById("bancos-list");
+    let html = '';
+    for (const [codigo, nombre] of Object.entries(bancos)) {
+      html += `<p>${codigo} - ${nombre}</p>`;
+    }
+    bancosListContainer.innerHTML = html;
+  </script>
 </body>
 </html>
