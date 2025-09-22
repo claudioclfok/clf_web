@@ -22,23 +22,42 @@ body {
     margin: 0;
     background: var(--color-background-light);
     color: var(--color-text-dark);
+}
+header {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 20px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 40px 20px;
+    align-items: center;
+    position: relative;
 }
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    text-align: center;
+}
+header button {
+    position: absolute;
+    right: 20px;
+    background-color: white;
+    color: var(--color-primary);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+header button:hover { background-color: #e0e0e0; }
 .container {
+    max-width: 500px;
+    margin: 30px auto;
     background: var(--color-card-background);
     border-radius: 12px;
     box-shadow: var(--shadow-base);
-    max-width: 500px;
-    width: 100%;
     padding: 30px 25px;
     text-align: center;
-}
-h1 {
-    color: var(--color-primary);
-    margin-bottom: 20px;
 }
 input[type="text"] {
     width: 100%;
@@ -49,7 +68,7 @@ input[type="text"] {
     border: 1px solid #ccc;
     box-sizing: border-box;
 }
-button {
+button#validarBtn {
     background-color: var(--btn-bg);
     color: var(--btn-color);
     border: none;
@@ -58,12 +77,12 @@ button {
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s ease;
+    margin: 5px 0;
 }
-button:hover { background-color: var(--btn-hover-bg); }
+button#validarBtn:hover { background-color: var(--btn-hover-bg); }
 #resultado {
     margin-top: 20px;
     font-size: 16px;
-    color: var(--color-text-dark);
 }
 #lista-bancos {
     margin-top: 30px;
@@ -76,48 +95,121 @@ button:hover { background-color: var(--btn-hover-bg); }
     border-radius: 6px;
     border: 1px solid #ccc;
 }
+#codigo-banco {
+    margin-top: 10px;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
-<div class="container">
+
+<header>
     <h1>Validador CBU/CVU</h1>
+    <button onclick="window.location.href='index.html'">Inicio</button>
+</header>
+
+<div class="container">
     <input type="text" id="cbuInput" placeholder="Ingrese CBU o CVU">
-    <button onclick="validarCBU()">Validar</button>
+    <button id="validarBtn">Validar</button>
     <div id="resultado"></div>
 
     <div id="lista-bancos">
         <label for="bancosSelect">Lista de bancos / billeteras:</label>
         <select id="bancosSelect">
             <option value="">Seleccione</option>
-            <option value="00011">Banco Nación</option>
-            <option value="011">Banco Provincia</option>
-            <option value="285">Banco Santander</option>
-            <option value="017">BBVA</option>
         </select>
+        <div id="codigo-banco"></div>
     </div>
 </div>
 
 <script>
+const bancos = {
+ "00007": "Banco de Galicia y Buenos Aires S.A.",
+ "00011": "Banco de la Nación Argentina",
+ "00014": "Banco de la Provincia de Buenos Aires",
+ "00015": "Industrial and Commercial Bank of China (ICBC)",
+ "00016": "Citibank N.A.",
+ "00017": "Banco BBVA Argentina S.A.",
+ "00027": "Banco Supervielle S.A.",
+ "00029": "Banco de la Ciudad de Buenos Aires",
+ "00034": "Banco Patagonia S.A.",
+ "00044": "Banco Hipotecario S.A.",
+ "00045": "Banco de San Juan S.A.",
+ "00065": "Banco Municipal de Rosario",
+ "00072": "Banco Santander Argentina S.A.",
+ "00083": "Banco del Chubut S.A.",
+ "00093": "Banco de la Provincia de Misiones",
+ "00094": "Banco de Corrientes S.A.",
+ "00097": "Banco de La Pampa",
+ "00100": "Banco de Córdoba",
+ "00101": "Nuevo Banco del Chaco S.A.",
+ "00102": "Banco de la Provincia de Tucumán",
+ "00143": "Brubank S.A.U.",
+ "00150": "HSBC Bank Argentina S.A.",
+ "00165": "Banco de la Provincia de Mendoza",
+ "00191": "Banco de la Provincia de Jujuy",
+ "00206": "Banco Comafi S.A.",
+ "00220": "Banco de Servicios y Transacciones S.A.",
+ "00259": "Banco Itaú Argentina S.A.",
+ "00268": "Banco Columbia S.A.",
+ "00285": "Banco Macro S.A.",
+ "00292": "Banco Credicoop Cooperativo Ltdo.",
+ "00300": "Banco de Inversión y Comercio Exterior (BICE)",
+ "00305": "Banco Mariva S.A.",
+ "00310": "Banco del Sol S.A.",
+ "00311": "Banco de Valores S.A.",
+ "00312": "Banco Finandino S.A.",
+ "00315": "Banco Piano S.A.",
+ "00319": "Banco CMF S.A.",
+ "00321": "Banco de Formosa S.A.",
+ "00322": "Banco Voii S.A.",
+ "00336": "Banco de Tierra del Fuego",
+ "00340": "Banco de Santiago del Estero S.A.",
+ "00341": "Banco Masventas S.A.",
+ "00389": "Banco Cetelem Argentina S.A.",
+ "MP": "Mercado Pago",
+ "UALA": "Ualá",
+ "NX": "Naranja X",
+ "BNA+": "BNA+",
+ "BNP": "Billetera Provincia",
+ "BN": "Billetera Nación",
+ "PO": "Billetera Personal Pay"
+};
+
+const listaBancos = document.getElementById('bancosSelect');
+for (const codigo in bancos) {
+    const option = document.createElement("option");
+    option.value = codigo;
+    option.textContent = bancos[codigo];
+    listaBancos.appendChild(option);
+}
+listaBancos.addEventListener("change", () => {
+    const codigo = listaBancos.value;
+    document.getElementById('codigo-banco').textContent = codigo ? `Código: ${codigo} - ${bancos[codigo]}` : '';
+});
+
+function obtenerEntidad(codigo) {
+    if (codigo.length === 22) {
+        const codigoBanco = codigo.slice(0, 5);
+        return bancos[codigoBanco.padStart(5,'0')] || "Banco desconocido";
+    }
+    return bancos[codigo] || "Entidad no reconocida";
+}
+
 function validarCBU() {
     const cbu = document.getElementById('cbuInput').value.trim();
-    const resultado = document.getElementById('resultado');
-    if(!cbu) {
-        resultado.textContent = "Por favor, ingrese un CBU o CVU.";
-        resultado.style.color = "crimson";
+    const resultadoDiv = document.getElementById('resultado');
+    if(!/^\d{22,24}$/.test(cbu)) {
+        resultadoDiv.textContent = "CBU/CVU inválido.";
+        resultadoDiv.style.color = "crimson";
         return;
     }
-    // Ejemplo de validación simple: solo longitud y numérica
-    if(/^\d{22}$/.test(cbu)) {
-        resultado.textContent = "CBU válido.";
-        resultado.style.color = "green";
-    } else if(/^\d{24}$/.test(cbu)) {
-        resultado.textContent = "CVU válido.";
-        resultado.style.color = "green";
-    } else {
-        resultado.textContent = "CBU/CVU inválido.";
-        resultado.style.color = "crimson";
-    }
+    const entidad = obtenerEntidad(cbu);
+    resultadoDiv.textContent = `✅ CBU/CVU válido - Banco: ${entidad}`;
+    resultadoDiv.style.color = "green";
 }
+
+document.getElementById('validarBtn').addEventListener('click', validarCBU);
 </script>
 </body>
 </html>
