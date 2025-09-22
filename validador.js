@@ -1,31 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Validador CBU/CVU</title>
-<style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    #resultado { margin-top: 15px; font-weight: bold; }
-    select, input { padding: 5px; font-size: 16px; width: 300px; margin-bottom: 10px; }
-</style>
-</head>
-<body>
-<h2>Validador CBU / CVU</h2>
-
-<form id="formValidador">
-    <input type="text" id="codigo" placeholder="Ingrese CBU o CVU" maxlength="22">
-    <button type="submit">Validar</button>
-</form>
-
-<div id="resultado"></div>
-
-<h3>Lista de bancos / billeteras</h3>
-<select id="lista-bancos">
-    <option value="">Seleccione</option>
-</select>
-<div id="codigo-banco"></div>
-
 <script>
 const bancos = {
  "00007": "Banco de Galicia y Buenos Aires S.A.",
@@ -83,7 +55,9 @@ const bancos = {
 function obtenerEntidad(codigo) {
     if (codigo.length === 22 && /^[0-9]+$/.test(codigo)) {
         const codigoBanco = codigo.slice(0, 3);
-        const entidad = Object.keys(bancos).find(c => c.startsWith(codigoBanco));
+        const entidad = Object.keys(bancos)
+            .filter(c => /^[0-9]+$/.test(c))
+            .find(c => c.startsWith(codigoBanco));
         return bancos[entidad] || "Banco desconocido";
     }
     return bancos[codigo] || "Entidad no reconocida";
@@ -147,5 +121,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-</body>
-</html>
