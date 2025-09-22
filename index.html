@@ -1,280 +1,181 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cotizaciones - Dólar y Acciones</title>
-    <style>
-        :root {
-            --color-primary: #005baa;
-            --color-text-dark: #2c3e50;
-            --color-text-light: #444f5a;
-            --color-background-light: #f9f9f9;
-            --color-card-background: #fefefe;
-            --shadow-base: 0 0 15px rgba(0,0,0,0.1);
-            --shadow-hover: 0 12px 32px rgba(0,0,0,0.15);
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: var(--color-background-light);
-            padding: 40px 20px;
-            text-align: center;
-            color: var(--color-text-dark);
-        }
-
-        header {
-            background-color: var(--color-primary);
-            color: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-        }
-
-        #fecha-hora {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-        }
-
-        nav {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        nav a {
-            color: white;
-            margin: 5px 10px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 18px;
-            transition: text-decoration 0.2s ease;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        #acciones-barra-superior {
-            max-width: 900px;
-            margin: 0 auto 30px auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: var(--shadow-base);
-            padding: 15px 0;
-        }
-
-        #acciones-barra-superior h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: var(--color-primary);
-        }
-
-        .tradingview-widget-container {
-            margin: 0 auto;
-            max-width: 880px;
-        }
-
-        main {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: var(--shadow-base);
-            text-align: center;
-        }
-
-        #cotizaciones-dolar {
-            font-size: 20px;
-            margin-bottom: 30px;
-        }
-
-        #cotizaciones-dolar p {
-            margin: 6px 0;
-        }
-
-        #noticias {
-            text-align: left;
-            margin-top: 40px;
-        }
-
-        #noticias h2 {
-            color: var(--color-primary);
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        #noticias-lista {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 28px;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #noticias-lista li {
-            background: var(--color-card-background);
-            border-radius: 12px;
-            padding: 18px 22px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.07);
-            display: flex;
-            flex-direction: column;
-            min-height: 200px;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        #noticias-lista li:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        #noticias-lista li a {
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            color: #004a9f;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-
-        #noticias-lista li a:hover {
-            text-decoration: underline;
-        }
-
-        #noticias-lista li p {
-            flex-grow: 1;
-            font-size: 0.95rem;
-            color: var(--color-text-light);
-            margin-bottom: 14px;
-            line-height: 1.3;
-        }
-
-        #noticias-lista li time {
-            font-size: 0.82rem;
-            color: #8899aa;
-            opacity: 0.85;
-            align-self: flex-end;
-        }
-
-        #noticias-lista li img {
-            border-radius: 8px;
-            margin-bottom: 12px;
-            max-height: 150px;
-            object-fit: cover;
-            width: 100%;
-        }
-
-        @media (max-width: 600px) {
-            body { padding: 20px 12px; }
-            nav { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-            nav a { font-size: 16px; margin: 5px 0; }
-            main { padding: 20px 15px; }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cotizaciones - Dólar y Acciones</title>
+<style>
+:root {
+    --color-primary: #005baa;
+    --color-text-dark: #2c3e50;
+    --color-text-light: #444f5a;
+    --color-background-light: #f9f9f9;
+    --color-card-background: #fefefe;
+    --shadow-base: 0 0 15px rgba(0,0,0,0.1);
+    --shadow-hover: 0 12px 32px rgba(0,0,0,0.15);
+}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: var(--color-background-light);
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--color-text-dark);
+}
+header {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+header h1 { margin: 0; font-size: 2.5rem; }
+#fecha-hora {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    transition: text-decoration 0.2s ease;
+}
+nav a:hover { text-decoration: underline; }
+#acciones-barra-superior {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: var(--shadow-base);
+    padding: 15px 0;
+}
+#acciones-barra-superior h3 { margin-top: 0; margin-bottom: 10px; color: var(--color-primary); }
+.tradingview-widget-container { margin: 0 auto; max-width: 880px; }
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-base);
+    text-align: center;
+}
+#cotizaciones-dolar { font-size: 20px; margin-bottom: 30px; }
+#cotizaciones-dolar p { margin: 6px 0; }
+#noticias { text-align: left; margin-top: 40px; }
+#noticias h2 { color: var(--color-primary); font-size: 1.8rem; margin-bottom: 25px; text-align: center; }
+#noticias-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#noticias-lista li {
+    background: var(--color-card-background);
+    border-radius: 12px;
+    padding: 18px 22px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+#noticias-lista li:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+#noticias-lista li a { font-weight: 700; font-size: 1.1rem; margin-bottom: 12px; color: #004a9f; text-decoration: none; flex-shrink: 0; }
+#noticias-lista li a:hover { text-decoration: underline; }
+#noticias-lista li p { flex-grow: 1; font-size: 0.95rem; color: var(--color-text-light); margin-bottom: 14px; line-height: 1.3; }
+#noticias-lista li time { font-size: 0.82rem; color: #8899aa; opacity: 0.85; align-self: flex-end; }
+#noticias-lista li img { border-radius: 8px; margin-bottom: 12px; max-height: 150px; object-fit: cover; width: 100%; }
+@media (max-width: 600px) {
+    body { padding: 20px 12px; }
+    nav { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+    nav a { font-size: 16px; margin: 5px 0; }
+    main { padding: 20px 15px; }
+}
+</style>
 </head>
 <body>
-    <header>
-        <div id="fecha-hora"></div>
-        <h1>Cotizaciones - Dólar y Acciones</h1>
-        <nav aria-label="Navegación principal">
-            <a href="index.html">Inicio</a>
-            <a href="Cotizador.html">Cotizador Dólar</a>
-            <a href="cuit-cuil.html">CUIT/CUIL</a>
-            <a href="cbu-cvu.html">Validador CBU/CVU</a>
-            <a href="datos-personales.html">Datos Personales</a>
-            <a href="contacto.html">Contacto</a>
-        </nav>
-    </header>
+<header>
+    <div id="fecha-hora"></div>
+    <h1>Cotizaciones - Dólar y Acciones</h1>
+    <nav aria-label="Navegación principal">
+        <a href="index.html">Inicio</a>
+        <a href="cotizador.html">Cotizador Dólar</a>
+        <a href="cuit-cuil.html">CUIT/CUIL</a>
+        <a href="validador.html">Validador CBU/CVU</a>
+        <a href="datos-personales.html">Datos Personales</a>
+        <a href="contacto.html">Contacto</a>
+    </nav>
+</header>
 
-    <section id="acciones-barra-superior">
-        <h3>Cotizaciones de Acciones</h3>
-        <div class="tradingview-widget-container">
-            <div id="tradingview-ticker"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-            {
-                "symbols": [
-                    {"proName": "BCBA:GGAL","title":"GGAL"},
-                    {"proName": "BCBA:YPFD","title":"YPFD"},
-                    {"proName": "BCBA:PAMP","title":"PAMP"},
-                    {"proName": "BCBA:COME","title":"COME"},
-                    {"proName": "BCBA:CEPU","title":"CEPU"},
-                    {"proName": "BCBA:BMA","title":"BMA"},
-                    {"proName": "BCBA:TECO2","title":"TECO2"}
-                ],
-                "colorTheme":"light",
-                "isTransparent":false,
-                "displayMode":"adaptive",
-                "locale":"es"
-            }
-            </script>
+<section id="acciones-barra-superior">
+    <h3>Cotizaciones de Acciones</h3>
+    <div class="tradingview-widget-container">
+        <div id="tradingview-ticker"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        {
+            "symbols": [
+                {"proName": "BCBA:GGAL","title":"GGAL"},
+                {"proName": "BCBA:YPFD","title":"YPFD"},
+                {"proName": "BCBA:PAMP","title":"PAMP"},
+                {"proName": "BCBA:COME","title":"COME"},
+                {"proName": "BCBA:CEPU","title":"CEPU"},
+                {"proName": "BCBA:BMA","title":"BMA"},
+                {"proName": "BCBA:TECO2","title":"TECO2"}
+            ],
+            "colorTheme":"light",
+            "isTransparent":false,
+            "displayMode":"adaptive",
+            "locale":"es"
+        }
+        </script>
+    </div>
+</section>
+
+<main>
+    <section id="cotizaciones-dolar">
+        <h3>Cotizaciones del Dólar</h3>
+        <div id="dolar-cotizaciones">
+            <p>Cargando cotizaciones...</p>
         </div>
     </section>
 
-    <main>
-        <section id="cotizaciones-dolar">
-            <h3>Cotizaciones del Dólar</h3>
-            <div id="dolar-cotizaciones">
-                <p>Cargando cotizaciones...</p>
-            </div>
-        </section>
+    <section id="noticias">
+        <h2>Noticias Económicas - Varias Fuentes</h2>
+        <ul id="noticias-lista">
+            <li>Cargando noticias de varias fuentes...</li>
+        </ul>
+    </section>
+</main>
 
-        <section id="noticias">
-            <h2>Noticias Económicas - Varias Fuentes</h2>
-            <ul id="noticias-lista">
-                <li>Cargando noticias de varias fuentes...</li>
-            </ul>
-        </section>
-    </main>
+<script>
+function actualizarFechaHora() {
+    const ahora = new Date();
+    const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+    const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    document.getElementById('fecha-hora').textContent = `${ahora.toLocaleDateString('es-AR', opcionesFecha)} - ${ahora.toLocaleTimeString('es-AR', opcionesHora)}`;
+}
+setInterval(actualizarFechaHora, 1000);
+actualizarFechaHora();
 
-    <script>
-        function actualizarFechaHora() {
-            const ahora = new Date();
-            const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
-            const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            const fechaFormateada = ahora.toLocaleDateString('es-AR', opcionesFecha);
-            const horaFormateada = ahora.toLocaleTimeString('es-AR', opcionesHora);
-            document.getElementById('fecha-hora').textContent = `${fechaFormateada} - ${horaFormateada}`;
-        }
-        setInterval(actualizarFechaHora, 1000);
-        actualizarFechaHora();
-
-        async function cargarCotizaciones() {
-            const target = document.getElementById('dolar-cotizaciones');
-            const urls = { blue:'https://dolarapi.com/v1/dolares/blue', oficial:'https://dolarapi.com/v1/dolares/oficial', mep:'https://dolarapi.com/v1/dolares/bolsa' };
-            try {
-                const responses = await Promise.allSettled(Object.values(urls).map(url => fetch(url)));
-                let html = '';
-                const labels = { blue: 'Blue', oficial: 'Oficial', mep: 'MEP' };
-                for (const [index, result] of responses.entries()) {
-                    const type = Object.keys(urls)[index];
-                    const label = labels[type];
-                    if (result.status === 'fulfilled' && result.value.ok) {
-                        const data = await result.value.json();
-                        if (typeof data.compra === 'number' && typeof data.venta === 'number') {
-                            html += `<p><strong>Dólar ${label}:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
-                        } else {
-                            html += `<p style="color:crimson;">Error: Datos inválidos para Dólar ${label}</p>`;
-                        }
-                    } else {
-                        html += `<p style="color:crimson;">Error al cargar Dólar ${label}</p>`;
-                    }
-                }
-                html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
-                target.innerHTML = html;
-            } catch { target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`; }
-        }
-        cargarCotizaciones
+async function cargarCotizaciones() {
+    const target = document.getElementById('dolar-cotizaciones');
+    target.innerHTML = '<p>Cargando cotizaciones...</p>';
+}
+cargarCotizaciones();
+async function cargarNoticias() {
+    const noticiasLista = document.getElementById('noticias-lista');
+    noticiasLista.innerHTML = '<li>Cargando noticias...</li>';
+}
+cargarNoticias();
+</script>
+</body>
+</html>
