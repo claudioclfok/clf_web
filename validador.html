@@ -4,13 +4,66 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Validador CBU/CVU</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0056a3;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .validator, .bancos {
+      background: #f5f9ff;
+      border: 1px solid #d0e2ff;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select {
+      padding: 8px;
+      width: 100%;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #0056a3;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004080;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>Validador de CBU/CVU</h1>
   </header>
-
   <main class="main-container">
     <section class="validator">
       <label for="cbu">Ingrese CBU o CVU:</label>
@@ -18,15 +71,14 @@
       <button onclick="validarCBU()">Validar</button>
       <div id="resultado"></div>
     </section>
-
     <section class="bancos">
       <h2>Listado de Bancos</h2>
       <label for="listaBancos">Seleccione un banco:</label>
       <select id="listaBancos"></select>
     </section>
   </main>
-
   <script src="validador.js"></script>
 </body>
 </html>
+
 
