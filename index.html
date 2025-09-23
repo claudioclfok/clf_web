@@ -46,9 +46,17 @@
             color: white;
         }
 
+        /* 🔹 Menú corregido */
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;   /* permite que baje en móvil */
+            gap: 15px;         /* separación uniforme */
+            margin-top: 10px;
+        }
+
         nav a {
             color: white;
-            margin: 0 15px;
             text-decoration: none;
             font-weight: bold;
             font-size: 18px;
@@ -177,15 +185,11 @@
             }
 
             nav {
-                display: flex;
-                flex-direction: column;
                 gap: 10px;
-                margin-top: 10px;
             }
 
             nav a {
                 font-size: 16px;
-                margin: 5px 0;
             }
 
             main {
@@ -202,7 +206,7 @@
             <a href="index.html">Inicio</a>
             <a href="Cotizador.html">Cotizador Dólar</a>
             <a href="cuit-cuil.html">CUIT/CUIL</a>
-            <li><a href="validador.html">Validador CBU/CVU</a></li>
+            <a href="validador.html">Validador CBU/CVU</a>
             <a href="contacto.html">Contacto</a>
         </nav>
     </header>
@@ -400,4 +404,3 @@
     </script>
 </body>
 </html>
-
