@@ -26,6 +26,18 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
+    header button {
+      margin-top: 10px;
+      background-color: #004080;
+      padding: 8px 15px;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    header button:hover {
+      background-color: #002850;
+    }
+
     main {
       flex: 1;
       display: flex;
@@ -47,7 +59,7 @@
       text-align: center;
     }
 
-    input, select {
+    input {
       width: 80%;
       padding: 10px;
       margin: 10px 0;
@@ -64,6 +76,7 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
+      margin-top: 10px;
     }
 
     button:hover {
@@ -75,11 +88,20 @@
       font-weight: bold;
       font-size: 16px;
     }
+
+    select {
+      width: 80%;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Validador de CBU/CVU</h1>
+    <button onclick="window.scrollTo({top:0, behavior:'smooth'})">Inicio</button>
   </header>
 
   <main>
@@ -93,78 +115,70 @@
 
     <div class="section">
       <h2>Listado de Bancos</h2>
-      <label for="listaBancos">Seleccione un banco:</label>
-      <br>
       <select id="listaBancos"></select>
     </div>
   </main>
 
   <script>
+    const bancos = [
+      { codigo: "005", nombre: "Banco Galicia", provincias: ["Nacional"] },
+      { codigo: "007", nombre: "Banco de Galicia y Buenos Aires", provincias: ["Nacional"] },
+      { codigo: "011", nombre: "Banco de la Nación Argentina", provincias: ["Nacional"] },
+      { codigo: "014", nombre: "Banco de la Provincia de Buenos Aires", provincias: ["Buenos Aires"] },
+      { codigo: "015", nombre: "Banco ICBC", provincias: ["Nacional"] },
+      { codigo: "016", nombre: "CitiBank N.A.", provincias: ["Nacional"] },
+      { codigo: "017", nombre: "BBVA Banco Francés", provincias: ["Nacional"] },
+      { codigo: "020", nombre: "Banco de la Provincia de Córdoba", provincias: ["Córdoba"] },
+      { codigo: "027", nombre: "Banco Supervielle", provincias: ["Nacional"] },
+      { codigo: "029", nombre: "Banco de la Ciudad de Buenos Aires", provincias: ["CABA"] },
+      { codigo: "034", nombre: "Banco Patagonia", provincias: ["Nacional"] },
+      { codigo: "044", nombre: "Banco Hipotecario", provincias: ["Nacional"] },
+      { codigo: "045", nombre: "Banco de San Juan", provincias: ["San Juan"] },
+      { codigo: "060", nombre: "Banco de Tucumán", provincias: ["Tucumán"] },
+      { codigo: "065", nombre: "Banco Municipal de Rosario", provincias: ["Santa Fe"] },
+      { codigo: "072", nombre: "Banco Santander Río", provincias: ["Nacional"] },
+      { codigo: "083", nombre: "Banco del Chubut", provincias: ["Chubut"] },
+      { codigo: "086", nombre: "Banco de Santa Fe", provincias: ["Santa Fe"] },
+      { codigo: "143", nombre: "Brubank", provincias: ["Nacional"] },
+      { codigo: "150", nombre: "HSBC Bank Argentina", provincias: ["Nacional"] },
+      { codigo: "191", nombre: "Banco Credicoop", provincias: ["Nacional"] },
+      { codigo: "198", nombre: "Banco de Valores", provincias: ["Nacional"] },
+      { codigo: "247", nombre: "Banco Roela", provincias: ["Nacional"] },
+      { codigo: "254", nombre: "Banco Mariva", provincias: ["Nacional"] },
+      { codigo: "259", nombre: "Banco Itaú Argentina", provincias: ["Nacional"] }
+    ];
+
     function validarCBU() {
-      const cbu = document.getElementById("cbu").value;
+      const cbu = document.getElementById("cbu").value.trim();
       const resultado = document.getElementById("resultado");
-      if (cbu.length !== 22 || isNaN(cbu)) {
-        resultado.innerText = "❌ El CBU/CVU debe tener 22 dígitos numéricos.";
-        resultado.style.color = "red";
+
+      if (!/^\d{22}$/.test(cbu)) {
+        resultado.innerHTML = `<span style="color:red">❌ CBU/CVU inválido. Debe tener 22 dígitos.</span>`;
         return;
       }
-      resultado.innerText = "✅ CBU/CVU válido en formato.";
-      resultado.style.color = "green";
-    }
 
-    const bancos = [
-      { codigo: "005", nombre: "Banco Galicia" },
-      { codigo: "007", nombre: "Banco de Galicia y Buenos Aires" },
-      { codigo: "011", nombre: "Banco de la Nación Argentina" },
-      { codigo: "014", nombre: "Banco de la Provincia de Buenos Aires" },
-      { codigo: "015", nombre: "Banco ICBC" },
-      { codigo: "016", nombre: "CitiBank N.A." },
-      { codigo: "017", nombre: "BBVA Banco Francés" },
-      { codigo: "020", nombre: "Banco de la Provincia de Córdoba" },
-      { codigo: "027", nombre: "Banco Supervielle" },
-      { codigo: "029", nombre: "Banco de la Ciudad de Buenos Aires" },
-      { codigo: "034", nombre: "Banco Patagonia" },
-      { codigo: "044", nombre: "Banco Hipotecario" },
-      { codigo: "045", nombre: "Banco de San Juan" },
-      { codigo: "046", nombre: "Banco de Santa Cruz" },
-      { codigo: "060", nombre: "Banco de Tucumán" },
-      { codigo: "065", nombre: "Banco Municipal de Rosario" },
-      { codigo: "072", nombre: "Banco Santander Río" },
-      { codigo: "083", nombre: "Banco del Chubut" },
-      { codigo: "086", nombre: "Banco de Santa Fe" },
-      { codigo: "143", nombre: "Brubank" },
-      { codigo: "150", nombre: "HSBC Bank Argentina" },
-      { codigo: "191", nombre: "Banco Credicoop" },
-      { codigo: "198", nombre: "Banco de Valores" },
-      { codigo: "247", nombre: "Banco Roela" },
-      { codigo: "254", nombre: "Banco Mariva" },
-      { codigo: "259", nombre: "Banco Itaú Argentina" },
-      { codigo: "262", nombre: "Banco Provincia de Tierra del Fuego" },
-      { codigo: "266", nombre: "Banco Meridian" },
-      { codigo: "268", nombre: "Banco de Corrientes" },
-      { codigo: "269", nombre: "Banco de la Rioja" },
-      { codigo: "285", nombre: "Banco Macro" },
-      { codigo: "295", nombre: "Banco CMF" },
-      { codigo: "299", nombre: "Banco Comafi" },
-      { codigo: "321", nombre: "Banco de Formosa" },
-      { codigo: "322", nombre: "Banco Industrial" },
-      { codigo: "330", nombre: "Nuevo Banco de Entre Ríos" },
-      { codigo: "331", nombre: "Banco de La Pampa" },
-      { codigo: "386", nombre: "Banco de Entre Ríos" },
-      { codigo: "389", nombre: "Banco de San Luis" },
-      { codigo: "426", nombre: "Banco Bica" },
-      { codigo: "431", nombre: "Banco Coinag" },
-      { codigo: "432", nombre: "Banco de Comercio" },
-      { codigo: "434", nombre: "Banco Cencosud" },
-      { codigo: "435", nombre: "Banco de Servicios Financieros" },
-      { codigo: "437", nombre: "Banco Voii" },
-      { codigo: "438", nombre: "Banco Bradesco Argentina" },
-      { codigo: "440", nombre: "Banco de Corrientes" },
-      { codigo: "442", nombre: "Banco BST" },
-      { codigo: "448", nombre: "Banco Dino" },
-      { codigo: "501", nombre: "Banco Transatlántico" },
-      { codigo: "513", nombre: "Banco Masventas" }
-    ];
+      const bancoCodigo = cbu.substring(0, 3);
+      const sucursalCodigo = cbu.substring(3, 7);
+      const banco = bancos.find(b => b.codigo === bancoCodigo);
+
+      if (banco) {
+        let provincia = banco.provincias.length === 1 ? banco.provincias[0] : 'Desconocida';
+        resultado.innerHTML = `
+          <div style="color:green; font-weight:bold">
+            ✅ CBU/CVU válido.<br>
+            Banco: ${banco.nombre}<br>
+            Sucursal: ${sucursalCodigo}<br>
+            Provincia: ${provincia}
+          </div>`;
+      } else {
+        resultado.innerHTML = `
+          <div style="color:orange; font-weight:bold">
+            ⚠️ CBU/CVU válido.<br>
+            Banco: Código ${bancoCodigo} (no registrado)<br>
+            Sucursal: ${sucursalCodigo}
+          </div>`;
+      }
+    }
 
     const select = document.getElementById("listaBancos");
     bancos.forEach(banco => {
@@ -176,5 +190,4 @@
   </script>
 </body>
 </html>
-
 
