@@ -172,15 +172,11 @@
   </main>
 
   <footer>
-    Fuente: bluelytics.com.ar y dolarapi.com
+    Fuente: dolarapi.com
   </footer>
 
   <script>
-    const cotizaciones = {
-      oficial: 0,
-      blue: 0,
-      mep: 0
-    };
+    const cotizaciones = { oficial: 0, blue: 0, mep: 0 };
 
     function formato(n) {
       return n.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -188,18 +184,29 @@
 
     async function cargarCotizaciones() {
       try {
-        const res1 = await fetch('https://api.bluelytics.com.ar/v2/latest');
-        const data1 = await res1.json();
-        const res2 = await fetch('https://dolarapi.com/v1/dolares/bolsa');
-        const data2 = await res2.json();
+        const urls = {
+          oficial: 'https://dolarapi.com/v1/dolares/oficial',
+          blue: 'https://dolarapi.com/v1/dolares/blue',
+          mep: 'https://dolarapi.com/v1/dolares/bolsa'
+        };
 
-        cotizaciones.oficial = data1.oficial.value_sell;
-        cotizaciones.blue = data1.blue.value_sell;
-        cotizaciones.mep = data2.venta;
+        const [resOf, resBlue, resMep] = await Promise.all([
+          fetch(urls.oficial),
+          fetch(urls.blue),
+          fetch(urls.mep)
+        ]);
 
-        document.getElementById("cot-oficial").textContent = `Venta: $${formato(cotizaciones.oficial)}`;
-        document.getElementById("cot-blue").textContent = `Venta: $${formato(cotizaciones.blue)}`;
-        document.getElementById("cot-mep").textContent = `Venta: $${formato(cotizaciones.mep)}`;
+        const dataOf = await resOf.json();
+        const dataBlue = await resBlue.json();
+        const dataMep = await resMep.json();
+
+        cotizaciones.oficial = dataOf.venta;
+        cotizaciones.blue = dataBlue.venta;
+        cotizaciones.mep = dataMep.venta;
+
+        document.getElementById("cot-oficial").textContent = `Compra: $${formato(dataOf.compra)} - Venta: $${formato(dataOf.venta)}`;
+        document.getElementById("cot-blue").textContent = `Compra: $${formato(dataBlue.compra)} - Venta: $${formato(dataBlue.venta)}`;
+        document.getElementById("cot-mep").textContent = `Compra: $${formato(dataMep.compra)} - Venta: $${formato(dataMep.venta)}`;
       } catch (e) {
         document.querySelectorAll(".cotizacion-valor").forEach(e => e.textContent = "Error al cargar cotización");
       }
@@ -234,6 +241,7 @@
     }
 
     cargarCotizaciones();
+    setInterval(cargarCotizaciones, 60000);
 
     document.getElementById('btn-volver-inicio').addEventListener('click', () => {
       window.location.href = 'index.html';
@@ -241,4 +249,3 @@
   </script>
 </body>
 </html>
-
