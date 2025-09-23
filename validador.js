@@ -1,3 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Validar CBU/CVU</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  #cbu { width: 250px; padding: 5px; margin-bottom: 10px; }
+  #resultado { margin-top: 10px; }
+  select { width: 300px; max-height: 200px; overflow-y: auto; }
+</style>
+</head>
+<body>
+
+<h2>Validar CBU/CVU</h2>
+
+<input type="text" id="cbu" placeholder="Ingrese CBU/CVU" maxlength="22">
+<button onclick="validarCBU()">Validar CBU</button>
+
+<br><br>
+
+<select id="listaBancos"></select>
+
+<div id="resultado"></div>
+
+<script>
 const bancos = [
   { codigo: '005', nombre: 'The Royal Bank of Scotland N.V.', provincias: ['Internacional'] },
   { codigo: '007', nombre: 'Banco de Galicia y Buenos Aires S.A.', provincias: ['Nacional'] },
@@ -46,7 +72,7 @@ const bancos = [
   { codigo: '309', nombre: 'Nuevo Banco de La Rioja S.A.', provincias: ['La Rioja'] },
   { codigo: '310', nombre: 'Banco del Sol S.A.', provincias: ['Nacional'] },
   { codigo: '311', nombre: 'Nuevo Banco del Chaco S.A.', provincias: ['Chaco'] },
-  { codigo doing: '312', nombre: 'Banco VOII S.A.', provincias: ['Nacional'] },
+  { codigo: '312', nombre: 'Banco VOII S.A.', provincias: ['Nacional'] },
   { codigo: '315', nombre: 'Banco de Formosa S.A.', provincias: ['Formosa'] },
   { codigo: '319', nombre: 'Banco CMF S.A.', provincias: ['Nacional'] },
   { codigo: '321', nombre: 'Banco de Santiago del Estero S.A.', provincias: ['Santiago del Estero'] },
@@ -81,20 +107,9 @@ function validarCBU() {
 
   if (banco) {
     let provincia = banco.provincias.length === 1 ? banco.provincias[0] : 'Desconocida';
-    resultado.innerHTML = `
-      <div style="color:green; font-weight:bold">
-        ✅ CBU/CVU válido.<br>
-        Banco: ${banco.nombre}<br>
-        Sucursal: ${sucursalCodigo}<br>
-        Provincia: ${provincia}
-      </div>`;
+    resultado.innerHTML = `<div style="color:green; font-weight:bold">✅ CBU/CVU válido.<br>Banco: ${banco.nombre}<br>Sucursal: ${sucursalCodigo}<br>Provincia: ${provincia}</div>`;
   } else {
-    resultado.innerHTML = `
-      <div style="color:orange; font-weight:bold">
-        ⚠️ CBU/CVU válido.<br>
-        Banco: Código ${bancoCodigo} (no registrado)<br>
-        Sucursal: ${sucursalCodigo}
-      </div>`;
+    resultado.innerHTML = `<div style="color:orange; font-weight:bold">⚠️ CBU/CVU válido.<br>Banco: Código ${bancoCodigo} (no registrado)<br>Sucursal: ${sucursalCodigo}</div>`;
   }
 }
 
@@ -106,8 +121,15 @@ function cargarListaBancos() {
     option.text = `${b.codigo} - ${b.nombre}`;
     lista.appendChild(option);
   });
+
+  lista.addEventListener('change', () => {
+    document.getElementById('cbu').value = lista.value;
+  });
 }
 
 window.onload = cargarListaBancos;
+</script>
 
+</body>
+</html>
 
