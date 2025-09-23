@@ -45,8 +45,9 @@ const bancos = [
 function validarCBU() {
   const cbu = document.getElementById('cbu').value.trim();
   const resultado = document.getElementById('resultado');
+
   if (!/^\d{22}$/.test(cbu)) {
-    resultado.innerHTML = `<span style="color:red">CBU/CVU inválido. Debe tener 22 dígitos.</span>`;
+    resultado.innerHTML = `<span style="color:red">❌ CBU/CVU inválido. Debe tener 22 dígitos.</span>`;
     return;
   }
 
@@ -56,9 +57,20 @@ function validarCBU() {
 
   if (banco) {
     let provincia = banco.provincias.length === 1 ? banco.provincias[0] : 'Desconocida';
-    resultado.innerHTML = `<span style="color:green">CBU/CVU válido.<br>Banco: ${banco.nombre}<br>Sucursal: ${sucursalCodigo}<br>Provincia: ${provincia}</span>`;
+    resultado.innerHTML = `
+      <div style="color:green; font-weight:bold">
+        ✅ CBU/CVU válido.<br>
+        Banco: ${banco.nombre}<br>
+        Sucursal: ${sucursalCodigo}<br>
+        Provincia: ${provincia}
+      </div>`;
   } else {
-    resultado.innerHTML = `<span style="color:orange">CBU/CVU válido.<br>Banco: Código ${bancoCodigo} (no registrado)<br>Sucursal: ${sucursalCodigo}</span>`;
+    resultado.innerHTML = `
+      <div style="color:orange; font-weight:bold">
+        ⚠️ CBU/CVU válido.<br>
+        Banco: Código ${bancoCodigo} (no registrado)<br>
+        Sucursal: ${sucursalCodigo}
+      </div>`;
   }
 }
 
@@ -73,4 +85,5 @@ function cargarListaBancos() {
 }
 
 window.onload = cargarListaBancos;
+
 
