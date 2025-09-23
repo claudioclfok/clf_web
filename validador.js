@@ -1,123 +1,93 @@
-<script>
+// Diccionario de bancos con sus códigos (principales nacionales y provinciales)
 const bancos = {
- "00007": "Banco de Galicia y Buenos Aires S.A.",
- "00011": "Banco de la Nación Argentina",
- "00014": "Banco de la Provincia de Buenos Aires",
- "00015": "Industrial and Commercial Bank of China (ICBC)",
- "00016": "Citibank N.A.",
- "00017": "Banco BBVA Argentina S.A.",
- "00027": "Banco Supervielle S.A.",
- "00029": "Banco de la Ciudad de Buenos Aires",
- "00034": "Banco Patagonia S.A.",
- "00044": "Banco Hipotecario S.A.",
- "00045": "Banco de San Juan S.A.",
- "00065": "Banco Municipal de Rosario",
- "00072": "Banco Santander Argentina S.A.",
- "00083": "Banco del Chubut S.A.",
- "00093": "Banco de la Provincia de Misiones",
- "00094": "Banco de Corrientes S.A.",
- "00097": "Banco de La Pampa",
- "00100": "Banco de Córdoba",
- "00101": "Nuevo Banco del Chaco S.A.",
- "00102": "Banco de la Provincia de Tucumán",
- "00143": "Brubank S.A.U.",
- "00150": "HSBC Bank Argentina S.A.",
- "00165": "Banco de la Provincia de Mendoza",
- "00191": "Banco de la Provincia de Jujuy",
- "00206": "Banco Comafi S.A.",
- "00220": "Banco de Servicios y Transacciones S.A.",
- "00259": "Banco Itaú Argentina S.A.",
- "00268": "Banco Columbia S.A.",
- "00285": "Banco Macro S.A.",
- "00292": "Banco Credicoop Cooperativo Ltdo.",
- "00300": "Banco de Inversión y Comercio Exterior (BICE)",
- "00305": "Banco Mariva S.A.",
- "00310": "Banco del Sol S.A.",
- "00311": "Banco de Valores S.A.",
- "00312": "Banco Finandino S.A.",
- "00315": "Banco Piano S.A.",
- "00319": "Banco CMF S.A.",
- "00321": "Banco de Formosa S.A.",
- "00322": "Banco Voii S.A.",
- "00336": "Banco de Tierra del Fuego",
- "00340": "Banco de Santiago del Estero S.A.",
- "00341": "Banco Masventas S.A.",
- "00389": "Banco Cetelem Argentina S.A.",
- "MP": "Mercado Pago",
- "UALA": "Ualá",
- "NX": "Naranja X",
- "BNA+": "BNA+",
- "BNP": "Billetera Provincia",
- "BN": "Billetera Nación",
- "PO": "Billetera Personal Pay"
+  "011": "Banco de la Nación Argentina",
+  "014": "Banco de la Provincia de Buenos Aires",
+  "015": "Banco Galicia",
+  "016": "Banco de la Provincia de Córdoba",
+  "017": "BBVA Banco Francés",
+  "018": "Banco de la Provincia de Jujuy",
+  "020": "Banco de la Provincia de San Juan",
+  "027": "Banco Supervielle",
+  "029": "Banco de la Ciudad de Buenos Aires",
+  "030": "Banco de la Provincia de Tucumán",
+  "034": "Banco Patagonia",
+  "044": "Banco Hipotecario",
+  "045": "Banco de San Luis",
+  "072": "Banco Santander Río",
+  "083": "Banco del Chubut",
+  "086": "Banco de Santa Cruz",
+  "093": "Banco de la Pampa",
+  "094": "Banco de Corrientes",
+  "097": "Banco Provincia del Neuquén",
+  "143": "Brubank",
+  "147": "Banco Interfinanzas",
+  "150": "HSBC Bank Argentina",
+  "165": "JP Morgan Chase Bank",
+  "191": "Banco Credicoop",
+  "198": "Banco de Valores",
+  "247": "Banco Roela",
+  "254": "Banco Mariva",
+  "259": "Banco Itaú Argentina",
+  "262": "Bank of America",
+  "266": "BNP Paribas",
+  "268": "Banco Provincia de Tierra del Fuego",
+  "269": "Banco de la República Oriental del Uruguay",
+  "277": "Banco Sáenz",
+  "281": "Banco Meridian",
+  "285": "Banco Macro",
+  "299": "Banco Comafi",
+  "300": "Banco de Inversión y Comercio Exterior",
+  "301": "Banco Piano",
+  "305": "Banco Julio",
+  "309": "Banco HSBC Investment",
+  "310": "Banco del Sol",
+  "311": "Nuevo Banco del Chaco",
+  "312": "MBA Lazard",
+  "315": "Banco de Formosa",
+  "319": "Banco CMF",
+  "321": "Banco de Santiago del Estero",
+  "322": "Banco Industrial",
+  "325": "Deutsche Bank",
+  "330": "Banco de Santa Fe",
+  "331": "Banco de Entre Ríos",
+  "332": "Banco de Santa Cruz",
+  "336": "Banco Cetelem",
+  "338": "Banco de Servicios Financieros",
+  "339": "RCI Banque",
+  "340": "BACS Banco de Crédito y Securitización",
+  "341": "Banco Masventas",
+  "384": "Wilobank"
 };
 
-function obtenerEntidad(codigo) {
-    if (codigo.length === 22 && /^[0-9]+$/.test(codigo)) {
-        const codigoBanco = codigo.slice(0, 3);
-        const entidad = Object.keys(bancos)
-            .filter(c => /^[0-9]+$/.test(c))
-            .find(c => c.startsWith(codigoBanco));
-        return bancos[entidad] || "Banco desconocido";
-    }
-    return bancos[codigo] || "Entidad no reconocida";
+// Validación de CBU
+function validarCBU() {
+  const cbu = document.getElementById("cbu").value.trim();
+  const resultado = document.getElementById("resultado");
+
+  if (!/^\d{22}$/.test(cbu)) {
+    resultado.innerHTML = "<span style='color:red'>❌ El CBU/CVU debe tener 22 dígitos</span>";
+    return;
+  }
+
+  const bancoCodigo = cbu.substring(0, 3);
+  const sucursalCodigo = cbu.substring(3, 7);
+
+  let bancoNombre = bancos[bancoCodigo] || "Banco desconocido";
+
+  resultado.innerHTML = `
+    ✅ <b>CBU válido</b><br>
+    🏦 Banco: ${bancoNombre}<br>
+    🏢 Sucursal: ${sucursalCodigo}
+  `;
 }
 
-function validarCBU(cbu) {
-    if (!/^[0-9]{22}$/.test(cbu)) return false;
-
-    function validarBloque(bloque, pesos) {
-        let suma = 0;
-        for (let i = 0; i < pesos.length; i++) {
-            suma += parseInt(bloque[i], 10) * pesos[i];
-        }
-        const verificador = (10 - (suma % 10)) % 10;
-        return verificador === parseInt(bloque[bloque.length - 1], 10);
-    }
-
-    const bloque1 = cbu.slice(0, 8);
-    const bloque2 = cbu.slice(8, 22);
-
-    return validarBloque(bloque1, [7, 1, 3, 9, 7, 1, 3]) &&
-           validarBloque(bloque2, [3, 9, 7, 1, 3, 9, 7, 1, 3, 9, 7, 1, 3]);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    const formValidador = document.getElementById("formValidador");
-    const inputCodigo = document.getElementById("codigo");
-    const resultadoDiv = document.getElementById("resultado");
-    const listaBancos = document.getElementById("lista-bancos");
-    const codigoBancoDiv = document.getElementById("codigo-banco");
-
-    for (const codigo in bancos) {
-        const option = document.createElement("option");
-        option.value = codigo;
-        option.textContent = bancos[codigo];
-        listaBancos.appendChild(option);
-    }
-
-    formValidador.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const codigo = inputCodigo.value.trim();
-        const entidad = obtenerEntidad(codigo);
-        
-        if (validarCBU(codigo)) {
-            resultadoDiv.style.color = "green";
-            resultadoDiv.textContent = `✅ CBU válido - Entidad: ${entidad}`;
-        } else {
-            resultadoDiv.style.color = "red";
-            resultadoDiv.textContent = `❌ CBU/CVU no válido`;
-        }
-    });
-
-    listaBancos.addEventListener("change", () => {
-        const codigoSeleccionado = listaBancos.value;
-        const nombreEntidad = bancos[codigoSeleccionado];
-        if (codigoSeleccionado) {
-            codigoBancoDiv.textContent = `Código: ${codigoSeleccionado} - ${nombreEntidad}`;
-        } else {
-            codigoBancoDiv.textContent = "";
-        }
-    });
-});
-</script>
+// Llenar lista desplegable
+window.onload = function() {
+  const lista = document.getElementById("listaBancos");
+  for (const codigo in bancos) {
+    const option = document.createElement("option");
+    option.value = codigo;
+    option.text = `${codigo} - ${bancos[codigo]}`;
+    lista.appendChild(option);
+  }
+};
