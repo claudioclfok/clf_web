@@ -1,133 +1,180 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Validar CBU/CVU</title>
-<style>
-body { font-family: Arial; padding: 20px; }
-#cbu { width: 250px; margin-bottom: 10px; padding:5px; }
-#resultado { margin-top: 10px; }
-.dropdown { position: relative; width: 400px; }
-.dropdown button { width: 100%; padding: 8px; text-align: left; cursor: pointer; }
-.dropdown ul { display: none; position: absolute; width: 100%; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; background: white; list-style: none; padding: 0; margin: 0; z-index: 1000; }
-.dropdown ul.show { display: block; }
-.dropdown ul li { padding:5px; cursor:pointer; }
-.dropdown ul li:hover { background:#eee; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validador CBU/CVU</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f0ff;
+      color: #003366;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0056a3;
+      color: white;
+      padding: 20px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .section {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin: 15px 0;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    input, select {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #0056a3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #004080;
+    }
+
+    #resultado {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>Validador de CBU/CVU</h1>
+  </header>
 
-<input type="text" id="cbu" placeholder="Ingrese CBU/CVU">
-<button onclick="validarCBU()">Validar</button>
+  <main>
+    <div class="section">
+      <label for="cbu">Ingrese CBU o CVU:</label>
+      <input type="text" id="cbu" maxlength="22" placeholder="22 dígitos">
+      <br>
+      <button onclick="validarCBU()">Validar</button>
+      <div id="resultado"></div>
+    </div>
 
-<div class="dropdown">
-  <button id="btnBancos">Seleccionar Banco</button>
-  <ul id="opcionesBancos"></ul>
-</div>
+    <div class="section">
+      <h2>Listado de Bancos</h2>
+      <label for="listaBancos">Seleccione un banco:</label>
+      <br>
+      <select id="listaBancos"></select>
+    </div>
+  </main>
 
-<div id="resultado"></div>
+  <script>
+    function validarCBU() {
+      const cbu = document.getElementById("cbu").value;
+      const resultado = document.getElementById("resultado");
+      if (cbu.length !== 22 || isNaN(cbu)) {
+        resultado.innerText = "❌ El CBU/CVU debe tener 22 dígitos numéricos.";
+        resultado.style.color = "red";
+        return;
+      }
+      resultado.innerText = "✅ CBU/CVU válido en formato.";
+      resultado.style.color = "green";
+    }
 
-<script>
-const bancos = [
-{codigo:'005',nombre:'The Royal Bank of Scotland N.V.',provincias:['Internacional']},
-{codigo:'007',nombre:'Banco de Galicia y Buenos Aires S.A.',provincias:['Nacional']},
-{codigo:'011',nombre:'Banco de la Nación Argentina',provincias:['Nacional']},
-{codigo:'014',nombre:'Banco de la Provincia de Buenos Aires',provincias:['Buenos Aires']},
-{codigo:'015',nombre:'Industrial and Commercial Bank of China (Argentina) S.A.',provincias:['Nacional']},
-{codigo:'016',nombre:'Citibank N.A.',provincias:['Nacional']},
-{codigo:'017',nombre:'BBVA Banco Francés S.A.',provincias:['Nacional']},
-{codigo:'018',nombre:'The Bank of Tokyo-Mitsubishi UFJ, LTD.',provincias:['Nacional']},
-{codigo:'020',nombre:'Banco de la Provincia de Córdoba S.A.',provincias:['Córdoba']},
-{codigo:'027',nombre:'Banco Supervielle S.A.',provincias:['Nacional']},
-{codigo:'029',nombre:'Banco de la Ciudad de Buenos Aires',provincias:['CABA']},
-{codigo:'034',nombre:'Banco Patagonia S.A.',provincias:['Nacional']},
-{codigo:'044',nombre:'Banco Hipotecario S.A.',provincias:['Nacional']},
-{codigo:'045',nombre:'Banco de San Juan S.A.',provincias:['San Juan']},
-{codigo:'046',nombre:'Banco do Brasil S.A.',provincias:['Internacional']},
-{codigo:'060',nombre:'Banco del Tucumán S.A.',provincias:['Tucumán']},
-{codigo:'065',nombre:'Banco Municipal de Rosario',provincias:['Santa Fe']},
-{codigo:'072',nombre:'Banco Santander Río S.A.',provincias:['Nacional']},
-{codigo:'083',nombre:'Banco del Chubut S.A.',provincias:['Chubut']},
-{codigo:'086',nombre:'Banco de Santa Cruz S.A.',provincias:['Santa Cruz']},
-{codigo:'093',nombre:'Banco de la Pampa',provincias:['La Pampa']},
-{codigo:'094',nombre:'Banco de Corrientes S.A.',provincias:['Corrientes']},
-{codigo:'097',nombre:'Banco Provincia del Neuquén S.A.',provincias:['Neuquén']},
-{codigo:'147',nombre:'Banco B.I. Creditanstalt S.A.',provincias:['Nacional']},
-{codigo:'150',nombre:'HSBC Bank Argentina S.A.',provincias:['Nacional']},
-{codigo:'165',nombre:'J.P. Morgan Chase Bank (Sucursal Buenos Aires)',provincias:['Nacional']},
-{codigo:'191',nombre:'Banco Credicoop Cooperativo Limitado',provincias:['Nacional']},
-{codigo:'198',nombre:'Banco de Valores S.A.',provincias:['Nacional']},
-{codigo:'247',nombre:'Banco Roela S.A.',provincias:['Nacional']},
-{codigo:'254',nombre:'Banco Mariva S.A.',provincias:['Nacional']},
-{codigo:'259',nombre:'Banco Itaú Argentina S.A.',provincias:['Nacional']},
-{codigo:'262',nombre:'Bank of America, National Association',provincias:['Internacional']},
-{codigo:'266',nombre:'BNP Paribas',provincias:['Internacional']},
-{codigo:'268',nombre:'Banco Provincia de Tierra del Fuego',provincias:['Tierra del Fuego']},
-{codigo:'269',nombre:'Banco de la República Oriental del Uruguay',provincias:['Internacional']},
-{codigo:'277',nombre:'Banco Sáenz S.A.',provincias:['Nacional']},
-{codigo:'281',nombre:'Banco Meridian S.A.',provincias:['Nacional']},
-{codigo:'285',nombre:'Banco Macro S.A.',provincias:['Nacional']},
-{codigo:'295',nombre:'American Express Bank Ltd.',provincias:['Internacional']},
-{codigo:'299',nombre:'Banco Comafi S.A.',provincias:['Nacional']},
-{codigo:'300',nombre:'Banco de Inversión y Comercio Exterior S.A.',provincias:['Nacional']},
-{codigo:'301',nombre:'Banco Piano S.A.',provincias:['Nacional']},
-{codigo:'303',nombre:'Banco Finansur S.A.',provincias:['Nacional']},
-{codigo:'305',nombre:'Banco Julio S.A.',provincias:['Nacional']},
-{codigo:'309',nombre:'Nuevo Banco de La Rioja S.A.',provincias:['La Rioja']},
-{codigo:'310',nombre:'Banco del Sol S.A.',provincias:['Nacional']},
-{codigo:'311',nombre:'Nuevo Banco del Chaco S.A.',provincias:['Chaco']},
-{codigo:'312',nombre:'Banco VOII S.A.',provincias:['Nacional']},
-{codigo:'315',nombre:'Banco de Formosa S.A.',provincias:['Formosa']},
-{codigo:'319',nombre:'Banco CMF S.A.',provincias:['Nacional']},
-{codigo:'321',nombre:'Banco de Santiago del Estero S.A.',provincias:['Santiago del Estero']},
-{codigo:'325',nombre:'Deutsche Bank S.A.',provincias:['Nacional']},
-{codigo:'330',nombre:'Nuevo Banco de Santa Fe S.A.',provincias:['Santa Fe']},
-{codigo:'331',nombre:'Banco Cetelem Argentina S.A.',provincias:['Nacional']},
-{codigo:'332',nombre:'Banco de Servicios Financieros S.A.',provincias:['Nacional']},
-{codigo:'336',nombre:'Banco Bradesco Argentina S.A.',provincias:['Nacional']},
-{codigo:'338',nombre:'Banco de Servicios y Transacciones S.A.',provincias:['Nacional']},
-{codigo:'339',nombre:'RCI Banque S.A.',provincias:['Nacional']},
-{codigo:'340',nombre:'BACS Banco de Crédito y Securitización S.A.',provincias:['Nacional']},
-{codigo:'341',nombre:'Banco Masventas S.A.',provincias:['Nacional']},
-{codigo:'386',nombre:'Nuevo Banco de Entre Ríos S.A.',provincias:['Entre Ríos']},
-{codigo:'389',nombre:'Banco Columbia S.A.',provincias:['Nacional']},
-{codigo:'426',nombre:'Banco BICA S.A.',provincias:['Nacional']},
-{codigo:'431',nombre:'Banco Coinag S.A.',provincias:['Nacional']},
-{codigo:'432',nombre:'Banco de Comercio S.A.',provincias:['Nacional']}
-];
+    const bancos = [
+      { codigo: "005", nombre: "Banco Galicia" },
+      { codigo: "007", nombre: "Banco de Galicia y Buenos Aires" },
+      { codigo: "011", nombre: "Banco de la Nación Argentina" },
+      { codigo: "014", nombre: "Banco de la Provincia de Buenos Aires" },
+      { codigo: "015", nombre: "Banco ICBC" },
+      { codigo: "016", nombre: "CitiBank N.A." },
+      { codigo: "017", nombre: "BBVA Banco Francés" },
+      { codigo: "020", nombre: "Banco de la Provincia de Córdoba" },
+      { codigo: "027", nombre: "Banco Supervielle" },
+      { codigo: "029", nombre: "Banco de la Ciudad de Buenos Aires" },
+      { codigo: "034", nombre: "Banco Patagonia" },
+      { codigo: "044", nombre: "Banco Hipotecario" },
+      { codigo: "045", nombre: "Banco de San Juan" },
+      { codigo: "046", nombre: "Banco de Santa Cruz" },
+      { codigo: "060", nombre: "Banco de Tucumán" },
+      { codigo: "065", nombre: "Banco Municipal de Rosario" },
+      { codigo: "072", nombre: "Banco Santander Río" },
+      { codigo: "083", nombre: "Banco del Chubut" },
+      { codigo: "086", nombre: "Banco de Santa Fe" },
+      { codigo: "143", nombre: "Brubank" },
+      { codigo: "150", nombre: "HSBC Bank Argentina" },
+      { codigo: "191", nombre: "Banco Credicoop" },
+      { codigo: "198", nombre: "Banco de Valores" },
+      { codigo: "247", nombre: "Banco Roela" },
+      { codigo: "254", nombre: "Banco Mariva" },
+      { codigo: "259", nombre: "Banco Itaú Argentina" },
+      { codigo: "262", nombre: "Banco Provincia de Tierra del Fuego" },
+      { codigo: "266", nombre: "Banco Meridian" },
+      { codigo: "268", nombre: "Banco de Corrientes" },
+      { codigo: "269", nombre: "Banco de la Rioja" },
+      { codigo: "285", nombre: "Banco Macro" },
+      { codigo: "295", nombre: "Banco CMF" },
+      { codigo: "299", nombre: "Banco Comafi" },
+      { codigo: "321", nombre: "Banco de Formosa" },
+      { codigo: "322", nombre: "Banco Industrial" },
+      { codigo: "330", nombre: "Nuevo Banco de Entre Ríos" },
+      { codigo: "331", nombre: "Banco de La Pampa" },
+      { codigo: "386", nombre: "Banco de Entre Ríos" },
+      { codigo: "389", nombre: "Banco de San Luis" },
+      { codigo: "426", nombre: "Banco Bica" },
+      { codigo: "431", nombre: "Banco Coinag" },
+      { codigo: "432", nombre: "Banco de Comercio" },
+      { codigo: "434", nombre: "Banco Cencosud" },
+      { codigo: "435", nombre: "Banco de Servicios Financieros" },
+      { codigo: "437", nombre: "Banco Voii" },
+      { codigo: "438", nombre: "Banco Bradesco Argentina" },
+      { codigo: "440", nombre: "Banco de Corrientes" },
+      { codigo: "442", nombre: "Banco BST" },
+      { codigo: "448", nombre: "Banco Dino" },
+      { codigo: "501", nombre: "Banco Transatlántico" },
+      { codigo: "513", nombre: "Banco Masventas" }
+    ];
 
-function validarCBU(){
-  const cbu=document.getElementById('cbu').value.trim();
-  const res=document.getElementById('resultado');
-  if(!/^\d{22}$/.test(cbu)){ res.innerHTML='<span style="color:red">❌ CBU/CVU inválido. Debe tener 22 dígitos.</span>'; return; }
-  const cod=cbu.substring(0,3);
-  const sucursal=cbu.substring(3,7);
-  const banco=bancos.find(b=>b.codigo===cod);
-  if(banco){
-    let provincia=banco.provincias.length===1? banco.provincias[0] : 'Desconocida';
-    res.innerHTML=`<div style="color:green; font-weight:bold">✅ CBU/CVU válido.<br>Banco: ${banco.nombre}<br>Sucursal: ${sucursal}<br>Provincia: ${provincia}</div>`;
-  } else {
-    res.innerHTML=`<div style="color:orange; font-weight:bold">⚠️ CBU/CVU válido.<br>Banco: Código ${cod} (no registrado)<br>Sucursal: ${sucursal}</div>`;
-  }
-}
-
-function cargarDropdown(){
-  const ul=document.getElementById('opcionesBancos');
-  bancos.forEach(b=>{
-    const li=document.createElement('li');
-    li.textContent=`${b.codigo} - ${b.nombre}`;
-    li.onclick=()=>{ document.getElementById('cbu').value=b.codigo; ul.classList.remove('show'); };
-    ul.appendChild(li);
-  });
-  document.getElementById('btnBancos').onclick=()=>{ ul.classList.toggle('show'); };
-  window.onclick=e=>{ if(!e.target.closest('.dropdown')) ul.classList.remove('show'); };
-}
-
-window.onload=cargarDropdown;
-</script>
-
+    const select = document.getElementById("listaBancos");
+    bancos.forEach(banco => {
+      const option = document.createElement("option");
+      option.value = banco.codigo;
+      option.textContent = `${banco.codigo} - ${banco.nombre}`;
+      select.appendChild(option);
+    });
+  </script>
 </body>
 </html>
-
 
 
