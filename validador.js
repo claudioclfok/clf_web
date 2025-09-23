@@ -1,93 +1,75 @@
-// Diccionario de bancos con sus códigos (principales nacionales y provinciales)
-const bancos = {
-  "011": "Banco de la Nación Argentina",
-  "014": "Banco de la Provincia de Buenos Aires",
-  "015": "Banco Galicia",
-  "016": "Banco de la Provincia de Córdoba",
-  "017": "BBVA Banco Francés",
-  "018": "Banco de la Provincia de Jujuy",
-  "020": "Banco de la Provincia de San Juan",
-  "027": "Banco Supervielle",
-  "029": "Banco de la Ciudad de Buenos Aires",
-  "030": "Banco de la Provincia de Tucumán",
-  "034": "Banco Patagonia",
-  "044": "Banco Hipotecario",
-  "045": "Banco de San Luis",
-  "072": "Banco Santander Río",
-  "083": "Banco del Chubut",
-  "086": "Banco de Santa Cruz",
-  "093": "Banco de la Pampa",
-  "094": "Banco de Corrientes",
-  "097": "Banco Provincia del Neuquén",
-  "143": "Brubank",
-  "147": "Banco Interfinanzas",
-  "150": "HSBC Bank Argentina",
-  "165": "JP Morgan Chase Bank",
-  "191": "Banco Credicoop",
-  "198": "Banco de Valores",
-  "247": "Banco Roela",
-  "254": "Banco Mariva",
-  "259": "Banco Itaú Argentina",
-  "262": "Bank of America",
-  "266": "BNP Paribas",
-  "268": "Banco Provincia de Tierra del Fuego",
-  "269": "Banco de la República Oriental del Uruguay",
-  "277": "Banco Sáenz",
-  "281": "Banco Meridian",
-  "285": "Banco Macro",
-  "299": "Banco Comafi",
-  "300": "Banco de Inversión y Comercio Exterior",
-  "301": "Banco Piano",
-  "305": "Banco Julio",
-  "309": "Banco HSBC Investment",
-  "310": "Banco del Sol",
-  "311": "Nuevo Banco del Chaco",
-  "312": "MBA Lazard",
-  "315": "Banco de Formosa",
-  "319": "Banco CMF",
-  "321": "Banco de Santiago del Estero",
-  "322": "Banco Industrial",
-  "325": "Deutsche Bank",
-  "330": "Banco de Santa Fe",
-  "331": "Banco de Entre Ríos",
-  "332": "Banco de Santa Cruz",
-  "336": "Banco Cetelem",
-  "338": "Banco de Servicios Financieros",
-  "339": "RCI Banque",
-  "340": "BACS Banco de Crédito y Securitización",
-  "341": "Banco Masventas",
-  "384": "Wilobank"
-};
+const bancos = [
+  { codigo: '011', nombre: 'Banco de la Nación Argentina', provincias: ['Nacional'] },
+  { codigo: '017', nombre: 'Banco Provincia de Buenos Aires', provincias: ['Buenos Aires'] },
+  { codigo: '027', nombre: 'Banco de la Ciudad de Buenos Aires', provincias: ['CABA'] },
+  { codigo: '029', nombre: 'Banco Hipotecario', provincias: ['Nacional'] },
+  { codigo: '035', nombre: 'Banco Patagonia', provincias: ['Nacional'] },
+  { codigo: '045', nombre: 'Banco de San Juan', provincias: ['San Juan'] },
+  { codigo: '072', nombre: 'Banco Santander Río', provincias: ['Nacional'] },
+  { codigo: '085', nombre: 'Banco Comafi', provincias: ['Nacional'] },
+  { codigo: '093', nombre: 'Banco de Formosa', provincias: ['Formosa'] },
+  { codigo: '100', nombre: 'Banco Macro', provincias: ['Nacional'] },
+  { codigo: '147', nombre: 'Banco B.I. Creditanstalt', provincias: ['Nacional'] },
+  { codigo: '150', nombre: 'HSBC Bank Argentina', provincias: ['Nacional'] },
+  { codigo: '165', nombre: 'JPMorgan Chase Bank', provincias: ['Nacional'] },
+  { codigo: '191', nombre: 'Banco Credicoop', provincias: ['Nacional'] },
+  { codigo: '198', nombre: 'Banco de Valores', provincias: ['Nacional'] },
+  { codigo: '319', nombre: 'Banco CMF', provincias: ['Nacional'] },
+  { codigo: '321', nombre: 'Banco de Santiago del Estero', provincias: ['Santiago del Estero'] },
+  { codigo: '325', nombre: 'Deutsche Bank', provincias: ['Nacional'] },
+  { codigo: '330', nombre: 'Nuevo Banco de Santa Fe', provincias: ['Santa Fe'] },
+  { codigo: '331', nombre: 'Banco Cetelem Argentina', provincias: ['Nacional'] },
+  { codigo: '332', nombre: 'Banco de Servicios Financieros', provincias: ['Nacional'] },
+  { codigo: '335', nombre: 'Banco Cofidis', provincias: ['Nacional'] },
+  { codigo: '336', nombre: 'Banco Bradesco Argentina', provincias: ['Nacional'] },
+  { codigo: '338', nombre: 'Banco de Servicios y Transacciones', provincias: ['Nacional'] },
+  { codigo: '339', nombre: 'RCI Banque', provincias: ['Nacional'] },
+  { codigo: '340', nombre: 'BACS Banco de Crédito y Securitización', provincias: ['Nacional'] },
+  { codigo: '341', nombre: 'Banco Masventas', provincias: ['Nacional'] },
+  { codigo: '386', nombre: 'Nuevo Banco de Entre Ríos', provincias: ['Entre Ríos'] },
+  { codigo: '389', nombre: 'Banco Columbia', provincias: ['Nacional'] },
+  { codigo: '426', nombre: 'Banco Bica', provincias: ['Nacional'] },
+  { codigo: '431', nombre: 'Banco Coinag', provincias: ['Nacional'] },
+  { codigo: '432', nombre: 'Banco de Comercio', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'Ford Credit Compañía Financiera', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'Volkswagen Credit Compañía Financiera', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'Toyota Compañía Financiera de Argentina', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'Mercedes-Benz Compañía Financiera Argentina', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'Rombo Compañía Financiera', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'John Deere Credit Compañía Financiera', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'PSA Finance Argentina Compañía Financiera', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'Montemar Compañía Financiera', provincias: ['Nacional'] },
+  { codigo: '459', nombre: 'Multifinanzas Compañía Financiera', provincias: ['Nacional'] }
+];
 
-// Validación de CBU
 function validarCBU() {
-  const cbu = document.getElementById("cbu").value.trim();
-  const resultado = document.getElementById("resultado");
-
+  const cbu = document.getElementById('cbu').value.trim();
+  const resultado = document.getElementById('resultado');
   if (!/^\d{22}$/.test(cbu)) {
-    resultado.innerHTML = "<span style='color:red'>❌ El CBU/CVU debe tener 22 dígitos</span>";
+    resultado.innerHTML = `<span style="color:red">CBU/CVU inválido. Debe tener 22 dígitos.</span>`;
     return;
   }
 
   const bancoCodigo = cbu.substring(0, 3);
   const sucursalCodigo = cbu.substring(3, 7);
+  const banco = bancos.find(b => b.codigo === bancoCodigo);
 
-  let bancoNombre = bancos[bancoCodigo] || "Banco desconocido";
-
-  resultado.innerHTML = `
-    ✅ <b>CBU válido</b><br>
-    🏦 Banco: ${bancoNombre}<br>
-    🏢 Sucursal: ${sucursalCodigo}
-  `;
+  if (banco) {
+    let provincia = banco.provincias.length === 1 ? banco.provincias[0] : 'Desconocida';
+    resultado.innerHTML = `<span style="color:green">CBU/CVU válido.<br>Banco: ${banco.nombre}<br>Sucursal: ${sucursalCodigo}<br>Provincia: ${provincia}</span>`;
+  } else {
+    resultado.innerHTML = `<span style="color:orange">CBU/CVU válido.<br>Banco: Código ${bancoCodigo} (no registrado)<br>Sucursal: ${sucursalCodigo}</span>`;
+  }
 }
 
-// Llenar lista desplegable
-window.onload = function() {
-  const lista = document.getElementById("listaBancos");
-  for (const codigo in bancos) {
-    const option = document.createElement("option");
-    option.value = codigo;
-    option.text = `${codigo} - ${bancos[codigo]}`;
+function cargarListaBancos() {
+  const lista = document.getElementById('listaBancos');
+  bancos.forEach(b => {
+    const option = document.createElement('option');
+    option.value = b.codigo;
+    option.text = `${b.codigo} - ${b.nombre}`;
     lista.appendChild(option);
-  }
-};
+  });
+}
+
+window.onload = cargarListaBancos;
