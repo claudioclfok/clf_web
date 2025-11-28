@@ -11,54 +11,45 @@ actualizarFechaHora();
 
 async function cargarCotizaciones() {
     const target = document.getElementById('dolar-cotizaciones');
-    let html = '';
-    let blueDolarVenta = 0;
-    const fetchPromises = [];
-
-    fetchPromises.push(
-        fetch('https://dolarapi.com/v1/dolares/blue')
-            .then(res => res.json())
-            .then(data => {
-                if (data.venta) {
-                    blueDolarVenta = data.venta;
-                    return `<p><strong>Dólar Blue:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
-                }
-                return `<p style="color:crimson;">Error: Dólar Blue no disponible.</p>`;
-            })
-            .catch(() => `<p style="color:crimson;">Error al cargar Dólar Blue.</p>`)
-    );
-
-    fetchPromises.push(
-        fetch('https://dolarapi.com/v1/dolares/oficial')
-            .then(res => res.json())
-            .then(data => {
-                if (data.venta) {
-                    return `<p><strong>Dólar Oficial:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
-                }
-                return `<p style="color:crimson;">Error: Dólar Oficial no disponible.</p>`;
-            })
-            .catch(() => `<p style="color:crimson;">Error al cargar Dólar Oficial.</p>`)
-    );
-    
-    fetchPromises.push(
-        fetch('https://dolarapi.com/v1/dolares/bolsa')
-            .then(res => res.json())
-            .then(data => {
-                if (data.venta) {
-                    return `<p><strong>Dólar MEP:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
-                }
-                return `<p style="color:crimson;">Error: Dólar MEP no disponible.</p>`;
-            })
-            .catch(() => `<p style="color:crimson;">Error al cargar Dólar MEP.</p>`)
-    );
+    const urls = {
+        blue: 'https://dolarapi.com/v1/dolares/blue',
+        oficial: 'https://dolarapi.com/v1/dolares/oficial',
+        mep: 'https://dolarapi.com/v1/dolares/bolsa'
+    };
 
     try {
-        const results = await Promise.all(fetchPromises);
-        html = results.join('');
-        html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
-        target.innerHTML = html;
+        const responses = await Promise.allSettled(Object.values(urls).map(url => fetch(url)));
+        let html = '';
+        const labels = { blue: 'Blue', oficial: 'Oficial', mep: 'MEP' };
+
+        for (const [index, result] of responses.entries()) {
+            const type = Object.keys(urls)[index];
+            const label = labels[type];
+
+            if (result.status === 'fulfilled' && result.value.ok) {
+                const data = await result.value.json();
+                if (typeof data.compra === 'number' && typeof data.venta === 'number') {
+                    html += `<p><strong>Dólar ${label}:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
+                } else {
+                    html += `<p style="color:crimson;">Error: Datos inválidos para Dólar ${label}</p>`;
+                }
+            } else {
+                html += `<p style="color:crimson;">Error al cargar Dólar ${label}</p>`;
+            }
+        }
         
-        inicializarConversor(blueDolarVenta);
+        // Agregar cotizaciones estáticas para Cripto, ya que no tienes una API para ellas.
+        html += `<div style="margin-top: 30px;">
+                    <h3>Cotizaciones Criptomonedas Populares</h3>
+                    <div id="cripto-cotizaciones">
+                        <p>Bitcoin (BTC): <strong>$110.500.000 ARS</strong> <span>(+1.5%)</span></p>
+                        <p>Ethereum (ETH): <strong>$6.050.000 ARS</strong> <span>(-0.2%)</span></p>
+                        <p style="font-size:10px;color:#666;">Fuente: Binance / CryptoYa (Datos estáticos de ejemplo)</p>
+                    </div>
+                </div>`;
+        
+        html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización de divisas: ${new Date().toLocaleString('es-AR')}</p>`;
+        target.innerHTML = html;
 
     } catch (err) {
         target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`;
@@ -69,10 +60,12 @@ setInterval(cargarCotizaciones, 60000);
 
 async function cargarNoticias() {
     const noticiasLista = document.getElementById('noticias-lista');
-    noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>';
+    noticiasLista.innerHTML = '<li>Cargando noticias... Si no cargan, el servidor proxy podría estar caído.</li>';
 
+    // Usamos el proxy para intentar acceder a la fuente de noticias (La Nación)
+    const proxy = 'https://api.allorigins.win/get?url=';
     const rssFeeds = [
-        { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 3 },
+        { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 5 }
     ];
 
     let allNewsItems = [];
@@ -80,37 +73,49 @@ async function cargarNoticias() {
     try {
         const results = await Promise.allSettled(
             rssFeeds.map(feed =>
-                fetch(feed.url, { mode: 'cors' })
+                fetch(proxy + encodeURIComponent(feed.url))
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`Error HTTP ${response.status} para ${feed.name}`);
                         }
-                        return response.text();
+                        return response.json();
                     })
-                    .then(str => {
+                    .then(data => {
                         const parser = new DOMParser();
-                        const xml = parser.parseFromString(str, "text/xml");
+                        const xml = parser.parseFromString(data.contents, "text/xml");
                         const items = xml.querySelectorAll('item');
                         const newsFromFeed = [];
                         items.forEach((item, i) => {
                             if (i >= feed.limit) return;
-                            
+
                             const title = item.querySelector('title')?.textContent || 'Sin título';
                             const link = item.querySelector('link')?.textContent || '#';
                             const pubDate = item.querySelector('pubDate')?.textContent || '';
                             const descriptionHtml = item.querySelector('description')?.textContent || '';
-                            
+
+                            let imgSrc = '';
+                            let cleanDescriptionText = '';
                             const tempDiv = document.createElement('div');
                             tempDiv.innerHTML = descriptionHtml;
+
                             const imgElement = tempDiv.querySelector('img');
-                            let imgSrc = imgElement ? imgElement.src : '';
-                            if (imgElement) imgElement.remove();
-                            let cleanDescriptionText = tempDiv.textContent || '';
+                            if (imgElement) {
+                                imgSrc = imgElement.src;
+                                imgElement.remove();
+                            }
+                            cleanDescriptionText = tempDiv.textContent || '';
                             const shortText = cleanDescriptionText.substring(0, 140) + (cleanDescriptionText.length > 140 ? '...' : '');
-                            
+
                             const fecha = pubDate ? new Date(pubDate).toLocaleDateString('es-AR', {year:'numeric', month:'short', day:'numeric'}) : 'Fecha desconocida';
 
-                            newsFromFeed.push({ title, link, shortText, fecha, imgSrc, source: feed.name });
+                            newsFromFeed.push({
+                                title,
+                                link,
+                                shortText,
+                                fecha,
+                                imgSrc,
+                                source: feed.name
+                            });
                         });
                         return newsFromFeed;
                     })
@@ -127,7 +132,7 @@ async function cargarNoticias() {
 
         let html = '';
         if (allNewsItems.length === 0) {
-            html = '<li>No se pudieron cargar noticias.</li>';
+            html = '<li>No se pudieron cargar noticias. El proxy (allorigins.win) o la fuente están fallando.</li>';
         } else {
             allNewsItems.forEach(news => {
                 html += `<li>
@@ -141,40 +146,8 @@ async function cargarNoticias() {
         noticiasLista.innerHTML = html;
 
     } catch(e) {
-        noticiasLista.innerHTML = '<li style="color:crimson;">Error al cargar las noticias.</li>';
+        noticiasLista.innerHTML = '<li style="color:crimson;">Error general en el proceso de carga de noticias.</li>';
     }
 }
 cargarNoticias();
 setInterval(cargarNoticias, 5 * 60 * 1000);
-
-
-function inicializarConversor(tasaDolarBlueVenta) {
-    const tasa = tasaDolarBlueVenta || 1420;
-    const inputPesos = document.getElementById('monto-pesos');
-    const resultado = document.getElementById('conversion-resultado');
-
-    function actualizarConversion() {
-        const pesos = parseFloat(inputPesos.value);
-        if (!isNaN(pesos) && pesos > 0 && tasa > 0) {
-            const dolares = pesos / tasa;
-            resultado.textContent = `$${dolares.toFixed(2)} USD`;
-        } else {
-            resultado.textContent = '$0.00 USD';
-        }
-    }
-    
-    actualizarConversion();
-    inputPesos.addEventListener('input', actualizarConversion);
-}
-
-function cargarCriptomonedasEstaticas() {
-    const criptoDiv = document.getElementById('cripto-cotizaciones');
-    if (criptoDiv) {
-        criptoDiv.innerHTML = `
-            <p>Bitcoin (BTC): <strong>$110.500.000 ARS</strong> <span style="color: green;">(+1.5%)</span></p>
-            <p>Ethereum (ETH): <strong>$6.050.000 ARS</strong> <span style="color: red;">(-0.2%)</span></p>
-        `;
-    }
-}
-
-cargarCriptomonedasEstaticas();
