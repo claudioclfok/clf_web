@@ -1,37 +1,181 @@
-const verifikApiKey = 'TU_API_KEY_DE_VERIFIK';
-const tusFacturasApiUrl = 'https://api.tusfacturas.app/v2/consulta/cuit';
+function actualizarFechaHora() {
+    const ahora = new Date();
+    const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+    const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const fechaFormateada = ahora.toLocaleDateString('es-AR', opcionesFecha);
+    const horaFormateada = ahora.toLocaleTimeString('es-AR', opcionesHora);
+    document.getElementById('fecha-hora').textContent = `${fechaFormateada} - ${horaFormateada}`;
+}
+setInterval(actualizarFechaHora, 1000);
+actualizarFechaHora();
 
-async function consultarDatos() {
-  const dni = document.getElementById('dni').value;
-  if (!dni) { alert('Por favor, ingrese un DNI.'); return; }
+async function cargarCotizaciones() {
+    const target = document.getElementById('dolar-cotizaciones');
+    const urls = {
+        blue: 'https://dolarapi.com/v1/dolares/blue',
+        oficial: 'https://dolarapi.com/v1/dolares/oficial',
+        mep: 'https://dolarapi.com/v1/dolares/bolsa'
+    };
 
-  try {
-    const datosPersonales = await obtenerDatosPersonales(dni);
-    document.getElementById('datosPersonales').textContent = JSON.stringify(datosPersonales, null, 2);
+    try {
+        const responses = await Promise.allSettled(Object.values(urls).map(url => fetch(url)));
+        let html = '';
+        const labels = { blue: 'Blue', oficial: 'Oficial', mep: 'MEP' };
+        let blueDolarVenta = 0;
 
-    const cuit = datosPersonales.cuit;
-    if (cuit) {
-      const datosFiscales = await obtenerDatosFiscales(cuit);
-      document.getElementById('datosFiscales').textContent = JSON.stringify(datosFiscales, null, 2);
-    } else {
-      document.getElementById('datosFiscales').textContent = 'No se pudo obtener el CUIT asociado al DNI.';
+        for (const [index, result] of responses.entries()) {
+            const type = Object.keys(urls)[index];
+            const label = labels[type];
+
+            if (result.status === 'fulfilled' && result.value.ok) {
+                const data = await result.value.json();
+                if (typeof data.compra === 'number' && typeof data.venta === 'number') {
+                    html += `<p><strong>Dólar ${label}:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
+                    if (type === 'blue') {
+                        blueDolarVenta = data.venta;
+                    }
+                } else {
+                    html += `<p style="color:crimson;">Error: Datos inválidos para Dólar ${label}</p>`;
+                }
+            } else {
+                html += `<p style="color:crimson;">Error al cargar Dólar ${label}</p>`;
+            }
+        }
+        html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
+        target.innerHTML = html;
+        
+        inicializarConversor(blueDolarVenta);
+
+    } catch (err) {
+        target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`;
     }
-  } catch (error) {
-    alert('Error al consultar los datos: ' + error.message);
-  }
+}
+cargarCotizaciones();
+setInterval(cargarCotizaciones, 60000);
+
+async function cargarNoticias() {
+    const noticiasLista = document.getElementById('noticias-lista');
+    noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>';
+
+    const proxy = 'https://api.allorigins.win/get?url=';
+    const rssFeeds = [
+        { name: 'Ámbito Financiero', url: 'https://www.ambito.com/rss/economia.xml', limit: 5 },
+        { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 3 },
+        { name: 'Clarín (Economía)', url: 'https://www.clarin.com/rss/economia/', limit: 2 }
+    ];
+
+    let allNewsItems = [];
+
+    try {
+        const results = await Promise.allSettled(
+            rssFeeds.map(feed =>
+                fetch(proxy + encodeURIComponent(feed.url))
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error HTTP ${response.status} para ${feed.name}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const parser = new DOMParser();
+                        const xml = parser.parseFromString(data.contents, "text/xml");
+                        const items = xml.querySelectorAll('item');
+                        const newsFromFeed = [];
+                        items.forEach((item, i) => {
+                            if (i >= feed.limit) return;
+
+                            const title = item.querySelector('title')?.textContent || 'Sin título';
+                            const link = item.querySelector('link')?.textContent || '#';
+                            const pubDate = item.querySelector('pubDate')?.textContent || '';
+                            const descriptionHtml = item.querySelector('description')?.textContent || '';
+
+                            let imgSrc = '';
+                            let cleanDescriptionText = '';
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = descriptionHtml;
+
+                            const imgElement = tempDiv.querySelector('img');
+                            if (imgElement) {
+                                imgSrc = imgElement.src;
+                                imgElement.remove();
+                            }
+                            cleanDescriptionText = tempDiv.textContent || '';
+                            const shortText = cleanDescriptionText.substring(0, 140) + (cleanDescriptionText.length > 140 ? '...' : '');
+
+                            const fecha = pubDate ? new Date(pubDate).toLocaleDateString('es-AR', {year:'numeric', month:'short', day:'numeric'}) : 'Fecha desconocida';
+
+                            newsFromFeed.push({
+                                title,
+                                link,
+                                shortText,
+                                fecha,
+                                imgSrc,
+                                source: feed.name
+                            });
+                        });
+                        return newsFromFeed;
+                    })
+            )
+        );
+
+        results.forEach(result => {
+            if (result.status === 'fulfilled') {
+                allNewsItems = allNewsItems.concat(result.value);
+            }
+        });
+
+        allNewsItems.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+        let html = '';
+        if (allNewsItems.length === 0) {
+            html = '<li>No se pudieron cargar noticias de ninguna fuente.</li>';
+        } else {
+            allNewsItems.forEach(news => {
+                html += `<li>
+                    ${news.imgSrc ? `<img src="${news.imgSrc}" alt="${news.title}">` : ''}
+                    <a href="${news.link}" target="_blank" rel="noopener noreferrer">${news.title}</a>
+                    <p>${news.shortText}</p>
+                    <time>${news.fecha} - <span style="font-weight: bold;">${news.source}</span></time>
+                </li>`;
+            });
+        }
+        noticiasLista.innerHTML = html;
+
+    } catch(e) {
+        noticiasLista.innerHTML = '<li style="color:crimson;">Error general al cargar las noticias. Por favor, inténtelo de nuevo más tarde.</li>';
+    }
+}
+cargarNoticias();
+setInterval(cargarNoticias, 5 * 60 * 1000);
+
+
+function inicializarConversor(tasaDolarBlueVenta) {
+    const tasa = tasaDolarBlueVenta || 1420;
+    const inputPesos = document.getElementById('monto-pesos');
+    const resultado = document.getElementById('conversion-resultado');
+
+    function actualizarConversion() {
+        const pesos = parseFloat(inputPesos.value);
+        if (!isNaN(pesos) && pesos > 0 && tasa > 0) {
+            const dolares = pesos / tasa;
+            resultado.textContent = `$${dolares.toFixed(2)} USD`;
+        } else {
+            resultado.textContent = '$0.00 USD';
+        }
+    }
+    
+    actualizarConversion();
+    inputPesos.addEventListener('input', actualizarConversion);
 }
 
-async function obtenerDatosPersonales(dni) {
-  const response = await fetch(`https://api.verifik.co/v2/ar/cedula/${dni}`, {
-    headers: { 'Authorization': `Bearer ${verifikApiKey}` }
-  });
-  if (!response.ok) throw new Error('Error al consultar los datos personales.');
-  return await response.json();
+function cargarCriptomonedasEstaticas() {
+    const criptoDiv = document.getElementById('cripto-cotizaciones');
+    if (criptoDiv) {
+        criptoDiv.innerHTML = `
+            <p>Bitcoin (BTC): <strong>$110.500.000 ARS</strong> <span style="color: green;">(+1.5%)</span></p>
+            <p>Ethereum (ETH): <strong>$6.050.000 ARS</strong> <span style="color: red;">(-0.2%)</span></p>
+        `;
+    }
 }
 
-async function obtenerDatosFiscales(cuit) {
-  const response = await fetch(`${tusFacturasApiUrl}/${cuit}`);
-  if (!response.ok) throw new Error('Error al consultar los datos fiscales.');
-  return await response.json();
-}
-
+cargarCriptomonedasEstaticas();
