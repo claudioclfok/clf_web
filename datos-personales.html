@@ -1,100 +1,180 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Datos Personales - Simulación</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 30px;
-      text-align: center;
-      color: #2c3e50;
-    }
-    header {
-      background: #005baa;
-      color: white;
-      padding: 20px;
-      margin-bottom: 30px;
-    }
-    header h1 { margin: 0; }
-    main {
-      background: white;
-      max-width: 500px;
-      margin: auto;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    label { display: block; margin-bottom: 10px; font-weight: bold; }
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 1rem;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      background: #005baa;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      font-size: 1rem;
-      cursor: pointer;
-      border-radius: 6px;
-    }
-    button:hover { background: #004080; }
-    #resultado {
-      margin-top: 20px;
-      font-size: 1.1rem;
-      text-align: left;
-    }
-    #resultado p { margin: 5px 0; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Datos Personales - Simulación</h1>
-  </header>
-  <main>
-    <form id="formDNI">
-      <label for="dni">Ingrese DNI:</label>
-      <input type="text" id="dni" maxlength="8" placeholder="Ejemplo: 12345678" required>
-      <button type="submit">Consultar</button>
-    </form>
-    <div id="resultado"></div>
-  </main>
+function actualizarFechaHora() {
+    const ahora = new Date();
+    const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+    const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const fechaFormateada = ahora.toLocaleDateString('es-AR', opcionesFecha);
+    const horaFormateada = ahora.toLocaleTimeString('es-AR', opcionesHora);
+    document.getElementById('fecha-hora').textContent = `${fechaFormateada} - ${horaFormateada}`;
+}
+setInterval(actualizarFechaHora, 1000);
+actualizarFechaHora();
 
-  <script>
-    // Datos simulados para prueba
-    const datosSimulados = {
-      "12345678": { nombre: "Juan Pérez", nacimiento: "01/01/1990", genero: "Masculino", cuil: "20-12345678-3", localidad: "Buenos Aires", entidad: "Empresa ABC" },
-      "87654321": { nombre: "María Gómez", nacimiento: "15/05/1985", genero: "Femenino", cuil: "27-87654321-1", localidad: "Córdoba", entidad: "Banco XYZ" },
-      "11223344": { nombre: "Carlos López", nacimiento: "20/12/1975", genero: "Masculino", cuil: "20-11223344-5", localidad: "Rosario", entidad: "Municipalidad" }
-    };
+async function cargarCotizaciones() {
+    const target = document.getElementById('dolar-cotizaciones');
+    let html = '';
+    let blueDolarVenta = 0;
+    const fetchPromises = [];
 
-    document.getElementById("formDNI").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const dni = document.getElementById("dni").value.trim();
-      const resultado = document.getElementById("resultado");
+    fetchPromises.push(
+        fetch('https://dolarapi.com/v1/dolares/blue')
+            .then(res => res.json())
+            .then(data => {
+                if (data.venta) {
+                    blueDolarVenta = data.venta;
+                    return `<p><strong>Dólar Blue:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
+                }
+                return `<p style="color:crimson;">Error: Dólar Blue no disponible.</p>`;
+            })
+            .catch(() => `<p style="color:crimson;">Error al cargar Dólar Blue.</p>`)
+    );
 
-      if (datosSimulados[dni]) {
-        const persona = datosSimulados[dni];
-        resultado.innerHTML = `
-          <p><strong>Nombre:</strong> ${persona.nombre}</p>
-          <p><strong>Fecha de Nacimiento:</strong> ${persona.nacimiento}</p>
-          <p><strong>Género:</strong> ${persona.genero}</p>
-          <p><strong>CUIL:</strong> ${persona.cuil}</p>
-          <p><strong>Localidad:</strong> ${persona.localidad}</p>
-          <p><strong>Entidad:</strong> ${persona.entidad}</p>
+    fetchPromises.push(
+        fetch('https://dolarapi.com/v1/dolares/oficial')
+            .then(res => res.json())
+            .then(data => {
+                if (data.venta) {
+                    return `<p><strong>Dólar Oficial:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
+                }
+                return `<p style="color:crimson;">Error: Dólar Oficial no disponible.</p>`;
+            })
+            .catch(() => `<p style="color:crimson;">Error al cargar Dólar Oficial.</p>`)
+    );
+    
+    fetchPromises.push(
+        fetch('https://dolarapi.com/v1/dolares/bolsa')
+            .then(res => res.json())
+            .then(data => {
+                if (data.venta) {
+                    return `<p><strong>Dólar MEP:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
+                }
+                return `<p style="color:crimson;">Error: Dólar MEP no disponible.</p>`;
+            })
+            .catch(() => `<p style="color:crimson;">Error al cargar Dólar MEP.</p>`)
+    );
+
+    try {
+        const results = await Promise.all(fetchPromises);
+        html = results.join('');
+        html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
+        target.innerHTML = html;
+        
+        inicializarConversor(blueDolarVenta);
+
+    } catch (err) {
+        target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`;
+    }
+}
+cargarCotizaciones();
+setInterval(cargarCotizaciones, 60000);
+
+async function cargarNoticias() {
+    const noticiasLista = document.getElementById('noticias-lista');
+    noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>';
+
+    const rssFeeds = [
+        { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 3 },
+    ];
+
+    let allNewsItems = [];
+
+    try {
+        const results = await Promise.allSettled(
+            rssFeeds.map(feed =>
+                fetch(feed.url, { mode: 'cors' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error HTTP ${response.status} para ${feed.name}`);
+                        }
+                        return response.text();
+                    })
+                    .then(str => {
+                        const parser = new DOMParser();
+                        const xml = parser.parseFromString(str, "text/xml");
+                        const items = xml.querySelectorAll('item');
+                        const newsFromFeed = [];
+                        items.forEach((item, i) => {
+                            if (i >= feed.limit) return;
+                            
+                            const title = item.querySelector('title')?.textContent || 'Sin título';
+                            const link = item.querySelector('link')?.textContent || '#';
+                            const pubDate = item.querySelector('pubDate')?.textContent || '';
+                            const descriptionHtml = item.querySelector('description')?.textContent || '';
+                            
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = descriptionHtml;
+                            const imgElement = tempDiv.querySelector('img');
+                            let imgSrc = imgElement ? imgElement.src : '';
+                            if (imgElement) imgElement.remove();
+                            let cleanDescriptionText = tempDiv.textContent || '';
+                            const shortText = cleanDescriptionText.substring(0, 140) + (cleanDescriptionText.length > 140 ? '...' : '');
+                            
+                            const fecha = pubDate ? new Date(pubDate).toLocaleDateString('es-AR', {year:'numeric', month:'short', day:'numeric'}) : 'Fecha desconocida';
+
+                            newsFromFeed.push({ title, link, shortText, fecha, imgSrc, source: feed.name });
+                        });
+                        return newsFromFeed;
+                    })
+            )
+        );
+
+        results.forEach(result => {
+            if (result.status === 'fulfilled') {
+                allNewsItems = allNewsItems.concat(result.value);
+            }
+        });
+
+        allNewsItems.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+        let html = '';
+        if (allNewsItems.length === 0) {
+            html = '<li>No se pudieron cargar noticias.</li>';
+        } else {
+            allNewsItems.forEach(news => {
+                html += `<li>
+                    ${news.imgSrc ? `<img src="${news.imgSrc}" alt="${news.title}">` : ''}
+                    <a href="${news.link}" target="_blank" rel="noopener noreferrer">${news.title}</a>
+                    <p>${news.shortText}</p>
+                    <time>${news.fecha} - <span style="font-weight: bold;">${news.source}</span></time>
+                </li>`;
+            });
+        }
+        noticiasLista.innerHTML = html;
+
+    } catch(e) {
+        noticiasLista.innerHTML = '<li style="color:crimson;">Error al cargar las noticias.</li>';
+    }
+}
+cargarNoticias();
+setInterval(cargarNoticias, 5 * 60 * 1000);
+
+
+function inicializarConversor(tasaDolarBlueVenta) {
+    const tasa = tasaDolarBlueVenta || 1420;
+    const inputPesos = document.getElementById('monto-pesos');
+    const resultado = document.getElementById('conversion-resultado');
+
+    function actualizarConversion() {
+        const pesos = parseFloat(inputPesos.value);
+        if (!isNaN(pesos) && pesos > 0 && tasa > 0) {
+            const dolares = pesos / tasa;
+            resultado.textContent = `$${dolares.toFixed(2)} USD`;
+        } else {
+            resultado.textContent = '$0.00 USD';
+        }
+    }
+    
+    actualizarConversion();
+    inputPesos.addEventListener('input', actualizarConversion);
+}
+
+function cargarCriptomonedasEstaticas() {
+    const criptoDiv = document.getElementById('cripto-cotizaciones');
+    if (criptoDiv) {
+        criptoDiv.innerHTML = `
+            <p>Bitcoin (BTC): <strong>$110.500.000 ARS</strong> <span style="color: green;">(+1.5%)</span></p>
+            <p>Ethereum (ETH): <strong>$6.050.000 ARS</strong> <span style="color: red;">(-0.2%)</span></p>
         `;
-      } else {
-        resultado.innerHTML = `<p style="color:red;">No se encontraron datos para el DNI ingresado.</p>`;
-      }
-    });
-  </script>
-</body>
-</html>
+    }
+}
+
+cargarCriptomonedasEstaticas();
