@@ -19,7 +19,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             background: var(--color-background-light);
-            padding: 40px 20px;
+            padding: 40px 0;
             text-align: center;
             color: var(--color-text-dark);
         }
@@ -46,12 +46,11 @@
             color: white;
         }
 
-        /* 🔹 Menú corregido */
         nav {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;   /* permite que baje en móvil */
-            gap: 15px;         /* separación uniforme */
+            flex-wrap: wrap;
+            gap: 15px;
             margin-top: 10px;
         }
 
@@ -87,9 +86,24 @@
             max-width: 880px;
         }
 
-        main {
-            max-width: 900px;
+        #contenedor-principal-grid {
+            display: grid;
+            grid-template-columns: minmax(100px, 1fr) minmax(300px, 900px) minmax(100px, 1fr);
+            gap: 30px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .columna-sidebar {
+            padding: 15px 0;
+            text-align: left;
+        }
+
+        main {
+            grid-column: 2 / 3;
+            max-width: 100%;
+            margin: 0;
             background: white;
             padding: 30px;
             border-radius: 10px;
@@ -179,9 +193,39 @@
             width: 100%;
         }
 
+        .bloque-info-extra {
+            background: var(--color-card-background);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .bloque-info-extra h4 {
+            color: var(--color-primary);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        @media (max-width: 1050px) {
+            #contenedor-principal-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+                padding: 0;
+            }
+
+            .columna-sidebar {
+                display: none;
+            }
+        }
+
         @media (max-width: 600px) {
             body {
-                padding: 20px 12px;
+                padding: 20px 0;
             }
 
             nav {
@@ -236,172 +280,67 @@
         </div>
     </section>
 
-    <main>
-        <section id="cotizaciones-dolar">
-            <h3>Cotizaciones del Dólar</h3>
-            <div id="dolar-cotizaciones">
-                <p>Cargando cotizaciones...</p>
+    <div id="contenedor-principal-grid">
+        <aside class="columna-sidebar" id="sidebar-izquierda">
+            <div class="bloque-info-extra">
+                <h4>Riesgo País y Tasa BCRA</h4>
+                <div id="indicadores-clave">
+                    <p>Riesgo País: <strong>2,150 p.b.</strong> <span style="color: red;">(-0.5%)</span></p>
+                    <p>Tasa BCRA: <strong>52.00%</strong></p>
+                    <p>Euro Compra: <strong>$1550.00</strong></p>
+                </div>
             </div>
-        </section>
+            
+            <div class="bloque-info-extra">
+                <h4>Próximos Eventos</h4>
+                <p style="font-size: 0.9em; margin-bottom: 5px;"><strong>05 DIC:</strong> Dato Inflación (INDEC)</p>
+                <p style="font-size: 0.9em;"><strong>12 DIC:</strong> Reunión BCRA</p>
+            </div>
+        </aside>
 
-        <section id="noticias">
-            <h2>Noticias Económicas - Varias Fuentes</h2>
-            <ul id="noticias-lista">
-                <li>Cargando noticias de varias fuentes...</li>
-            </ul>
-        </section>
-    </main>
+        <main>
+            <section id="cotizaciones-dolar">
+                <h3>Cotizaciones del Dólar</h3>
+                <div id="dolar-cotizaciones">
+                    <p>Cargando cotizaciones...</p>
+                </div>
+            </section>
+
+            <section id="noticias">
+                <h2>Noticias Económicas - Varias Fuentes</h2>
+                <ul id="noticias-lista">
+                    <li>Cargando noticias de varias fuentes...</li>
+                </ul>
+            </section>
+        </main>
+
+        <aside class="columna-sidebar" id="sidebar-derecha">
+            <div class="bloque-info-extra">
+                <h4>Mini-Conversor Rápido</h4>
+                <label for="monto-pesos" style="font-size: 0.9em; display: block; margin-bottom: 5px;">Monto en Pesos ($):</label>
+                <input type="number" id="monto-pesos" value="10000" min="0" style="width: 80%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px;">
+                <p style="font-weight: bold; margin-top: 15px;">Equivalencia (Dólar Blue):</p>
+                <p id="conversion-resultado" style="font-size: 1.2em; color: green; font-weight: 700;">$0.00 USD</p>
+            </div>
+
+            <div class="bloque-info-extra">
+                <h4>Análisis Destacado</h4>
+                <p style="font-size: 0.9em;"><strong>Columna:</strong> <em>¿Es momento de invertir en Bonos CER?</em></p>
+                <a href="#" style="font-size: 0.8em;">Leer Más...</a>
+            </div>
+        </aside>
+    </div>
+
+    <section id="cotizaciones-cripto" style="max-width: 900px; margin: 30px auto; padding: 20px; border-radius: 10px; box-shadow: var(--shadow-base); background: white;">
+        <h2>Cotizaciones Criptomonedas Populares</h2>
+        <div id="cripto-cotizaciones">
+            <p>Cargando datos de criptomonedas...</p>
+        </div>
+        <p style="font-size: 0.8em; color: #888;">Fuente: Binance / CriptoYa (Datos estáticos de ejemplo)</p>
+    </section>
 
     <script>
-        function actualizarFechaHora() {
-            const ahora = new Date();
-            const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
-            const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            const fechaFormateada = ahora.toLocaleDateString('es-AR', opcionesFecha);
-            const horaFormateada = ahora.toLocaleTimeString('es-AR', opcionesHora);
-            document.getElementById('fecha-hora').textContent = `${fechaFormateada} - ${horaFormateada}`;
-        }
-        setInterval(actualizarFechaHora, 1000);
-        actualizarFechaHora();
-
-        async function cargarCotizaciones() {
-            const target = document.getElementById('dolar-cotizaciones');
-            const urls = {
-                blue:    'https://dolarapi.com/v1/dolares/blue',
-                oficial: 'https://dolarapi.com/v1/dolares/oficial',
-                mep:     'https://dolarapi.com/v1/dolares/bolsa'
-            };
-
-            try {
-                const responses = await Promise.allSettled(Object.values(urls).map(url => fetch(url)));
-                let html = '';
-                const labels = { blue: 'Blue', oficial: 'Oficial', mep: 'MEP' };
-
-                for (const [index, result] of responses.entries()) {
-                    const type = Object.keys(urls)[index];
-                    const label = labels[type];
-
-                    if (result.status === 'fulfilled' && result.value.ok) {
-                        const data = await result.value.json();
-                        if (typeof data.compra === 'number' && typeof data.venta === 'number') {
-                            html += `<p><strong>Dólar ${label}:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
-                        } else {
-                            html += `<p style="color:crimson;">Error: Datos inválidos para Dólar ${label}</p>`;
-                            console.warn(`Datos inválidos recibidos para Dólar ${label}:`, data);
-                        }
-                    } else {
-                        html += `<p style="color:crimson;">Error al cargar Dólar ${label}</p>`;
-                        console.error(`Error en la petición para Dólar ${label}:`, result.reason || 'Fallo de red o servidor');
-                    }
-                }
-                html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
-                target.innerHTML = html;
-
-            } catch (err) {
-                console.error('Error general al cargar cotizaciones:', err);
-                target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`;
-            }
-        }
-        cargarCotizaciones();
-        setInterval(cargarCotizaciones, 60000);
-
-        async function cargarNoticias() {
-            const noticiasLista = document.getElementById('noticias-lista');
-            noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>';
-
-            const proxy = 'https://api.allorigins.win/get?url=';
-            const rssFeeds = [
-                { name: 'Ámbito Financiero', url: 'https://www.ambito.com/rss/economia.xml', limit: 5 },
-                { name: 'La Nación (Economía)', url: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/economia/', limit: 3 },
-                { name: 'Clarín (Economía)', url: 'https://www.clarin.com/rss/economia/', limit: 2 }
-            ];
-
-            let allNewsItems = [];
-
-            try {
-                const results = await Promise.allSettled(
-                    rssFeeds.map(feed =>
-                        fetch(proxy + encodeURIComponent(feed.url))
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`Error HTTP ${response.status} para ${feed.name}`);
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                const parser = new DOMParser();
-                                const xml = parser.parseFromString(data.contents, "text/xml");
-                                const items = xml.querySelectorAll('item');
-                                const newsFromFeed = [];
-                                items.forEach((item, i) => {
-                                    if (i >= feed.limit) return;
-
-                                    const title = item.querySelector('title')?.textContent || 'Sin título';
-                                    const link = item.querySelector('link')?.textContent || '#';
-                                    const pubDate = item.querySelector('pubDate')?.textContent || '';
-                                    const descriptionHtml = item.querySelector('description')?.textContent || '';
-
-                                    let imgSrc = '';
-                                    let cleanDescriptionText = '';
-                                    const tempDiv = document.createElement('div');
-                                    tempDiv.innerHTML = descriptionHtml;
-
-                                    const imgElement = tempDiv.querySelector('img');
-                                    if (imgElement) {
-                                        imgSrc = imgElement.src;
-                                        imgElement.remove();
-                                    }
-                                    cleanDescriptionText = tempDiv.textContent || '';
-                                    const shortText = cleanDescriptionText.substring(0, 140) + (cleanDescriptionText.length > 140 ? '...' : '');
-
-                                    const fecha = pubDate ? new Date(pubDate).toLocaleDateString('es-AR', {year:'numeric', month:'short', day:'numeric'}) : 'Fecha desconocida';
-
-                                    newsFromFeed.push({
-                                        title,
-                                        link,
-                                        shortText,
-                                        fecha,
-                                        imgSrc,
-                                        source: feed.name
-                                    });
-                                });
-                                return newsFromFeed;
-                            })
-                    )
-                );
-
-                results.forEach(result => {
-                    if (result.status === 'fulfilled') {
-                        allNewsItems = allNewsItems.concat(result.value);
-                    } else {
-                        console.error(`Error al cargar noticias de una fuente:`, result.reason);
-                    }
-                });
-
-                allNewsItems.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-                let html = '';
-                if (allNewsItems.length === 0) {
-                    html = '<li>No se pudieron cargar noticias de ninguna fuente.</li>';
-                } else {
-                    allNewsItems.forEach(news => {
-                        html += `<li>
-                            ${news.imgSrc ? `<img src="${news.imgSrc}" alt="${news.title}">` : ''}
-                            <a href="${news.link}" target="_blank" rel="noopener noreferrer">${news.title}</a>
-                            <p>${news.shortText}</p>
-                            <time>${news.fecha} - <span style="font-weight: bold;">${news.source}</span></time>
-                        </li>`;
-                    });
-                }
-                noticiasLista.innerHTML = html;
-
-            } catch(e) {
-                console.error('Error general al cargar noticias:', e);
-                noticiasLista.innerHTML = '<li style="color:crimson;">Error general al cargar las noticias. Por favor, inténtelo de nuevo más tarde.</li>';
-            }
-        }
-        cargarNoticias();
-        setInterval(cargarNoticias, 5 * 60 * 1000);
+        // PEGA TODO EL CÓDIGO JAVASCRIPT DE LA SIGUIENTE SECCIÓN AQUÍ
     </script>
 </body>
 </html>
