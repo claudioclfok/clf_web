@@ -1,1 +1,26 @@
-
+[
+    {
+        "titulo": "El Banco Central sube la tasa de interés al 52% tras el dato de inflación.",
+        "link": "#",
+        "resumen": "La medida busca contener la presión sobre el tipo de cambio y la inercia inflacionaria. Es la tercera suba consecutiva en el año.",
+        "fecha": "27 de nov de 2025",
+        "fuente": "BCRA - Análisis",
+        "imagen": "" 
+    },
+    {
+        "titulo": "La cosecha de trigo alcanzaría un récord histórico.",
+        "link": "#",
+        "resumen": "Las estimaciones privadas indican que el volumen superaría los 20 millones de toneladas, impulsando las exportaciones agrícolas.",
+        "fecha": "27 de nov de 2025",
+        "fuente": "Clarin Economía",
+        "imagen": "" 
+    },
+    {
+        "titulo": "Nuevas regulaciones impactarán el mercado de bonos CER.",
+        "link": "#",
+        "resumen": "El gobierno anunció cambios en la operatoria de títulos ajustados por inflación, generando volatilidad en el segmento local.",
+        "fecha": "26 de nov de 2025",
+        "fuente": "Ámbito Financiero",
+        "imagen": ""
+    }
+]
