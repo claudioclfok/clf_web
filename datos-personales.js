@@ -11,17 +11,17 @@ actualizarFechaHora();
 
 async function cargarCotizaciones() {
     const target = document.getElementById('dolar-cotizaciones');
+    // URLs de la API del Dólar (dolarapi.com)
     const urls = {
-        blue: 'https://dolarapi.com/v1/dolares/blue',
+        blue:    'https://dolarapi.com/v1/dolares/blue',
         oficial: 'https://dolarapi.com/v1/dolares/oficial',
-        mep: 'https://dolarapi.com/v1/dolares/bolsa'
+        mep:     'https://dolarapi.com/v1/dolares/bolsa'
     };
 
     try {
         const responses = await Promise.allSettled(Object.values(urls).map(url => fetch(url)));
         let html = '';
         const labels = { blue: 'Blue', oficial: 'Oficial', mep: 'MEP' };
-        let blueDolarVenta = 0;
 
         for (const [index, result] of responses.entries()) {
             const type = Object.keys(urls)[index];
@@ -31,9 +31,6 @@ async function cargarCotizaciones() {
                 const data = await result.value.json();
                 if (typeof data.compra === 'number' && typeof data.venta === 'number') {
                     html += `<p><strong>Dólar ${label}:</strong> Compra $${data.compra.toFixed(2)} - Venta $${data.venta.toFixed(2)}</p>`;
-                    if (type === 'blue') {
-                        blueDolarVenta = data.venta;
-                    }
                 } else {
                     html += `<p style="color:crimson;">Error: Datos inválidos para Dólar ${label}</p>`;
                 }
@@ -41,10 +38,19 @@ async function cargarCotizaciones() {
                 html += `<p style="color:crimson;">Error al cargar Dólar ${label}</p>`;
             }
         }
-        html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización: ${new Date().toLocaleString('es-AR')}</p>`;
-        target.innerHTML = html;
         
-        inicializarConversor(blueDolarVenta);
+        // Criptomonedas (ejemplo estático)
+        html += `<div style="margin-top: 30px;">
+                    <h3>Cotizaciones Criptomonedas Populares (Ejemplo)</h3>
+                    <div id="cripto-cotizaciones">
+                        <p>Bitcoin (BTC): <strong>$110.500.000 ARS</strong> <span>(+1.5%)</span></p>
+                        <p>Ethereum (ETH): <strong>$6.050.000 ARS</strong> <span>(-0.2%)</span></p>
+                        <p style="font-size:10px;color:#666;">Fuente: Datos estáticos de ejemplo</p>
+                    </div>
+                </div>`;
+        
+        html += `<p style="font-size:12px;color:#666;margin-top:8px;">Última actualización de divisas: ${new Date().toLocaleString('es-AR')}</p>`;
+        target.innerHTML = html;
 
     } catch (err) {
         target.innerHTML = `<p style="color:crimson;">Error general al cargar cotizaciones.</p>`;
@@ -55,8 +61,9 @@ setInterval(cargarCotizaciones, 60000);
 
 async function cargarNoticias() {
     const noticiasLista = document.getElementById('noticias-lista');
-    noticiasLista.innerHTML = '<li>Cargando noticias de varias fuentes...</li>';
+    noticiasLista.innerHTML = '<li>Cargando noticias... Si no cargan, el servidor proxy podría estar caído.</li>';
 
+    // Proxy para evitar problemas de CORS y URLs de RSS
     const proxy = 'https://api.allorigins.win/get?url=';
     const rssFeeds = [
         { name: 'Ámbito Financiero', url: 'https://www.ambito.com/rss/economia.xml', limit: 5 },
@@ -128,7 +135,7 @@ async function cargarNoticias() {
 
         let html = '';
         if (allNewsItems.length === 0) {
-            html = '<li>No se pudieron cargar noticias de ninguna fuente.</li>';
+            html = '<li>No se pudieron cargar noticias de ninguna fuente. El proxy o las fuentes podrían estar fallando.</li>';
         } else {
             allNewsItems.forEach(news => {
                 html += `<li>
@@ -142,40 +149,8 @@ async function cargarNoticias() {
         noticiasLista.innerHTML = html;
 
     } catch(e) {
-        noticiasLista.innerHTML = '<li style="color:crimson;">Error general al cargar las noticias. Por favor, inténtelo de nuevo más tarde.</li>';
+        noticiasLista.innerHTML = '<li style="color:crimson;">Error general al cargar las noticias.</li>';
     }
 }
 cargarNoticias();
 setInterval(cargarNoticias, 5 * 60 * 1000);
-
-
-function inicializarConversor(tasaDolarBlueVenta) {
-    const tasa = tasaDolarBlueVenta || 1420;
-    const inputPesos = document.getElementById('monto-pesos');
-    const resultado = document.getElementById('conversion-resultado');
-
-    function actualizarConversion() {
-        const pesos = parseFloat(inputPesos.value);
-        if (!isNaN(pesos) && pesos > 0 && tasa > 0) {
-            const dolares = pesos / tasa;
-            resultado.textContent = `$${dolares.toFixed(2)} USD`;
-        } else {
-            resultado.textContent = '$0.00 USD';
-        }
-    }
-    
-    actualizarConversion();
-    inputPesos.addEventListener('input', actualizarConversion);
-}
-
-function cargarCriptomonedasEstaticas() {
-    const criptoDiv = document.getElementById('cripto-cotizaciones');
-    if (criptoDiv) {
-        criptoDiv.innerHTML = `
-            <p>Bitcoin (BTC): <strong>$110.500.000 ARS</strong> <span style="color: green;">(+1.5%)</span></p>
-            <p>Ethereum (ETH): <strong>$6.050.000 ARS</strong> <span style="color: red;">(-0.2%)</span></p>
-        `;
-    }
-}
-
-cargarCriptomonedasEstaticas();
