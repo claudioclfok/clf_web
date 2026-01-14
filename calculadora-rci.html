@@ -16,9 +16,6 @@ body {
   padding: 20px;
   border-radius: 8px;
 }
-h2, h3 {
-  margin-top: 0;
-}
 table {
   width: 100%;
   border-collapse: collapse;
@@ -36,18 +33,10 @@ input {
   width: 100%;
   padding: 6px;
 }
-.ok {
-  background: #d4edda;
-}
-.no {
-  background: #f8d7da;
-}
-.warn {
-  background: #fff3cd;
-}
-.left {
-  text-align: left;
-}
+.ok { background: #d4edda; }
+.no { background: #f8d7da; }
+.warn { background: #fff3cd; }
+.left { text-align: left; }
 </style>
 </head>
 
@@ -71,7 +60,7 @@ input {
 <tr><td class="left">Total deuda BCRA</td><td id="totalDeuda">0</td></tr>
 <tr><td class="left">Endeudamiento (sueldos)</td><td id="endeudamiento">0</td></tr>
 <tr><td class="left">RCI aplicado</td><td id="rci">-</td></tr>
-<tr><td class="left">Cuota máxima disponible</td><td id="cuotaMax">-</td></tr>
+<tr><td class="left">Cuota máxima</td><td id="cuotaMax">-</td></tr>
 </table>
 
 <h3>Montos otorgables según RCI</h3>
@@ -90,83 +79,72 @@ input {
 
 <script>
 const inputs = document.querySelectorAll("input");
-inputs.forEach(i => i.addEventListener("input", calcularRCI));
+inputs.forEach(i => i.addEventListener("input", calcular));
 
-function calcularRCI() {
+function calcular() {
   const sueldo = Number(sueldoEl().value) || 0;
 
-  const deudaTotal =
+  const deuda =
     (Number(s1.value) || 0) +
     (Number(s2.value) || 0) +
     (Number(s3.value) || 0) +
     (Number(s4.value) || 0) +
     (Number(s5.value) || 0);
 
-  document.getElementById("totalDeuda").innerText = deudaTotal.toFixed(2);
+  document.getElementById("totalDeuda").innerText = deuda.toLocaleString();
 
-  if (sueldo <= 0) {
-    limpiarResultados();
-    return;
-  }
+  if (sueldo <= 0) return limpiar();
 
-  const endeudamiento = deudaTotal / sueldo;
+  const endeudamiento = deuda / sueldo;
   document.getElementById("endeudamiento").innerText = endeudamiento.toFixed(2);
 
-  let rciPorcentaje = 0;
-  let rciTexto = "";
+  let rci = 0;
 
-  if (endeudamiento <= 10) {
-    rciPorcentaje = 0.15;
-    rciTexto = "15 %";
-  } else if (endeudamiento > 10 && endeudamiento <= 15) {
-    rciPorcentaje = 0.10;
-    rciTexto = "10 %";
-  } else {
+  if (endeudamiento <= 10) rci = 0.15;
+  else if (endeudamiento <= 15) rci = 0.10;
+  else {
     document.getElementById("rci").innerText = "ANÁLISIS / RIESGOS";
     document.getElementById("cuotaMax").innerText = "-";
     document.getElementById("tablaResultados").innerHTML = "";
     return;
   }
 
-  document.getElementById("rci").innerText = rciTexto;
+  document.getElementById("rci").innerText = (rci * 100).toFixed(0) + " %";
 
-  const cuotaMaxima = sueldo * rciPorcentaje - deudaTotal;
-  document.getElementById("cuotaMax").innerText = cuotaMaxima.toFixed(2);
+  const cuotaMax = sueldo * rci;
+  document.getElementById("cuotaMax").innerText = cuotaMax.toLocaleString();
 
-  generarTabla(cuotaMaxima);
+  generarTabla(cuotaMax);
 }
 
-function generarTabla(cuotaMaxima) {
+function generarTabla(cuotaMax) {
   const tbody = document.getElementById("tablaResultados");
   tbody.innerHTML = "";
 
-  const capitales = [200000, 300000, 500000, 800000, 1000000, 1500000];
+  const capitales = [
+    200000, 300000, 500000, 800000, 1000000, 1500000
+  ];
   const cuotas = [6, 12, 18, 24, 36];
-  const tasaMensual = 0.08; // tasa estimada
 
-  capitales.forEach(capital => {
-    cuotas.forEach(cuotasCant => {
-      const cuota = (capital * (1 + tasaMensual * cuotasCant)) / cuotasCant;
-      const otorgable = cuota <= cuotaMaxima;
+  capitales.forEach(cap => {
+    cuotas.forEach(c => {
+      const cuota = cap / c;
+      const ok = cuota <= cuotaMax;
 
       const tr = document.createElement("tr");
-      tr.className = otorgable ? "ok" : "no";
-
+      tr.className = ok ? "ok" : "no";
       tr.innerHTML = `
-        <td>${capital.toLocaleString()}</td>
-        <td>${cuotasCant}</td>
-        <td>${cuota.toFixed(2)}</td>
-        <td>${otorgable ? "OTORGABLE" : "NO"}</td>
+        <td>${cap.toLocaleString()}</td>
+        <td>${c}</td>
+        <td>${cuota.toLocaleString()}</td>
+        <td>${ok ? "OTORGABLE" : "NO"}</td>
       `;
       tbody.appendChild(tr);
     });
   });
 }
 
-function limpiarResultados() {
-  document.getElementById("endeudamiento").innerText = "0";
-  document.getElementById("rci").innerText = "-";
-  document.getElementById("cuotaMax").innerText = "-";
+function limpiar() {
   document.getElementById("tablaResultados").innerHTML = "";
 }
 
