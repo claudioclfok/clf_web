@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora RCI</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+}
+.container {
+  max-width: 800px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+}
+h2 {
+  text-align: center;
+  color: #0b5ed7;
+}
+input {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+}
+button {
+  width: 100%;
+  padding: 10px;
+  background: #0b5ed7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.resultado {
+  margin-top: 20px;
+  font-size: 18px;
+}
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: right;
+}
+th {
+  background: #e9ecef;
+}
+.ok {
+  color: green;
+}
+.no {
+  color: red;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Calculadora RCI</h2>
+
+  <label>Sueldo neto</label>
+  <input type="number" id="sueldo">
+
+  <h3>Cuotas vigentes (BCRA)</h3>
+  <input type="number" id="s1" placeholder="Situación 1">
+  <input type="number" id="s2" placeholder="Situación 2">
+  <input type="number" id="s3" placeholder="Situación 3">
+  <input type="number" id="s4" placeholder="Situación 4">
+  <input type="number" id="s5" placeholder="Situación 5">
+
+  <button onclick="calcular()">Calcular RCI</button>
+
+  <div class="resultado">
+    <p>RCI aplicado: <b id="rci"></b></p>
+    <p>Cuota disponible: <b id="cuota"></b></p>
+    <p>Monto máximo otorgable: <b id="monto"></b></p>
+  </div>
+
+  <table id="tabla" style="display:none">
+    <thead>
+      <tr>
+        <th>Capital</th>
+        <th>Cuota</th>
+        <th>¿Otorgable?</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+const grilla = [
+  { capital: 1300000, cuota: 304251.96 },
+  { capital: 1250000, cuota: 292549.96 },
+  { capital: 1200000, cuota: 280847.96 },
+  { capital: 1150000, cuota: 269145.96 },
+  { capital: 1100000, cuota: 257443.96 },
+  { capital: 1050000, cuota: 245741.96 },
+  { capital: 1000000, cuota: 234039.97 },
+  { capital: 950000,  cuota: 222337.97 },
+  { capital: 900000,  cuota: 210635.97 },
+  { capital: 850000,  cuota: 198933.97 },
+  { capital: 800000,  cuota: 187231.97 },
+  { capital: 750000,  cuota: 175529.97 },
+  { capital: 700000,  cuota: 163827.98 },
+  { capital: 650000,  cuota: 152125.98 },
+  { capital: 600000,  cuota: 140423.98 },
+  { capital: 550000,  cuota: 128721.98 },
+  { capital: 500000,  cuota: 117019.98 },
+  { capital: 450000,  cuota: 105317.98 },
+  { capital: 400000,  cuota: 93615.99 },
+  { capital: 350000,  cuota: 81913.99 },
+  { capital: 300000,  cuota: 70211.99 },
+  { capital: 250000,  cuota: 58509.99 },
+  { capital: 200000,  cuota: 46807.99 },
+  { capital: 150000,  cuota: 35105.99 },
+  { capital: 100000,  cuota: 23404.00 },
+  { capital: 50000,   cuota: 11702.00 }
+];
+
+function calcular() {
+  const sueldo = Number(document.getElementById("sueldo").value);
+  const bcra =
+    Number(s1.value) +
+    Number(s2.value) +
+    Number(s3.value) +
+    Number(s4.value) +
+    Number(s5.value);
+
+  const endeudamiento = bcra / sueldo;
+  let rci;
+
+  if (endeudamiento <= 0.10) rci = 0.15;
+  else if (endeudamiento <= 0.15) rci = 0.10;
+  else {
+    document.getElementById("rci").innerText = "ANÁLISIS S/RIESGOS";
+    document.getElementById("cuota").innerText = "-";
+    document.getElementById("monto").innerText = "-";
+    return;
+  }
+
+  const cuotaDisponible = sueldo * rci - bcra;
+
+  document.getElementById("rci").innerText = (rci * 100) + "%";
+  document.getElementById("cuota").innerText =
+    cuotaDisponible.toLocaleString("es-AR");
+
+  const tbody = document.querySelector("#tabla tbody");
+  tbody.innerHTML = "";
+  let maxCapital = 0;
+
+  grilla.forEach(g => {
+    const ok = g.cuota <= cuotaDisponible;
+    if (ok) maxCapital = g.capital;
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${g.capital.toLocaleString("es-AR")}</td>
+        <td>${g.cuota.toLocaleString("es-AR")}</td>
+        <td class="${ok ? 'ok' : 'no'}">
+          ${ok ? '✔' : '✖'}
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("monto").innerText =
+    maxCapital.toLocaleString("es-AR");
+
+  document.getElementById("tabla").style.display = "table";
+}
+</script>
+
+</body>
+</html>
