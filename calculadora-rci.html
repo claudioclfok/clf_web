@@ -2,20 +2,21 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Calculadora RCI - Grilla Oficial</title>
+<title>Calculadora RCI - Filtro Automático</title>
 <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #333; }
     .container { max-width: 900px; margin: 20px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     h2, h3 { color: #004a99; border-bottom: 2px solid #eee; padding-bottom: 10px; }
     table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
     th, td { border: 1px solid #e0e0e0; padding: 10px; text-align: right; }
-    th { background: #f8f9fa; font-weight: 600; text-align: center; }
-    input { width: 90%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
-    .ok { background: #d4edda; color: #155724; font-weight: bold; }
-    .no { background: #f8d7da; color: #721c24; }
-    .analisis { background: #fff3cd; color: #856404; font-weight: bold; text-align: center; padding: 20px; border: 2px solid #ffeeba; }
-    .left { text-align: left; font-weight: 500; }
-    .resaltar { font-size: 1.2em; color: #d9534f; font-weight: bold; }
+    th { background: #004a99; color: white; font-weight: 600; text-align: center; }
+    input { width: 94%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; background: #fafafa; }
+    input:focus { outline: none; border-color: #004a99; background: #fff; }
+    .ok { background: #ffffff; }
+    .analisis { background: #f8d7da; color: #721c24; font-weight: bold; text-align: center; padding: 20px; border: 2px solid #f5c6cb; border-radius: 8px; margin-top: 20px; }
+    .left { text-align: left; font-weight: 500; background: #fdfdfd; }
+    .resaltar { font-size: 1.2em; color: #28a745; font-weight: bold; }
+    #totalDeuda { color: #d9534f; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -37,35 +38,39 @@
     <table>
         <tr><td class="left">Total Deuda BCRA</td><td id="totalDeuda">$ 0</td></tr>
         <tr><td class="left">Cant. de Sueldos Adeudados</td><td id="endeudamiento">0</td></tr>
-        <tr><td class="left">RCI Asignado</td><td id="rci" class="resaltar">-</td></tr>
-        <tr><td class="left">Cuota Máxima Otorgable</td><td id="cuotaMax" class="resaltar">$ 0</td></tr>
+        <tr><td class="left">RCI Aplicado</td><td id="rci">-</td></tr>
+        <tr><td class="left">Capacidad de Cuota Libre</td><td id="cuotaMax" class="resaltar">$ 0</td></tr>
     </table>
 
     <div id="mensajeRiesgo"></div>
 
-    <h3 id="tituloTabla">3. Montos según Grilla de Tasas</h3>
-    <table id="tablaPrincipal">
-        <thead>
-            <tr>
-                <th>Capital Prestado</th>
-                <th>Cuotas</th>
-                <th>Valor Cuota (Final)</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody id="tablaResultados"></tbody>
-    </table>
+    <div id="seccionResultados">
+        <h3>Monto a otorgar</h3>
+        <table id="tablaPrincipal">
+            <thead>
+                <tr>
+                    <th>Capital a Prestar</th>
+                    <th>Plazo (Cuotas)</th>
+                    <th>Valor de la Cuota</th>
+                </tr>
+            </thead>
+            <tbody id="tablaResultados"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-// Grilla extraída de tu imagen (Monto, Cuotas, Cuota Final)
+// Grilla basada en los valores de tu imagen
 const grillaOficial = [
-    {cap: 1000000, c: 36, v: 234039}, {cap: 1000000, c: 24, v: 243343}, {cap: 1000000, c: 18, v: 259616},
+    {cap: 1000000, c: 36, v: 234039}, {cap: 1000000, c: 24, v: 243343}, {cap: 1000000, c: 18, v: 259616}, {cap: 1000000, c: 12, v: 279430},
     {cap: 900000, c: 36, v: 210635}, {cap: 900000, c: 24, v: 219009}, {cap: 900000, c: 18, v: 233654},
     {cap: 800000, c: 36, v: 187231}, {cap: 800000, c: 24, v: 194674}, {cap: 800000, c: 18, v: 207692},
     {cap: 700000, c: 36, v: 163827}, {cap: 700000, c: 24, v: 170340}, {cap: 700000, c: 18, v: 181731},
+    {cap: 600000, c: 36, v: 140423}, {cap: 600000, c: 24, v: 146006}, {cap: 600000, c: 18, v: 155769},
     {cap: 500000, c: 36, v: 117019}, {cap: 500000, c: 24, v: 121671}, {cap: 500000, c: 18, v: 129808},
+    {cap: 400000, c: 36, v: 93615},  {cap: 400000, c: 24, v: 97337},  {cap: 400000, c: 18, v: 103846},
     {cap: 300000, c: 36, v: 70211},  {cap: 300000, c: 24, v: 73003},  {cap: 300000, c: 18, v: 77884},
+    {cap: 200000, c: 36, v: 46807},  {cap: 200000, c: 24, v: 48668},  {cap: 200000, c: 18, v: 51923},
     {cap: 100000, c: 36, v: 23404},  {cap: 100000, c: 24, v: 24334},  {cap: 100000, c: 18, v: 25961}
 ];
 
@@ -93,25 +98,21 @@ function calcular() {
 
     let rci = 0;
     let mensajeRiesgo = document.getElementById("mensajeRiesgo");
-    let tablaPrincipal = document.getElementById("tablaPrincipal");
-    let tituloTabla = document.getElementById("tituloTabla");
+    let seccionResultados = document.getElementById("seccionResultados");
     
     mensajeRiesgo.innerHTML = "";
-    tablaPrincipal.style.display = "table";
-    tituloTabla.style.display = "block";
+    seccionResultados.style.display = "block";
 
-    // Lógica pedida
+    // Pautas de RCI
     if (ratioEndeudamiento <= 10) {
         rci = 0.15;
     } else if (ratioEndeudamiento <= 15) {
         rci = 0.10;
     } else {
-        // Más de 15 sueldos
         document.getElementById("rci").innerText = "ANÁLISIS / RIESGOS";
-        document.getElementById("cuotaMax").innerText = "BLOQUEADO";
-        mensajeRiesgo.innerHTML = "<div class='analisis'>⚠️ CLIENTE EN NIVEL CRÍTICO: DERIVAR A ANÁLISIS DE RIESGOS</div>";
-        tablaPrincipal.style.display = "none";
-        tituloTabla.style.display = "none";
+        document.getElementById("cuotaMax").innerText = "CONSULTAR";
+        mensajeRiesgo.innerHTML = "<div class='analisis'>⚠️ EXCESO DE DEUDA: El cliente supera los 15 sueldos de deuda. Derivar a Análisis de Riesgos.</div>";
+        seccionResultados.style.display = "none";
         return;
     }
 
@@ -125,19 +126,26 @@ function calcular() {
 function generarTabla(cuotaMax) {
     const tbody = document.getElementById("tablaResultados");
     tbody.innerHTML = "";
+    let hayOpciones = false;
 
     grillaOficial.forEach(item => {
-        const ok = item.v <= cuotaMax;
-        const tr = document.createElement("tr");
-        tr.className = ok ? "ok" : "no";
-        tr.innerHTML = `
-            <td>$ ${item.cap.toLocaleString()}</td>
-            <td style="text-align:center">${item.c}</td>
-            <td>$ ${item.v.toLocaleString()}</td>
-            <td style="text-align:center">${ok ? "✔️ OTORGABLE" : "❌ SUPERA RCI"}</td>
-        `;
-        tbody.appendChild(tr);
+        // SOLO se muestran si la cuota es menor o igual a la máxima permitida
+        if (item.v <= cuotaMax) {
+            hayOpciones = true;
+            const tr = document.createElement("tr");
+            tr.className = "ok";
+            tr.innerHTML = `
+                <td style="text-align:center">$ ${item.cap.toLocaleString()}</td>
+                <td style="text-align:center">${item.c} meses</td>
+                <td style="text-align:center; font-weight:bold">$ ${item.v.toLocaleString()}</td>
+            `;
+            tbody.appendChild(tr);
+        }
     });
+
+    if (!hayOpciones) {
+        tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding:20px;'>No hay préstamos disponibles para este nivel de ingresos/RCI.</td></tr>";
+    }
 }
 
 function limpiar() {
