@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Calculadora RCI - Filtro Automático</title>
+<title>Calculadora RCI - Grilla Completa</title>
 <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #333; }
     .container { max-width: 900px; margin: 20px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -11,12 +11,10 @@
     th, td { border: 1px solid #e0e0e0; padding: 10px; text-align: right; }
     th { background: #004a99; color: white; font-weight: 600; text-align: center; }
     input { width: 94%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; background: #fafafa; }
-    input:focus { outline: none; border-color: #004a99; background: #fff; }
-    .ok { background: #ffffff; }
     .analisis { background: #f8d7da; color: #721c24; font-weight: bold; text-align: center; padding: 20px; border: 2px solid #f5c6cb; border-radius: 8px; margin-top: 20px; }
-    .left { text-align: left; font-weight: 500; background: #fdfdfd; }
     .resaltar { font-size: 1.2em; color: #28a745; font-weight: bold; }
-    #totalDeuda { color: #d9534f; font-weight: bold; }
+    .ok { background: #ffffff; }
+    .left { text-align: left; font-weight: 500; background: #fdfdfd; }
 </style>
 </head>
 <body>
@@ -26,7 +24,7 @@
 
     <h3>1. Datos del Solicitante</h3>
     <table>
-        <tr><td class="left">Sueldo Neto (Recibo)</td><td><input type="number" id="sueldo" placeholder="Ej: 500000"></td></tr>
+        <tr><td class="left">Sueldo Neto</td><td><input type="number" id="sueldo"></td></tr>
         <tr><td class="left">Situación 1 (BCRA)</td><td><input type="number" id="s1" value="0"></td></tr>
         <tr><td class="left">Situación 2</td><td><input type="number" id="s2" value="0"></td></tr>
         <tr><td class="left">Situación 3</td><td><input type="number" id="s3" value="0"></td></tr>
@@ -60,18 +58,27 @@
 </div>
 
 <script>
-// Grilla basada en los valores de tu imagen
+// Grilla Completa extraída de la imagen
 const grillaOficial = [
-    {cap: 1000000, c: 36, v: 234039}, {cap: 1000000, c: 24, v: 243343}, {cap: 1000000, c: 18, v: 259616}, {cap: 1000000, c: 12, v: 279430},
-    {cap: 900000, c: 36, v: 210635}, {cap: 900000, c: 24, v: 219009}, {cap: 900000, c: 18, v: 233654},
-    {cap: 800000, c: 36, v: 187231}, {cap: 800000, c: 24, v: 194674}, {cap: 800000, c: 18, v: 207692},
-    {cap: 700000, c: 36, v: 163827}, {cap: 700000, c: 24, v: 170340}, {cap: 700000, c: 18, v: 181731},
-    {cap: 600000, c: 36, v: 140423}, {cap: 600000, c: 24, v: 146006}, {cap: 600000, c: 18, v: 155769},
-    {cap: 500000, c: 36, v: 117019}, {cap: 500000, c: 24, v: 121671}, {cap: 500000, c: 18, v: 129808},
-    {cap: 400000, c: 36, v: 93615},  {cap: 400000, c: 24, v: 97337},  {cap: 400000, c: 18, v: 103846},
-    {cap: 300000, c: 36, v: 70211},  {cap: 300000, c: 24, v: 73003},  {cap: 300000, c: 18, v: 77884},
-    {cap: 200000, c: 36, v: 46807},  {cap: 200000, c: 24, v: 48668},  {cap: 200000, c: 18, v: 51923},
-    {cap: 100000, c: 36, v: 23404},  {cap: 100000, c: 24, v: 24334},  {cap: 100000, c: 18, v: 25961}
+    {cap: 1000000, c: 36, v: 234039.97}, {cap: 1000000, c: 24, v: 243343.46}, {cap: 1000000, c: 18, v: 259616.01}, {cap: 1000000, c: 12, v: 279430.77},
+    {cap: 950000, c: 36, v: 222337.97}, {cap: 950000, c: 24, v: 231176.28}, {cap: 950000, c: 18, v: 246635.21}, {cap: 950000, c: 12, v: 265459.23},
+    {cap: 900000, c: 36, v: 210635.97}, {cap: 900000, c: 24, v: 219009.11}, {cap: 900000, c: 18, v: 233654.41}, {cap: 900000, c: 12, v: 251487.70},
+    {cap: 850000, c: 36, v: 198933.97}, {cap: 850000, c: 24, v: 206841.94}, {cap: 850000, c: 18, v: 220673.61}, {cap: 850000, c: 12, v: 237516.16},
+    {cap: 800000, c: 36, v: 187231.97}, {cap: 800000, c: 24, v: 194674.76}, {cap: 800000, c: 18, v: 207692.81}, {cap: 800000, c: 12, v: 223544.62},
+    {cap: 750000, c: 36, v: 175529.97}, {cap: 750000, c: 24, v: 182507.59}, {cap: 750000, c: 18, v: 194712.01}, {cap: 750000, c: 12, v: 209573.08}, {cap: 750000, c: 6, v: 296047.57},
+    {cap: 700000, c: 36, v: 163827.98}, {cap: 700000, c: 24, v: 170340.42}, {cap: 700000, c: 18, v: 181731.21}, {cap: 700000, c: 12, v: 195601.54}, {cap: 700000, c: 6, v: 276311.07},
+    {cap: 650000, c: 36, v: 152125.98}, {cap: 650000, c: 24, v: 158173.25}, {cap: 650000, c: 18, v: 168750.41}, {cap: 650000, c: 12, v: 181630.00}, {cap: 650000, c: 6, v: 256574.56},
+    {cap: 600000, c: 36, v: 140423.98}, {cap: 600000, c: 24, v: 146006.07}, {cap: 600000, c: 18, v: 155769.61}, {cap: 600000, c: 12, v: 167658.46}, {cap: 600000, c: 6, v: 236838.06},
+    {cap: 550000, c: 36, v: 128721.98}, {cap: 550000, c: 24, v: 133838.90}, {cap: 550000, c: 18, v: 142788.81}, {cap: 550000, c: 12, v: 153686.93}, {cap: 550000, c: 6, v: 217101.55},
+    {cap: 500000, c: 36, v: 117019.98}, {cap: 500000, c: 24, v: 121671.73}, {cap: 500000, c: 18, v: 129808.01}, {cap: 500000, c: 12, v: 139715.39}, {cap: 500000, c: 6, v: 197365.05},
+    {cap: 450000, c: 36, v: 105317.98}, {cap: 450000, c: 24, v: 109504.55}, {cap: 450000, c: 18, v: 116827.21}, {cap: 450000, c: 12, v: 125743.85}, {cap: 450000, c: 6, v: 177628.54},
+    {cap: 400000, c: 36, v: 93615.99},  {cap: 400000, c: 24, v: 97337.38},  {cap: 400000, c: 18, v: 103846.41}, {cap: 400000, c: 12, v: 111772.31}, {cap: 400000, c: 6, v: 157892.04},
+    {cap: 350000, c: 36, v: 81913.99},  {cap: 350000, c: 24, v: 85170.21},  {cap: 350000, c: 18, v: 90865.60},  {cap: 350000, c: 12, v: 97800.77},  {cap: 350000, c: 6, v: 138155.53},
+    {cap: 300000, c: 36, v: 70211.99},  {cap: 300000, c: 24, v: 73003.04},  {cap: 300000, c: 18, v: 77884.80},  {cap: 300000, c: 12, v: 83829.23},  {cap: 300000, c: 6, v: 118419.03},
+    {cap: 250000, c: 36, v: 58509.99},  {cap: 250000, c: 24, v: 60835.86},  {cap: 250000, c: 18, v: 64904.00},  {cap: 250000, c: 12, v: 69857.69},  {cap: 250000, c: 6, v: 98682.52},
+    {cap: 200000, c: 36, v: 46807.99},  {cap: 200000, c: 24, v: 48668.69},  {cap: 200000, c: 18, v: 51923.20},  {cap: 200000, c: 12, v: 55886.15},  {cap: 200000, c: 6, v: 78946.02},
+    {cap: 150000, c: 36, v: 35105.99},  {cap: 150000, c: 24, v: 36501.52},  {cap: 150000, c: 18, v: 38942.40},  {cap: 150000, c: 12, v: 41914.62},  {cap: 150000, c: 6, v: 59209.51},
+    {cap: 100000, c: 36, v: 23404.00},  {cap: 100000, c: 24, v: 24334.35},  {cap: 100000, c: 18, v: 25961.60},  {cap: 100000, c: 12, v: 27943.08},  {cap: 100000, c: 6, v: 39473.01}
 ];
 
 const inputs = document.querySelectorAll("input");
@@ -79,13 +86,15 @@ inputs.forEach(i => i.addEventListener("input", calcular));
 
 function calcular() {
     const sueldo = Number(document.getElementById("sueldo").value) || 0;
-    const s1 = Number(document.getElementById("s1").value) || 0;
-    const s2 = Number(document.getElementById("s2").value) || 0;
-    const s3 = Number(document.getElementById("s3").value) || 0;
-    const s4 = Number(document.getElementById("s4").value) || 0;
-    const s5 = Number(document.getElementById("s5").value) || 0;
+    const deudas = [
+        Number(document.getElementById("s1").value) || 0,
+        Number(document.getElementById("s2").value) || 0,
+        Number(document.getElementById("s3").value) || 0,
+        Number(document.getElementById("s4").value) || 0,
+        Number(document.getElementById("s5").value) || 0
+    ];
 
-    const deudaTotal = s1 + s2 + s3 + s4 + s5;
+    const deudaTotal = deudas.reduce((a, b) => a + b, 0);
     document.getElementById("totalDeuda").innerText = "$ " + deudaTotal.toLocaleString();
 
     if (sueldo <= 0) {
@@ -103,7 +112,7 @@ function calcular() {
     mensajeRiesgo.innerHTML = "";
     seccionResultados.style.display = "block";
 
-    // Pautas de RCI
+    // Pautas RCI: hasta 10 sueldos 15%, 10-15 sueldos 10%, >15 ANALISIS
     if (ratioEndeudamiento <= 10) {
         rci = 0.15;
     } else if (ratioEndeudamiento <= 15) {
@@ -111,7 +120,7 @@ function calcular() {
     } else {
         document.getElementById("rci").innerText = "ANÁLISIS / RIESGOS";
         document.getElementById("cuotaMax").innerText = "CONSULTAR";
-        mensajeRiesgo.innerHTML = "<div class='analisis'>⚠️ EXCESO DE DEUDA: El cliente supera los 15 sueldos de deuda. Derivar a Análisis de Riesgos.</div>";
+        mensajeRiesgo.innerHTML = "<div class='analisis'>⚠️ EXCESO O DEUDA: El cliente supera los 15 sueldos de deuda. Derivar a Analisis de Riesgos.</div>";
         seccionResultados.style.display = "none";
         return;
     }
@@ -128,23 +137,23 @@ function generarTabla(cuotaMax) {
     tbody.innerHTML = "";
     let hayOpciones = false;
 
+    // Solo recorre y muestra si la cuota de la grilla es menor a la permitida
     grillaOficial.forEach(item => {
-        // SOLO se muestran si la cuota es menor o igual a la máxima permitida
         if (item.v <= cuotaMax) {
             hayOpciones = true;
             const tr = document.createElement("tr");
             tr.className = "ok";
             tr.innerHTML = `
                 <td style="text-align:center">$ ${item.cap.toLocaleString()}</td>
-                <td style="text-align:center">${item.c} meses</td>
-                <td style="text-align:center; font-weight:bold">$ ${item.v.toLocaleString()}</td>
+                <td style="text-align:center">${item.c}</td>
+                <td style="text-align:center; font-weight:bold">$ ${item.v.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
             `;
             tbody.appendChild(tr);
         }
     });
 
     if (!hayOpciones) {
-        tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding:20px;'>No hay préstamos disponibles para este nivel de ingresos/RCI.</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding:20px;'>No hay préstamos disponibles que se ajusten al RCI del cliente.</td></tr>";
     }
 }
 
