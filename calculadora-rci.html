@@ -2,162 +2,126 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Calculadora RCI</title>
-
+<title>Calculadora RCI - Montos Otorgables</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f4f7;
-}
-.container {
-  max-width: 1000px;
-  margin: 20px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-th, td {
-  border: 1px solid #ccc;
-  padding: 6px;
-  text-align: right;
-}
-th {
-  background: #eee;
-}
-input {
-  width: 100%;
-  padding: 6px;
-}
-.ok { background: #d4edda; }
-.no { background: #f8d7da; }
-.warn { background: #fff3cd; }
-.left { text-align: left; }
+body { font-family: Arial; margin: 20px; }
+input, select { padding: 6px; margin: 4px; }
+table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+th, td { border: 1px solid #ccc; padding: 6px; text-align: right; }
+th { background: #eee; }
+.alert { color: red; font-weight: bold; margin-top: 10px; }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-<h2>Calculadora RCI</h2>
+<h2>Calculadora RCI – Montos Otorgables</h2>
 
-<h3>Datos del solicitante</h3>
-<table>
-<tr><td class="left">Sueldo neto</td><td><input type="number" id="sueldo"></td></tr>
-<tr><td class="left">Situación 1</td><td><input type="number" id="s1"></td></tr>
-<tr><td class="left">Situación 2</td><td><input type="number" id="s2"></td></tr>
-<tr><td class="left">Situación 3</td><td><input type="number" id="s3"></td></tr>
-<tr><td class="left">Situación 4</td><td><input type="number" id="s4"></td></tr>
-<tr><td class="left">Situación 5</td><td><input type="number" id="s5"></td></tr>
-</table>
+<label>Sueldo neto:</label>
+<input type="number" id="sueldo"><br>
 
-<h3>Resultado RCI</h3>
-<table>
-<tr><td class="left">Total deuda BCRA</td><td id="totalDeuda">0</td></tr>
-<tr><td class="left">Endeudamiento (sueldos)</td><td id="endeudamiento">0</td></tr>
-<tr><td class="left">RCI aplicado</td><td id="rci">-</td></tr>
-<tr><td class="left">Cuota máxima</td><td id="cuotaMax">-</td></tr>
-</table>
+<label>Total deuda BCRA (todas las situaciones):</label>
+<input type="number" id="deuda"><br>
 
-<h3>Montos otorgables según RCI</h3>
-<table>
-<thead>
-<tr>
-<th>Capital</th>
-<th>Cuotas</th>
-<th>Cuota estimada</th>
-<th>Estado</th>
-</tr>
-</thead>
-<tbody id="tablaResultados"></tbody>
-</table>
-</div>
+<label>Cuotas:</label>
+<select id="cuotas">
+  <option value="6">6</option>
+  <option value="12">12</option>
+  <option value="18">18</option>
+  <option value="24">24</option>
+  <option value="36">36</option>
+</select><br>
+
+<button onclick="calcular()">Calcular</button>
+
+<div id="resultado"></div>
 
 <script>
-const inputs = document.querySelectorAll("input");
-inputs.forEach(i => i.addEventListener("input", calcular));
+const grilla = [
+ {capital:1000000, cuotas:36, cuota:234039.97, tasa:231.99},
+ {capital:1000000, cuotas:24, cuota:243343.46, tasa:240},
+ {capital:1000000, cuotas:18, cuota:259616.01, tasa:253.17},
+ {capital:1000000, cuotas:12, cuota:279430.77, tasa:260.20},
+
+ {capital:900000, cuotas:36, cuota:210635.97, tasa:231.99},
+ {capital:900000, cuotas:24, cuota:219009.11, tasa:240},
+ {capital:900000, cuotas:18, cuota:233654.41, tasa:253.17},
+ {capital:900000, cuotas:12, cuota:251487.70, tasa:260.20},
+
+ {capital:800000, cuotas:36, cuota:187231.97, tasa:231.99},
+ {capital:800000, cuotas:24, cuota:194674.76, tasa:240},
+ {capital:800000, cuotas:18, cuota:207692.81, tasa:253.17},
+ {capital:800000, cuotas:12, cuota:223544.62, tasa:260.20},
+
+ {capital:700000, cuotas:36, cuota:163827.98, tasa:231.99},
+ {capital:700000, cuotas:24, cuota:170340.42, tasa:240},
+ {capital:700000, cuotas:18, cuota:181731.21, tasa:253.17},
+ {capital:700000, cuotas:12, cuota:195601.54, tasa:260.20},
+
+ {capital:600000, cuotas:36, cuota:140423.98, tasa:231.99},
+ {capital:600000, cuotas:24, cuota:146006.07, tasa:240},
+ {capital:600000, cuotas:18, cuota:155769.61, tasa:253.17},
+ {capital:600000, cuotas:12, cuota:167658.46, tasa:260.20},
+
+ {capital:500000, cuotas:36, cuota:117019.98, tasa:231.99},
+ {capital:500000, cuotas:24, cuota:121671.73, tasa:240},
+ {capital:500000, cuotas:18, cuota:129808.01, tasa:253.17},
+ {capital:500000, cuotas:12, cuota:139715.39, tasa:260.20}
+];
 
 function calcular() {
-  const sueldo = Number(sueldoEl().value) || 0;
+  const sueldo = Number(document.getElementById("sueldo").value);
+  const deuda = Number(document.getElementById("deuda").value);
+  const cuotasSel = Number(document.getElementById("cuotas").value);
+  const resultado = document.getElementById("resultado");
 
-  const deuda =
-    (Number(s1.value) || 0) +
-    (Number(s2.value) || 0) +
-    (Number(s3.value) || 0) +
-    (Number(s4.value) || 0) +
-    (Number(s5.value) || 0);
+  resultado.innerHTML = "";
 
-  document.getElementById("totalDeuda").innerText = deuda.toLocaleString();
-
-  if (sueldo <= 0) return limpiar();
+  if (!sueldo || !deuda) return;
 
   const endeudamiento = deuda / sueldo;
-  document.getElementById("endeudamiento").innerText = endeudamiento.toFixed(2);
-
   let rci = 0;
 
   if (endeudamiento <= 10) rci = 0.15;
   else if (endeudamiento <= 15) rci = 0.10;
   else {
-    document.getElementById("rci").innerText = "ANÁLISIS / RIESGOS";
-    document.getElementById("cuotaMax").innerText = "-";
-    document.getElementById("tablaResultados").innerHTML = "";
+    resultado.innerHTML = "<div class='alert'>ENDEUDAMIENTO MAYOR A 15 SUELDOS – RIESGO / ANÁLISIS</div>";
     return;
   }
 
-  document.getElementById("rci").innerText = (rci * 100).toFixed(0) + " %";
-
   const cuotaMax = sueldo * rci;
-  document.getElementById("cuotaMax").innerText = cuotaMax.toLocaleString();
 
-  generarTabla(cuotaMax);
-}
+  const filtrados = grilla.filter(g =>
+    g.cuotas === cuotasSel && g.cuota <= cuotaMax
+  );
 
-function generarTabla(cuotaMax) {
-  const tbody = document.getElementById("tablaResultados");
-  tbody.innerHTML = "";
+  if (filtrados.length === 0) {
+    resultado.innerHTML = "<div class='alert'>No hay montos otorgables para ese RCI</div>";
+    return;
+  }
 
-  const capitales = [
-    200000, 300000, 500000, 800000, 1000000, 1500000
-  ];
-  const cuotas = [6, 12, 18, 24, 36];
+  let html = `<table>
+    <tr>
+      <th>Capital</th>
+      <th>Cuotas</th>
+      <th>Cuota</th>
+      <th>Tasa</th>
+    </tr>`;
 
-  capitales.forEach(cap => {
-    cuotas.forEach(c => {
-      const cuota = cap / c;
-      const ok = cuota <= cuotaMax;
-
-      const tr = document.createElement("tr");
-      tr.className = ok ? "ok" : "no";
-      tr.innerHTML = `
-        <td>${cap.toLocaleString()}</td>
-        <td>${c}</td>
-        <td>${cuota.toLocaleString()}</td>
-        <td>${ok ? "OTORGABLE" : "NO"}</td>
-      `;
-      tbody.appendChild(tr);
-    });
+  filtrados.forEach(f => {
+    html += `<tr>
+      <td>${f.capital.toLocaleString()}</td>
+      <td>${f.cuotas}</td>
+      <td>${f.cuota.toLocaleString()}</td>
+      <td>${f.tasa}%</td>
+    </tr>`;
   });
-}
 
-function limpiar() {
-  document.getElementById("tablaResultados").innerHTML = "";
+  html += "</table>";
+  resultado.innerHTML = html;
 }
-
-function sueldoEl() {
-  return document.getElementById("sueldo");
-}
-
-const s1 = document.getElementById("s1");
-const s2 = document.getElementById("s2");
-const s3 = document.getElementById("s3");
-const s4 = document.getElementById("s4");
-const s5 = document.getElementById("s5");
 </script>
 
 </body>
 </html>
+
