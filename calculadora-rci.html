@@ -2,126 +2,152 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Calculadora RCI - Montos Otorgables</title>
+<title>Calculadora RCI - Grilla Oficial</title>
 <style>
-body { font-family: Arial; margin: 20px; }
-input, select { padding: 6px; margin: 4px; }
-table { border-collapse: collapse; width: 100%; margin-top: 15px; }
-th, td { border: 1px solid #ccc; padding: 6px; text-align: right; }
-th { background: #eee; }
-.alert { color: red; font-weight: bold; margin-top: 10px; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #333; }
+    .container { max-width: 900px; margin: 20px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    h2, h3 { color: #004a99; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
+    th, td { border: 1px solid #e0e0e0; padding: 10px; text-align: right; }
+    th { background: #f8f9fa; font-weight: 600; text-align: center; }
+    input { width: 90%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+    .ok { background: #d4edda; color: #155724; font-weight: bold; }
+    .no { background: #f8d7da; color: #721c24; }
+    .analisis { background: #fff3cd; color: #856404; font-weight: bold; text-align: center; padding: 20px; border: 2px solid #ffeeba; }
+    .left { text-align: left; font-weight: 500; }
+    .resaltar { font-size: 1.2em; color: #d9534f; font-weight: bold; }
 </style>
 </head>
-
 <body>
 
-<h2>Calculadora RCI – Montos Otorgables</h2>
+<div class="container">
+    <h2>Calculadora de Capacidad Crediticia (RCI)</h2>
 
-<label>Sueldo neto:</label>
-<input type="number" id="sueldo"><br>
+    <h3>1. Datos del Solicitante</h3>
+    <table>
+        <tr><td class="left">Sueldo Neto (Recibo)</td><td><input type="number" id="sueldo" placeholder="Ej: 500000"></td></tr>
+        <tr><td class="left">Situación 1 (BCRA)</td><td><input type="number" id="s1" value="0"></td></tr>
+        <tr><td class="left">Situación 2</td><td><input type="number" id="s2" value="0"></td></tr>
+        <tr><td class="left">Situación 3</td><td><input type="number" id="s3" value="0"></td></tr>
+        <tr><td class="left">Situación 4</td><td><input type="number" id="s4" value="0"></td></tr>
+        <tr><td class="left">Situación 5</td><td><input type="number" id="s5" value="0"></td></tr>
+    </table>
 
-<label>Total deuda BCRA (todas las situaciones):</label>
-<input type="number" id="deuda"><br>
+    <h3>2. Análisis de Endeudamiento</h3>
+    <table>
+        <tr><td class="left">Total Deuda BCRA</td><td id="totalDeuda">$ 0</td></tr>
+        <tr><td class="left">Cant. de Sueldos Adeudados</td><td id="endeudamiento">0</td></tr>
+        <tr><td class="left">RCI Asignado</td><td id="rci" class="resaltar">-</td></tr>
+        <tr><td class="left">Cuota Máxima Otorgable</td><td id="cuotaMax" class="resaltar">$ 0</td></tr>
+    </table>
 
-<label>Cuotas:</label>
-<select id="cuotas">
-  <option value="6">6</option>
-  <option value="12">12</option>
-  <option value="18">18</option>
-  <option value="24">24</option>
-  <option value="36">36</option>
-</select><br>
+    <div id="mensajeRiesgo"></div>
 
-<button onclick="calcular()">Calcular</button>
-
-<div id="resultado"></div>
+    <h3 id="tituloTabla">3. Montos según Grilla de Tasas</h3>
+    <table id="tablaPrincipal">
+        <thead>
+            <tr>
+                <th>Capital Prestado</th>
+                <th>Cuotas</th>
+                <th>Valor Cuota (Final)</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody id="tablaResultados"></tbody>
+    </table>
+</div>
 
 <script>
-const grilla = [
- {capital:1000000, cuotas:36, cuota:234039.97, tasa:231.99},
- {capital:1000000, cuotas:24, cuota:243343.46, tasa:240},
- {capital:1000000, cuotas:18, cuota:259616.01, tasa:253.17},
- {capital:1000000, cuotas:12, cuota:279430.77, tasa:260.20},
-
- {capital:900000, cuotas:36, cuota:210635.97, tasa:231.99},
- {capital:900000, cuotas:24, cuota:219009.11, tasa:240},
- {capital:900000, cuotas:18, cuota:233654.41, tasa:253.17},
- {capital:900000, cuotas:12, cuota:251487.70, tasa:260.20},
-
- {capital:800000, cuotas:36, cuota:187231.97, tasa:231.99},
- {capital:800000, cuotas:24, cuota:194674.76, tasa:240},
- {capital:800000, cuotas:18, cuota:207692.81, tasa:253.17},
- {capital:800000, cuotas:12, cuota:223544.62, tasa:260.20},
-
- {capital:700000, cuotas:36, cuota:163827.98, tasa:231.99},
- {capital:700000, cuotas:24, cuota:170340.42, tasa:240},
- {capital:700000, cuotas:18, cuota:181731.21, tasa:253.17},
- {capital:700000, cuotas:12, cuota:195601.54, tasa:260.20},
-
- {capital:600000, cuotas:36, cuota:140423.98, tasa:231.99},
- {capital:600000, cuotas:24, cuota:146006.07, tasa:240},
- {capital:600000, cuotas:18, cuota:155769.61, tasa:253.17},
- {capital:600000, cuotas:12, cuota:167658.46, tasa:260.20},
-
- {capital:500000, cuotas:36, cuota:117019.98, tasa:231.99},
- {capital:500000, cuotas:24, cuota:121671.73, tasa:240},
- {capital:500000, cuotas:18, cuota:129808.01, tasa:253.17},
- {capital:500000, cuotas:12, cuota:139715.39, tasa:260.20}
+// Grilla extraída de tu imagen (Monto, Cuotas, Cuota Final)
+const grillaOficial = [
+    {cap: 1000000, c: 36, v: 234039}, {cap: 1000000, c: 24, v: 243343}, {cap: 1000000, c: 18, v: 259616},
+    {cap: 900000, c: 36, v: 210635}, {cap: 900000, c: 24, v: 219009}, {cap: 900000, c: 18, v: 233654},
+    {cap: 800000, c: 36, v: 187231}, {cap: 800000, c: 24, v: 194674}, {cap: 800000, c: 18, v: 207692},
+    {cap: 700000, c: 36, v: 163827}, {cap: 700000, c: 24, v: 170340}, {cap: 700000, c: 18, v: 181731},
+    {cap: 500000, c: 36, v: 117019}, {cap: 500000, c: 24, v: 121671}, {cap: 500000, c: 18, v: 129808},
+    {cap: 300000, c: 36, v: 70211},  {cap: 300000, c: 24, v: 73003},  {cap: 300000, c: 18, v: 77884},
+    {cap: 100000, c: 36, v: 23404},  {cap: 100000, c: 24, v: 24334},  {cap: 100000, c: 18, v: 25961}
 ];
 
+const inputs = document.querySelectorAll("input");
+inputs.forEach(i => i.addEventListener("input", calcular));
+
 function calcular() {
-  const sueldo = Number(document.getElementById("sueldo").value);
-  const deuda = Number(document.getElementById("deuda").value);
-  const cuotasSel = Number(document.getElementById("cuotas").value);
-  const resultado = document.getElementById("resultado");
+    const sueldo = Number(document.getElementById("sueldo").value) || 0;
+    const s1 = Number(document.getElementById("s1").value) || 0;
+    const s2 = Number(document.getElementById("s2").value) || 0;
+    const s3 = Number(document.getElementById("s3").value) || 0;
+    const s4 = Number(document.getElementById("s4").value) || 0;
+    const s5 = Number(document.getElementById("s5").value) || 0;
 
-  resultado.innerHTML = "";
+    const deudaTotal = s1 + s2 + s3 + s4 + s5;
+    document.getElementById("totalDeuda").innerText = "$ " + deudaTotal.toLocaleString();
 
-  if (!sueldo || !deuda) return;
+    if (sueldo <= 0) {
+        limpiar();
+        return;
+    }
 
-  const endeudamiento = deuda / sueldo;
-  let rci = 0;
+    const ratioEndeudamiento = deudaTotal / sueldo;
+    document.getElementById("endeudamiento").innerText = ratioEndeudamiento.toFixed(2);
 
-  if (endeudamiento <= 10) rci = 0.15;
-  else if (endeudamiento <= 15) rci = 0.10;
-  else {
-    resultado.innerHTML = "<div class='alert'>ENDEUDAMIENTO MAYOR A 15 SUELDOS – RIESGO / ANÁLISIS</div>";
-    return;
-  }
+    let rci = 0;
+    let mensajeRiesgo = document.getElementById("mensajeRiesgo");
+    let tablaPrincipal = document.getElementById("tablaPrincipal");
+    let tituloTabla = document.getElementById("tituloTabla");
+    
+    mensajeRiesgo.innerHTML = "";
+    tablaPrincipal.style.display = "table";
+    tituloTabla.style.display = "block";
 
-  const cuotaMax = sueldo * rci;
+    // Lógica pedida
+    if (ratioEndeudamiento <= 10) {
+        rci = 0.15;
+    } else if (ratioEndeudamiento <= 15) {
+        rci = 0.10;
+    } else {
+        // Más de 15 sueldos
+        document.getElementById("rci").innerText = "ANÁLISIS / RIESGOS";
+        document.getElementById("cuotaMax").innerText = "BLOQUEADO";
+        mensajeRiesgo.innerHTML = "<div class='analisis'>⚠️ CLIENTE EN NIVEL CRÍTICO: DERIVAR A ANÁLISIS DE RIESGOS</div>";
+        tablaPrincipal.style.display = "none";
+        tituloTabla.style.display = "none";
+        return;
+    }
 
-  const filtrados = grilla.filter(g =>
-    g.cuotas === cuotasSel && g.cuota <= cuotaMax
-  );
+    document.getElementById("rci").innerText = (rci * 100) + "%";
+    const cuotaMax = sueldo * rci;
+    document.getElementById("cuotaMax").innerText = "$ " + cuotaMax.toLocaleString(undefined, {minimumFractionDigits: 2});
 
-  if (filtrados.length === 0) {
-    resultado.innerHTML = "<div class='alert'>No hay montos otorgables para ese RCI</div>";
-    return;
-  }
+    generarTabla(cuotaMax);
+}
 
-  let html = `<table>
-    <tr>
-      <th>Capital</th>
-      <th>Cuotas</th>
-      <th>Cuota</th>
-      <th>Tasa</th>
-    </tr>`;
+function generarTabla(cuotaMax) {
+    const tbody = document.getElementById("tablaResultados");
+    tbody.innerHTML = "";
 
-  filtrados.forEach(f => {
-    html += `<tr>
-      <td>${f.capital.toLocaleString()}</td>
-      <td>${f.cuotas}</td>
-      <td>${f.cuota.toLocaleString()}</td>
-      <td>${f.tasa}%</td>
-    </tr>`;
-  });
+    grillaOficial.forEach(item => {
+        const ok = item.v <= cuotaMax;
+        const tr = document.createElement("tr");
+        tr.className = ok ? "ok" : "no";
+        tr.innerHTML = `
+            <td>$ ${item.cap.toLocaleString()}</td>
+            <td style="text-align:center">${item.c}</td>
+            <td>$ ${item.v.toLocaleString()}</td>
+            <td style="text-align:center">${ok ? "✔️ OTORGABLE" : "❌ SUPERA RCI"}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
-  html += "</table>";
-  resultado.innerHTML = html;
+function limpiar() {
+    document.getElementById("totalDeuda").innerText = "$ 0";
+    document.getElementById("endeudamiento").innerText = "0";
+    document.getElementById("rci").innerText = "-";
+    document.getElementById("cuotaMax").innerText = "$ 0";
+    document.getElementById("tablaResultados").innerHTML = "";
 }
 </script>
 
 </body>
 </html>
-
